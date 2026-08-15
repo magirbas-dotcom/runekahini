@@ -60,6 +60,7 @@ export default function OraclePage() {
   const [spreadType, setSpreadType] = useState<SpreadType>("single");
   const [drawn, setDrawn] = useState<DrawnRune[]>([]);
   const [revealed, setRevealed] = useState<boolean[]>([]);
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [showAlphabet, setShowAlphabet] = useState(false);
   const [showEthics, setShowEthics] = useState(false);
 
@@ -79,15 +80,26 @@ export default function OraclePage() {
       next[index] = true;
       return next;
     });
+    // Newly revealed stone opens its card and collapses the rest — keeps a
+    // multi-rune spread from turning into one long scroll on mobile.
+    setExpandedIndex(index);
   }
 
   function revealAll() {
     setRevealed(new Array(drawn.length).fill(true));
+    // Bulk reveal: start with everything collapsed to a compact list; the
+    // user picks which one to read first instead of scrolling past all of them.
+    setExpandedIndex(null);
+  }
+
+  function toggleExpanded(index: number) {
+    setExpandedIndex((prev) => (prev === index ? null : index));
   }
 
   function reset() {
     setDrawn([]);
     setRevealed([]);
+    setExpandedIndex(null);
   }
 
   return (
@@ -212,6 +224,12 @@ export default function OraclePage() {
                           ? SPREAD_LABELS[spreadType][i]
                           : undefined
                       }
+                      {...(spreadType !== "single"
+                        ? {
+                            expanded: expandedIndex === i,
+                            onToggle: () => toggleExpanded(i),
+                          }
+                        : {})}
                     />
                   ),
               )}
