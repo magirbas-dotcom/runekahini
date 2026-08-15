@@ -65,7 +65,16 @@ export default function BindruneDesigner() {
     );
   }
 
-  function handleDownload() {
+  function downloadBlob(blob: Blob) {
+    const pngUrl = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = pngUrl;
+    a.download = "tilsim.png";
+    a.click();
+    URL.revokeObjectURL(pngUrl);
+  }
+
+  async function handleSaveTalisman() {
     const svg = document.getElementById("bindrune-svg");
     if (!svg) return;
 
@@ -87,14 +96,30 @@ export default function BindruneDesigner() {
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
       URL.revokeObjectURL(url);
 
-      canvas.toBlob((blob) => {
+      canvas.toBlob(async (blob) => {
         if (!blob) return;
-        const pngUrl = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = pngUrl;
-        a.download = "tilsim.png";
-        a.click();
-        URL.revokeObjectURL(pngUrl);
+
+        // Mobile: hand the image to the native share sheet, which offers
+        // "Save to Photos" / "Fotoğraflara Kaydet" directly — a plain
+        // <a download> link mostly just opens the image on iOS Safari and
+        // lands in a generic Downloads folder (not the gallery) on Android.
+        const file = new File([blob], "tilsim.png", { type: "image/png" });
+        const nav = navigator as Navigator & {
+          canShare?: (data: { files: File[] }) => boolean;
+          share?: (data: { files: File[]; title?: string }) => Promise<void>;
+        };
+
+        if (nav.canShare?.({ files: [file] }) && nav.share) {
+          try {
+            await nav.share({ files: [file], title: "Tılsım" });
+            return;
+          } catch (err) {
+            if (err instanceof Error && err.name === "AbortError") return;
+            // Share failed for another reason — fall back to a plain download.
+          }
+        }
+
+        downloadBlob(blob);
       }, "image/png");
     };
     img.src = url;
@@ -245,11 +270,11 @@ export default function BindruneDesigner() {
 
         <button
           type="button"
-          onClick={handleDownload}
+          onClick={handleSaveTalisman}
           disabled={layers.length === 0}
           className="rounded-lg bg-amber-200/90 px-5 py-2 text-sm font-medium text-stone-900 shadow transition hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-40"
         >
-          Tılsımı İndir (PNG)
+          Tılsımı Kaydet
         </button>
       </div>
 
