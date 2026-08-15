@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { drawDailyRune, drawRunes, runes, type DrawnRune } from "../data/runes";
+import { AETT_NAMES, drawDailyRune, drawRunes, runes, type DrawnRune } from "../data/runes";
 import { buildSynergySummary } from "../data/synergy";
 import RuneStone from "./RuneStone";
 import RuneDetail from "./RuneDetail";
@@ -33,13 +33,34 @@ function DailyRune() {
   const todayKey = new Date().toISOString().slice(0, 10);
   const daily = useMemo(() => drawDailyRune(todayKey), [todayKey]);
   const [revealed, setRevealed] = useState(false);
+  const formattedDate = useMemo(
+    () =>
+      new Date().toLocaleDateString("tr-TR", {
+        day: "numeric",
+        month: "long",
+        weekday: "long",
+      }),
+    [todayKey],
+  );
 
   return (
-    <section className="mb-8 w-full max-w-md rounded-2xl border border-amber-200/10 bg-stone-900/30 p-5 text-center">
-      <p className="mb-4 text-xs uppercase tracking-[0.2em] text-amber-200/70">
-        Bugünün Rune'si
-      </p>
-      <div className="flex justify-center">
+    <section className="relative mb-8 w-full max-w-md overflow-hidden rounded-2xl border border-amber-200/10 bg-stone-900/30 text-left">
+      <div
+        className="pointer-events-none absolute -right-10 top-1/2 h-40 w-40 -translate-y-1/2 rounded-full bg-amber-400/10 blur-3xl"
+        aria-hidden="true"
+      />
+      <div className="relative flex items-center gap-4 p-5">
+        <div className="flex-1">
+          <p className="text-xs uppercase tracking-[0.2em] text-amber-200/70">
+            Bugünün Rune'si
+          </p>
+          <p className="mt-1 text-sm text-stone-300">{formattedDate}</p>
+          {!revealed && (
+            <p className="mt-2 text-xs text-stone-500">
+              Günün enerjisini öğrenmek için taşa dokun.
+            </p>
+          )}
+        </div>
         <RuneStone
           drawn={daily}
           revealed={revealed}
@@ -47,7 +68,7 @@ function DailyRune() {
         />
       </div>
       {revealed && (
-        <div className="mt-4 text-left">
+        <div className="relative border-t border-stone-800 p-5 pt-4 text-left">
           <RuneDetail drawn={daily} />
         </div>
       )}
@@ -63,15 +84,22 @@ export default function OraclePage() {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [showAlphabet, setShowAlphabet] = useState(false);
   const [showEthics, setShowEthics] = useState(false);
+  const [isDrawing, setIsDrawing] = useState(false);
 
   const count =
     spreadType === "single" ? 1 : spreadType === "three" ? 3 : spreadType === "four" ? 4 : 5;
   const allRevealed = revealed.length > 0 && revealed.every(Boolean);
 
   function handleDraw() {
-    const result = drawRunes(count);
-    setDrawn(result);
-    setRevealed(new Array(result.length).fill(false));
+    setIsDrawing(true);
+    // A short beat before the stones land — makes "çekmek" feel like an
+    // action taken, not an instant state flip.
+    window.setTimeout(() => {
+      const result = drawRunes(count);
+      setDrawn(result);
+      setRevealed(new Array(result.length).fill(false));
+      setIsDrawing(false);
+    }, 550);
   }
 
   function revealStone(index: number) {
@@ -143,9 +171,20 @@ export default function OraclePage() {
           <button
             type="button"
             onClick={handleDraw}
-            className="w-full rounded-lg bg-amber-200/90 py-2.5 text-sm font-medium text-stone-900 shadow transition hover:bg-amber-100"
+            disabled={isDrawing}
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-amber-200/90 py-2.5 text-sm font-medium text-stone-900 shadow transition hover:bg-amber-100 disabled:cursor-wait disabled:opacity-90"
           >
-            Taşları Çek
+            {isDrawing ? (
+              <>
+                <span
+                  className="shuffle-spinner h-4 w-4 rounded-full border-2 border-stone-900/25 border-t-stone-900"
+                  aria-hidden="true"
+                />
+                Taşlar Karıştırılıyor…
+              </>
+            ) : (
+              "Taşları Çek"
+            )}
           </button>
 
           <button
@@ -167,8 +206,20 @@ export default function OraclePage() {
         </section>
       ) : (
         <section className="w-full">
+          <div className="mb-4 flex justify-end">
+            <button
+              type="button"
+              onClick={reset}
+              aria-label="Yeniden çek"
+              title="Yeniden çek"
+              className="shrink-0 rounded-full border border-stone-700 p-2 text-stone-400 transition hover:border-amber-300/50 hover:text-amber-200"
+            >
+              <span className="block text-base leading-none">↻</span>
+            </button>
+          </div>
+
           {question.trim() && (
-            <p className="mb-6 text-center text-sm italic text-stone-400">
+            <p className="mb-4 text-center text-sm italic text-stone-400">
               “{question.trim()}”
             </p>
           )}
@@ -273,25 +324,65 @@ export default function OraclePage() {
         onClick={() => setShowAlphabet((v) => !v)}
         className="mt-12 text-xs uppercase tracking-wider text-stone-400 underline decoration-dotted underline-offset-4 hover:text-stone-200"
       >
-        {showAlphabet ? "Rune Alfabesini Gizle" : "Rune Alfabesini Göster"}
+        {showAlphabet ? "Rune Rehberini Gizle" : "Rune Rehberini Göster"}
       </button>
 
       {showAlphabet && (
-        <section className="mt-6 grid w-full grid-cols-2 gap-3 sm:grid-cols-3">
-          {runes.map((r) => (
-            <div
-              key={r.id}
-              className="flex items-start gap-3 rounded-lg border border-stone-800 bg-stone-900/40 p-3"
-            >
-              <span className="text-2xl text-amber-100">{r.symbol}</span>
-              <div>
-                <p className="text-sm text-stone-200">
-                  {r.name}{" "}
-                  <span className="text-[11px] text-stone-500">· {r.element}</span>
-                </p>
-                <p className="text-xs text-stone-400">
-                  {r.upright.keywords.join(", ")}
-                </p>
+        <section className="mt-6 w-full">
+          <div className="mb-6 w-full rounded-2xl border border-amber-200/10 bg-stone-900/30 p-5 text-left sm:p-6">
+            <h2 className="mb-3 font-serif text-xl text-amber-50">
+              Rune Taşları Nedir?
+            </h2>
+            <p className="mb-3 text-sm leading-relaxed text-stone-300">
+              Elder Futhark, MS 150–800 yılları arasında Kuzey ve Orta
+              Avrupa'daki Germen halkları tarafından kullanılan, günümüze
+              ulaşan en eski rün alfabesidir. 24 semboldan oluşur; her rün hem
+              bir ses değeri hem de kendi başına bir sembolizm taşır.
+            </p>
+            <p className="mb-3 text-sm leading-relaxed text-stone-300">
+              Rüneler sekizerli üç gruba (Aettir) ayrılır:{" "}
+              <span className="text-amber-200">Freyr &amp; Freyja Ailesi</span>{" "}
+              maddi dünyayı ve günlük yaşamı,{" "}
+              <span className="text-amber-200">Heimdall Ailesi</span> sınavları
+              ve dönüşümü, <span className="text-amber-200">Tyr Ailesi</span>{" "}
+              ise adaleti ve ruhsal olgunluğu temsil eder.
+            </p>
+            <p className="text-sm leading-relaxed text-stone-300">
+              9 rün (Gebo, Hagalaz, Nauthiz, Isa, Jera, Eihwaz, Sowilo, Ingwaz,
+              Dagaz) simetrik yapıları gereği hiçbir zaman ters dönmez. Her
+              rün ayrıca dört klasik elementten (Ateş, Toprak, Hava, Su)
+              biriyle ilişkilendirilir — tılsım tasarlarken birbirini
+              tamamlayan elementleri seçmek işine yarayabilir.
+            </p>
+          </div>
+
+          {([1, 2, 3] as const).map((aettNum) => (
+            <div key={aettNum} className="mb-6 w-full">
+              <p className="mb-3 text-xs uppercase tracking-[0.2em] text-amber-300/80">
+                {AETT_NAMES[aettNum]}
+              </p>
+              <div className="grid w-full grid-cols-2 gap-3 sm:grid-cols-3">
+                {runes
+                  .filter((r) => r.aett === aettNum)
+                  .map((r) => (
+                    <div
+                      key={r.id}
+                      className="flex items-start gap-3 rounded-lg border border-stone-800 bg-stone-900/40 p-3"
+                    >
+                      <span className="text-2xl text-amber-100">{r.symbol}</span>
+                      <div>
+                        <p className="text-sm text-stone-200">
+                          {r.name}{" "}
+                          <span className="text-[11px] text-stone-500">
+                            · {r.element}
+                          </span>
+                        </p>
+                        <p className="text-xs text-stone-400">
+                          {r.upright.keywords.join(", ")}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
               </div>
             </div>
           ))}

@@ -32,6 +32,36 @@ export const AETT_NAMES: Record<1 | 2 | 3, string> = {
   3: "Tyr Ailesi",
 };
 
+/** "<Rune İsmi>'in/'ın/'un/'ün" — correct Turkish possessive form per rune,
+ *  hand-mapped since vowel-harmony rules can't be derived from the Latin
+ *  transliteration alone (e.g. it depends on the rune's *last* vowel). */
+export const RUNE_POSSESSIVE: Record<string, string> = {
+  Fehu: "Fehu'nun",
+  Uruz: "Uruz'un",
+  Thurisaz: "Thurisaz'ın",
+  Ansuz: "Ansuz'un",
+  Raidho: "Raidho'nun",
+  Kenaz: "Kenaz'ın",
+  Gebo: "Gebo'nun",
+  Wunjo: "Wunjo'nun",
+  Hagalaz: "Hagalaz'ın",
+  Nauthiz: "Nauthiz'in",
+  Isa: "Isa'nın",
+  Jera: "Jera'nın",
+  Eihwaz: "Eihwaz'ın",
+  Perthro: "Perthro'nun",
+  Algiz: "Algiz'in",
+  Sowilo: "Sowilo'nun",
+  Tiwaz: "Tiwaz'ın",
+  Berkano: "Berkano'nun",
+  Ehwaz: "Ehwaz'ın",
+  Mannaz: "Mannaz'ın",
+  Laguz: "Laguz'un",
+  Ingwaz: "Ingwaz'ın",
+  Dagaz: "Dagaz'ın",
+  Othala: "Othala'nın",
+};
+
 export const runes: Rune[] = [
   {
     id: 1,

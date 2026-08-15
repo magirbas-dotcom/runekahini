@@ -29,14 +29,59 @@ body {
 @keyframes stone-appear {
   from {
     opacity: 0;
-    transform: translateY(10px) scale(0.95);
+    transform: translateY(22px) scale(0.8) rotate(-6deg);
+  }
+  65% {
+    opacity: 1;
+    transform: translateY(-4px) scale(1.04) rotate(2deg);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0) scale(1) rotate(0deg);
   }
 }
 
 .stone-flip {
-  animation: stone-appear 0.5s ease-out both;
+  animation: stone-appear 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes shuffle-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.shuffle-spinner {
+  animation: shuffle-spin 0.7s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stone-flip {
+    animation: fade-in 0.3s ease-out both;
+  }
+  .shuffle-spinner {
+    animation: none;
+  }
+}
+
+@keyframes emblem-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.3));
+  }
+  50% {
+    opacity: 0.9;
+    filter: drop-shadow(0 0 22px rgba(251, 191, 36, 0.55));
+  }
+}
+
+.emblem-pulse {
+  animation: emblem-pulse 3.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .emblem-pulse {
+    animation: none;
+  }
 }

@@ -5,10 +5,10 @@ import BindruneDesigner from "./components/BindruneDesigner";
 
 type View = "oracle" | "birthRune" | "bindrune";
 
-const NAV: { key: View; label: string }[] = [
-  { key: "oracle", label: "Rune Falı" },
-  { key: "birthRune", label: "Doğum Rune'si" },
-  { key: "bindrune", label: "Tılsım" },
+const NAV: { key: View; label: string; description: string }[] = [
+  { key: "oracle", label: "Rune Falı", description: "Anlık kehanet çek" },
+  { key: "birthRune", label: "Doğum Rune'si", description: "Doğum haritanı öğren" },
+  { key: "bindrune", label: "Tılsım", description: "Kendi tılsımını tasarla" },
 ];
 
 function App() {
@@ -18,6 +18,12 @@ function App() {
     <div className="min-h-screen bg-stone-950 bg-[radial-gradient(ellipse_at_top,_rgba(120,90,40,0.15),_transparent_60%)] text-stone-200">
       <div className="mx-auto flex min-h-screen max-w-3xl flex-col items-center px-4 py-10 sm:py-16">
         <header className="mb-8 text-center">
+          <span
+            className="emblem-pulse mx-auto mb-1 block text-6xl text-amber-200 sm:text-7xl"
+            aria-hidden="true"
+          >
+            ᛉ
+          </span>
           <p className="mb-2 text-xs uppercase tracking-[0.3em] text-amber-300/80">
             Elder Futhark
           </p>
@@ -30,19 +36,26 @@ function App() {
           </p>
         </header>
 
-        <nav className="mb-8 flex flex-wrap justify-center gap-2 rounded-lg border border-stone-800 bg-stone-900/40 p-1">
+        <nav className="mb-8 grid w-full max-w-lg grid-cols-3 gap-1 rounded-lg border border-stone-800 bg-stone-900/40 p-1">
           {NAV.map((n) => (
             <button
               key={n.key}
               type="button"
               onClick={() => setView(n.key)}
-              className={`rounded-md px-4 py-2 text-sm transition ${
+              className={`rounded-md px-2 py-2 text-center transition sm:px-4 ${
                 view === n.key
                   ? "bg-amber-200/10 text-amber-100"
                   : "text-stone-400 hover:text-stone-200"
               }`}
             >
-              {n.label}
+              <span className="block text-sm font-medium">{n.label}</span>
+              <span
+                className={`mt-0.5 block text-[10px] ${
+                  view === n.key ? "text-amber-200/60" : "text-stone-500"
+                }`}
+              >
+                {n.description}
+              </span>
             </button>
           ))}
         </nav>

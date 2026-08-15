@@ -1,4 +1,4 @@
-import type { DrawnRune } from "./runes";
+import { runes, RUNE_POSSESSIVE, type DrawnRune } from "./runes";
 
 function readingOf(d: DrawnRune) {
   return d.reversed && d.rune.reversed ? d.rune.reversed : d.rune.upright;
@@ -6,6 +6,30 @@ function readingOf(d: DrawnRune) {
 
 function nameOf(d: DrawnRune): string {
   return `${d.rune.name}${d.reversed ? " (ters)" : ""}`;
+}
+
+function joinWithVe(items: string[]): string {
+  if (items.length <= 1) return items[0] ?? "";
+  if (items.length === 2) return `${items[0]} ve ${items[1]}`;
+  return `${items.slice(0, -1).join(", ")} ve ${items[items.length - 1]}`;
+}
+
+/**
+ * Synergy line for a self-picked Bindrune combination (the talisman
+ * designer's "custom" mode) — names each rune's dominant trait so the
+ * result reads as an actual synthesis, not a generic "energies combine".
+ */
+export function buildCustomSynergy(layerNames: string[]): string | null {
+  if (layerNames.length < 2) return null;
+
+  const phrases = layerNames.map((name) => {
+    const rune = runes.find((r) => r.name === name);
+    const trait = rune?.upright.keywords[0] ?? name.toLowerCase();
+    const possessive = RUNE_POSSESSIVE[name] ?? `${name}'in`;
+    return `${possessive} ${trait}`;
+  });
+
+  return `${joinWithVe(phrases)} enerjileri tek bir sembolde kesişiyor — bu tılsım seçtiğin Rune'lerin baskın özelliklerini birleştiriyor.`;
 }
 
 /**
