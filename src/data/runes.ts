@@ -131,7 +131,7 @@ export const runes: Rune[] = [
     aett: 1,
     element: "Ateş",
     practicalNote:
-      "Gücü yoğun bir ründür, dikkatli kullanılmalıdır; kaçmak yerine zor bir gerçekle cepheden yüzleşme cesareti verdiğine inanılır.",
+      "Gücü yoğun bir Rune'dir, dikkatli kullanılmalıdır; kaçmak yerine zor bir gerçekle cepheden yüzleşme cesareti verdiğine inanılır.",
     upright: {
       keywords: ["koruma", "savunma", "ani şans"],
       general:
@@ -287,7 +287,7 @@ export const runes: Rune[] = [
     aett: 2,
     element: "Hava",
     practicalNote:
-      "En yoğun ve zorlayıcı rünlerden biri kabul edilir — ani ama arındırıcı bir dönüşümü temsil eder; sürekli taşınması değil, kısa süreli ve bilinçli çalışmalarda kullanılması önerilir.",
+      "En yoğun ve zorlayıcı Rune'lerden biri kabul edilir — ani ama arındırıcı bir dönüşümü temsil eder; sürekli taşınması değil, kısa süreli ve bilinçli çalışmalarda kullanılması önerilir.",
     upright: {
       keywords: ["yıkım", "sınama", "doğa gücü"],
       general:
@@ -308,7 +308,7 @@ export const runes: Rune[] = [
     aett: 2,
     element: "Ateş",
     practicalNote:
-      "Aktif olarak 'üzerinde çalışılan' değil, çoğunlukla bir okumada 'bekle ve gözlemle' sinyali olarak yorumlanan bir rün olarak öne çıkar.",
+      "Aktif olarak 'üzerinde çalışılan' değil, çoğunlukla bir okumada 'bekle ve gözlemle' sinyali olarak yorumlanan bir Rune olarak öne çıkar.",
     upright: {
       keywords: ["ihtiyaç", "kısıtlama", "sabır"],
       general: "Hareket alanınız daralmış, bir şeylerden mahrum kaldığınızı hissediyor olabilirsiniz. Ama tıpkı ateş yakmak için birbirine sürtülen iki kuru odun gibi, bu sürtünme ve kısıtlama sizi güçlendiriyor. Şu an mücadele etmek yerine sabırla ders çıkarmak, gizli gücünüzü ortaya çıkaracak.",
@@ -328,7 +328,7 @@ export const runes: Rune[] = [
     aett: 2,
     element: "Su",
     practicalNote:
-      "Bir tür 'acil fren' rünü olarak anılır; ani bir sancıyı, ateşi veya istenmeyen bir gidişatı geçici olarak yavaşlatmak için düşünülür — sürekli taşınmaz.",
+      "Bir tür 'acil fren' Rune'si olarak anılır; ani bir sancıyı, ateşi veya istenmeyen bir gidişatı geçici olarak yavaşlatmak için düşünülür — sürekli taşınmaz.",
     upright: {
       keywords: ["durgunluk", "buz", "iç gözlem"],
       general: "Her şey donmuş, hareketsiz gibi görünüyor — ama bu bir sona işaret değil, bilinçli bir bekleme hâli. Şu an harekete geçmek yerine gözlemlemek, mevcut durumu olduğu gibi korumak en akıllıca yaklaşım. Sessizlik içinde netlik kazanacaksınız.",
@@ -386,7 +386,7 @@ export const runes: Rune[] = [
     aett: 2,
     element: "Su",
     practicalNote:
-      "Nadir rastlanan bir gizlilik rünü olarak tarif edilir; göze görünmeden hareket etmek istenen dönemlerde ve geçmişten gelen örüntüleri anlamlandırma çalışmalarında akla gelir.",
+      "Nadir rastlanan bir gizlilik Rune'si olarak tarif edilir; göze görünmeden hareket etmek istenen dönemlerde ve geçmişten gelen örüntüleri anlamlandırma çalışmalarında akla gelir.",
     upright: {
       keywords: ["gizem", "şans", "sezgi"],
       general: "Görünenin ardında, henüz kelimelere dökülmemiş bir gizem dönüyor. Kaderin çarkları sizin bilginiz dışında işliyor olabilir ama sezgileriniz size doğru yolu fısıldıyor. Saklı bir gerçek, beklenmedik bir anda kendini gösterebilir — hazır olun.",
@@ -412,7 +412,7 @@ export const runes: Rune[] = [
     aett: 2,
     element: "Hava",
     practicalNote:
-      "En sık başvurulan koruma rünlerinden biridir; çocuğun odasından sınav stresine kadar geniş bir koruma yelpazesinde kullanıldığı söylenir.",
+      "En sık başvurulan koruma Rune'lerinden biridir; çocuğun odasından sınav stresine kadar geniş bir koruma yelpazesinde kullanıldığı söylenir.",
     upright: {
       keywords: ["koruma", "sezgi", "sınır koyma"],
       general: "Görünmeyen bir koruma kalkanı sizi kuşatıyor — tehlikelerden sezgisel olarak haberdar oluyor, doğru anda doğru tarafa yöneliyorsunuz. Bu dönem, kendinize sağlıklı sınırlar koymanın ve neye 'hayır' diyeceğinizi netleştirmenin tam zamanı. Sezgileriniz size yol gösteriyor, onları dinleyin.",
@@ -533,7 +533,7 @@ export const runes: Rune[] = [
     aett: 3,
     element: "Hava",
     practicalNote:
-      "Anlaşma ve ittifakların rünü olarak anılır; bir sözleşme imzalamadan önce zihinde canlandırmak, adil bir işbirliği niyeti taşımaya yardımcı olabileceği söylenir.",
+      "Anlaşma ve ittifakların Rune'si olarak anılır; bir sözleşme imzalamadan önce zihinde canlandırmak, adil bir işbirliği niyeti taşımaya yardımcı olabileceği söylenir.",
     upright: {
       keywords: ["benlik", "insanlık", "topluluk"],
       general: "Kendinizi ve çevrenizdeki insanları her zamankinden daha net görüyorsunuz. Sosyal bağlarınız sizi güçlendiren bir kaynak — yalnız başaramayacağınız şeyleri topluluk içinde başarabilirsiniz. Rasyonel zihniniz, duygularla dengeli bir şekilde çalışıyor.",
@@ -643,14 +643,35 @@ export interface DrawnRune {
   reversed: boolean;
 }
 
+/**
+ * A random float in [0, 1), drawn from the Web Crypto CSPRNG when available
+ * instead of Math.random(). Math.random() is a general-purpose PRNG with no
+ * unpredictability guarantee — fine for animations, not the standard you'd
+ * want backing "was this draw truly random" in a divination app. crypto's
+ * generator is the same one browsers use to mint encryption keys. Falls
+ * back to Math.random() only if Web Crypto is unavailable, so a draw is
+ * never blocked by the environment.
+ */
+function secureRandom(): number {
+  if (typeof crypto !== "undefined" && crypto.getRandomValues) {
+    const buf = new Uint32Array(1);
+    crypto.getRandomValues(buf);
+    return buf[0] / 2 ** 32;
+  }
+  return Math.random();
+}
+
 export function drawRunes(count: number): DrawnRune[] {
   const pool = [...runes];
   const drawn: DrawnRune[] = [];
 
   for (let i = 0; i < count && pool.length > 0; i++) {
-    const index = Math.floor(Math.random() * pool.length);
+    // Random removal without replacement: each remaining rune has an equal
+    // chance of being picked at every step, so every count-sized subset (and
+    // every ordering of it) is equally likely — no positional or repeat bias.
+    const index = Math.floor(secureRandom() * pool.length);
     const [rune] = pool.splice(index, 1);
-    const reversed = rune.reversible && Math.random() < 0.35;
+    const reversed = rune.reversible && secureRandom() < 0.35;
     drawn.push({ rune, reversed });
   }
 

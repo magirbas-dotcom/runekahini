@@ -15,7 +15,7 @@ export default defineConfig({
         name: 'Rune Kahini',
         short_name: 'Rune Kahini',
         description:
-          "Elder Futhark rün falı, doğum rünü hesaplayıcısı ve tılsım tasarımcısı.",
+          "Elder Futhark Rune okuması, Doğum Rune'si hesaplayıcısı ve tılsım tasarımcısı.",
         theme_color: '#0c0a09',
         background_color: '#0c0a09',
         display: 'standalone',

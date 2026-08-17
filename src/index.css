@@ -85,3 +85,25 @@ body {
     animation: none;
   }
 }
+
+@keyframes stone-hint-pulse {
+  0%,
+  100% {
+    opacity: 0.6;
+    box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.25);
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 0 6px rgba(251, 191, 36, 0);
+  }
+}
+
+.stone-hint-pulse {
+  animation: stone-hint-pulse 2.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stone-hint-pulse {
+    animation: none;
+  }
+}

@@ -6,7 +6,7 @@ import BindruneDesigner from "./components/BindruneDesigner";
 type View = "oracle" | "birthRune" | "bindrune";
 
 const NAV: { key: View; label: string; description: string }[] = [
-  { key: "oracle", label: "Rune Falı", description: "Anlık kehanet çek" },
+  { key: "oracle", label: "Rune Okuması", description: "Anlık kehanet çek" },
   { key: "birthRune", label: "Doğum Rune'si", description: "Doğum haritanı öğren" },
   { key: "bindrune", label: "Tılsım", description: "Kendi tılsımını tasarla" },
 ];

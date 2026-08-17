@@ -224,6 +224,12 @@ export default function OraclePage() {
             </p>
           )}
 
+          {!allRevealed && (
+            <p className="mb-5 text-center text-sm text-amber-200/70">
+              Anlamlarını görmek için taşlara dokun
+            </p>
+          )}
+
           {spreadType === "five" ? (
             <div className="mb-8 grid w-fit grid-cols-3 grid-rows-3 place-items-center gap-4 sm:gap-6 mx-auto">
               {drawn.map((d, i) => {
@@ -254,12 +260,6 @@ export default function OraclePage() {
                 />
               ))}
             </div>
-          )}
-
-          {!allRevealed && (
-            <p className="mb-6 text-center text-xs text-stone-400">
-              Anlamını görmek için taşlara dokun.
-            </p>
           )}
 
           {revealed.some(Boolean) && (
@@ -336,11 +336,11 @@ export default function OraclePage() {
             <p className="mb-3 text-sm leading-relaxed text-stone-300">
               Elder Futhark, MS 150–800 yılları arasında Kuzey ve Orta
               Avrupa'daki Germen halkları tarafından kullanılan, günümüze
-              ulaşan en eski rün alfabesidir. 24 semboldan oluşur; her rün hem
-              bir ses değeri hem de kendi başına bir sembolizm taşır.
+              ulaşan en eski Rune alfabesidir. 24 semboldan oluşur; her Rune
+              hem bir ses değeri hem de kendi başına bir sembolizm taşır.
             </p>
             <p className="mb-3 text-sm leading-relaxed text-stone-300">
-              Rüneler sekizerli üç gruba (Aettir) ayrılır:{" "}
+              Rune'ler sekizerli üç gruba (Aettir) ayrılır:{" "}
               <span className="text-amber-200">Freyr &amp; Freyja Ailesi</span>{" "}
               maddi dünyayı ve günlük yaşamı,{" "}
               <span className="text-amber-200">Heimdall Ailesi</span> sınavları
@@ -348,9 +348,9 @@ export default function OraclePage() {
               ise adaleti ve ruhsal olgunluğu temsil eder.
             </p>
             <p className="text-sm leading-relaxed text-stone-300">
-              9 rün (Gebo, Hagalaz, Nauthiz, Isa, Jera, Eihwaz, Sowilo, Ingwaz,
+              9 Rune (Gebo, Hagalaz, Nauthiz, Isa, Jera, Eihwaz, Sowilo, Ingwaz,
               Dagaz) simetrik yapıları gereği hiçbir zaman ters dönmez. Her
-              rün ayrıca dört klasik elementten (Ateş, Toprak, Hava, Su)
+              Rune ayrıca dört klasik elementten (Ateş, Toprak, Hava, Su)
               biriyle ilişkilendirilir — tılsım tasarlarken birbirini
               tamamlayan elementleri seçmek işine yarayabilir.
             </p>

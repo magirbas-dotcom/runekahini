@@ -37,8 +37,17 @@ export default function RuneStone({
           }`}
         >
           {/* Back of stone */}
-          <div className="absolute inset-0 flex items-center justify-center rounded-xl border border-amber-200/20 bg-gradient-to-br from-stone-800 via-stone-900 to-black shadow-lg [backface-visibility:hidden] group-hover:border-amber-200/40">
-            <div className="h-10 w-10 rounded-full border border-amber-100/10 bg-gradient-to-br from-amber-100/5 to-transparent" />
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 rounded-xl border border-amber-200/20 bg-gradient-to-br from-stone-800 via-stone-900 to-black shadow-lg [backface-visibility:hidden] group-hover:border-amber-200/40">
+            <div
+              className={`h-10 w-10 rounded-full border border-amber-100/20 bg-gradient-to-br from-amber-100/10 to-transparent ${
+                onClick ? "stone-hint-pulse" : ""
+              }`}
+            />
+            {onClick && (
+              <span className="text-[9px] uppercase tracking-[0.15em] text-amber-200/50">
+                Dokun
+              </span>
+            )}
           </div>
 
           {/* Front of stone */}
