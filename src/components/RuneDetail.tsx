@@ -1,5 +1,8 @@
 import { AETT_NAMES, type DrawnRune } from "../data/runes";
 import ReadingTabs from "./ReadingTabs";
+import MysticCard from "./ui/MysticCard";
+import SectionHeader from "./ui/SectionHeader";
+import RuneGlyph from "./ui/RuneGlyph";
 
 interface RuneDetailProps {
   drawn: DrawnRune;
@@ -24,38 +27,36 @@ export default function RuneDetail({
 
   const header = (
     <div className="flex items-center gap-4">
-      <span
-        className={`text-4xl text-amber-100 ${reversed ? "inline-block rotate-180" : ""}`}
-      >
-        {rune.symbol}
+      <span className="shrink-0 text-gold-light">
+        <RuneGlyph name={rune.name} size={44} strokeWidth={6} reversed={reversed} />
       </span>
       <div className="flex-1 text-left">
-        <h3 className="font-serif text-xl text-amber-50">
+        <h3 className="font-serif text-2xl leading-tight text-parchment">
           {rune.name}
           {reversed && (
-            <span className="ml-2 text-sm font-sans text-amber-300/70">
-              (Ters)
-            </span>
+            <span className="ml-2 font-sans text-sm text-gold">(Ters)</span>
           )}
         </h3>
         {isOpen ? (
-          <>
-            <p className="text-xs text-stone-400">
+          <div className="mt-1 space-y-0.5">
+            <p className="text-[13px] text-parchment-dim">
               {rune.pronunciation} · {rune.literalMeaning}
             </p>
-            <p className="text-xs text-stone-400">
+            <p className="text-[13px] text-parchment-dim">
               {AETT_NAMES[rune.aett]} · {rune.element} Elementi
             </p>
-          </>
+          </div>
         ) : (
-          <p className="text-xs text-stone-400">
+          <p className="mt-1 text-[13px] text-parchment-dim">
             {reading.keywords.join(", ")}
           </p>
         )}
       </div>
       {collapsible && (
         <span
-          className={`shrink-0 text-lg text-stone-500 transition-transform ${isOpen ? "rotate-180" : ""}`}
+          className={`shrink-0 text-lg text-gold transition-transform duration-200 ${
+            isOpen ? "rotate-180" : ""
+          }`}
           aria-hidden="true"
         >
           ⌄
@@ -65,12 +66,8 @@ export default function RuneDetail({
   );
 
   return (
-    <div className="animate-fade-in rounded-2xl border border-amber-200/15 bg-stone-900/60 p-5 text-left shadow-xl backdrop-blur-sm sm:p-6">
-      {positionLabel && (
-        <p className="mb-2 text-xs uppercase tracking-[0.2em] text-amber-300/90">
-          {positionLabel}
-        </p>
-      )}
+    <MysticCard grain className="animate-fade-in p-5 text-left sm:p-6">
+      {positionLabel && <SectionHeader align="left">{positionLabel}</SectionHeader>}
 
       {collapsible ? (
         <button
@@ -82,32 +79,32 @@ export default function RuneDetail({
           {header}
         </button>
       ) : (
-        <div className="mb-1">{header}</div>
+        <div>{header}</div>
       )}
 
       {isOpen && (
         <>
           {!rune.reversible && (
-            <p className="mb-3 mt-3 text-xs italic text-stone-400">
+            <p className="mt-4 text-[13px] italic leading-relaxed text-parchment-dim">
               Simetrik yapısı gereği bu Rune'nin ters konumu yoktur — her zaman
               düz okunur.
             </p>
           )}
 
-          <div className="mt-3">
+          <div className="mt-4">
             <ReadingTabs reading={reading} />
           </div>
 
-          <div className="mt-4 rounded-lg border border-stone-800 bg-stone-950/40 p-3">
-            <p className="mb-1 text-[11px] uppercase tracking-wider text-amber-200/70">
+          <div className="mt-5 rounded-lg border border-hairline bg-ink-soft/70 p-4">
+            <p className="mb-1.5 text-[11px] uppercase tracking-[0.16em] text-gold">
               Pratik İpucu
             </p>
-            <p className="text-xs leading-relaxed text-stone-400">
+            <p className="text-[15px] leading-6 text-parchment-dim">
               {rune.practicalNote}
             </p>
           </div>
         </>
       )}
-    </div>
+    </MysticCard>
   );
 }

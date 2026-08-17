@@ -3,6 +3,12 @@ import { AETT_NAMES, drawDailyRune, drawRunes, runes, type DrawnRune } from "../
 import { buildSynergySummary } from "../data/synergy";
 import RuneStone from "./RuneStone";
 import RuneDetail from "./RuneDetail";
+import MysticCard from "./ui/MysticCard";
+import SectionHeader from "./ui/SectionHeader";
+import MysticDivider from "./ui/MysticDivider";
+import GoldButton from "./ui/GoldButton";
+import RuneGlyph from "./ui/RuneGlyph";
+import SpreadOptionCard from "./ui/SpreadOptionCard";
 
 type SpreadType = "single" | "three" | "four" | "five";
 
@@ -44,35 +50,45 @@ function DailyRune() {
   );
 
   return (
-    <section className="relative mb-8 w-full max-w-md overflow-hidden rounded-2xl border border-amber-200/10 bg-stone-900/30 text-left">
-      <div
-        className="pointer-events-none absolute -right-10 top-1/2 h-40 w-40 -translate-y-1/2 rounded-full bg-amber-400/10 blur-3xl"
-        aria-hidden="true"
-      />
-      <div className="relative flex items-center gap-4 p-5">
-        <div className="flex-1">
-          <p className="text-xs uppercase tracking-[0.2em] text-amber-200/70">
-            Bugünün Rune'si
-          </p>
-          <p className="mt-1 text-sm text-stone-300">{formattedDate}</p>
-          {!revealed && (
-            <p className="mt-2 text-xs text-stone-500">
-              Günün enerjisini öğrenmek için taşa dokun.
-            </p>
-          )}
-        </div>
-        <RuneStone
-          drawn={daily}
-          revealed={revealed}
-          onClick={revealed ? undefined : () => setRevealed(true)}
+    <div className="mb-9 w-full max-w-md space-y-4">
+      <MysticCard grain tone="raised">
+        <div
+          className="pointer-events-none absolute -right-12 top-1/2 h-44 w-44 -translate-y-1/2 rounded-full bg-gold/10 blur-3xl"
+          aria-hidden="true"
         />
-      </div>
-      {revealed && (
-        <div className="relative border-t border-stone-800 p-5 pt-4 text-left">
-          <RuneDetail drawn={daily} />
+        <div className="relative p-5">
+          <SectionHeader>Bugünün Rune'si</SectionHeader>
+          <div className="flex items-center gap-5">
+            <RuneStone
+              drawn={daily}
+              revealed={revealed}
+              onClick={revealed ? undefined : () => setRevealed(true)}
+            />
+            <div className="flex-1 text-left">
+              {revealed ? (
+                <>
+                  <p className="font-serif text-2xl leading-tight text-parchment">
+                    {daily.rune.name}
+                  </p>
+                  <p className="mt-1.5 text-[13px] text-gold">{formattedDate}</p>
+                </>
+              ) : (
+                <>
+                  <p className="font-serif text-lg leading-snug text-parchment">
+                    {formattedDate}
+                  </p>
+                  <p className="mt-2 text-[15px] leading-6 text-parchment-dim">
+                    Günün enerjisini öğrenmek için taşa dokun.
+                  </p>
+                </>
+              )}
+            </div>
+          </div>
         </div>
-      )}
-    </section>
+      </MysticCard>
+
+      {revealed && <RuneDetail drawn={daily} />}
+    </div>
   );
 }
 
@@ -135,49 +151,39 @@ export default function OraclePage() {
       {drawn.length === 0 && <DailyRune />}
 
       {drawn.length === 0 ? (
-        <section className="w-full max-w-md rounded-2xl border border-amber-200/10 bg-stone-900/50 p-6 shadow-xl backdrop-blur-sm">
-          <label
-            htmlFor="question"
-            className="mb-2 block text-xs uppercase tracking-wider text-amber-200/80"
-          >
-            Sorun (isteğe bağlı)
-          </label>
+        <MysticCard grain className="w-full max-w-md p-6">
+          <SectionHeader align="left">Sorun (isteğe bağlı)</SectionHeader>
           <textarea
             id="question"
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
             placeholder="Örn. Bu dönemde neye odaklanmalıyım?"
             rows={3}
-            className="mb-5 w-full resize-none rounded-lg border border-stone-700 bg-stone-950/60 p-3 text-sm text-stone-200 placeholder:text-stone-600 focus:border-amber-300/50 focus:outline-none"
+            className="mb-6 w-full resize-none rounded-lg border border-hairline bg-ink-soft/70 p-3.5 text-[15px] leading-6 text-parchment transition placeholder:text-parchment-mute focus:border-hairline-strong focus:outline-none"
           />
 
-          <div className="mb-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <SectionHeader align="left">Açılım Seçimi</SectionHeader>
+          <div className="mb-6 grid grid-cols-2 gap-2.5">
             {(Object.keys(SPREAD_TITLES) as SpreadType[]).map((type) => (
-              <button
+              <SpreadOptionCard
                 key={type}
-                type="button"
+                label={SPREAD_TITLES[type]}
+                diagram={type}
+                selected={spreadType === type}
                 onClick={() => setSpreadType(type)}
-                className={`rounded-lg border px-2 py-2 text-xs transition ${
-                  spreadType === type
-                    ? "border-amber-300/60 bg-amber-200/10 text-amber-100"
-                    : "border-stone-700 text-stone-400 hover:border-stone-600"
-                }`}
-              >
-                {SPREAD_TITLES[type]}
-              </button>
+              />
             ))}
           </div>
 
-          <button
-            type="button"
+          <GoldButton
             onClick={handleDraw}
             disabled={isDrawing}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-amber-200/90 py-2.5 text-sm font-medium text-stone-900 shadow transition hover:bg-amber-100 disabled:cursor-wait disabled:opacity-90"
+            className="w-full py-3"
           >
             {isDrawing ? (
               <>
                 <span
-                  className="shuffle-spinner h-4 w-4 rounded-full border-2 border-stone-900/25 border-t-stone-900"
+                  className="shuffle-spinner h-4 w-4 rounded-full border-2 border-ink/25 border-t-ink"
                   aria-hidden="true"
                 />
                 Taşlar Karıştırılıyor…
@@ -185,17 +191,17 @@ export default function OraclePage() {
             ) : (
               "Taşları Çek"
             )}
-          </button>
+          </GoldButton>
 
           <button
             type="button"
             onClick={() => setShowEthics((v) => !v)}
-            className="mt-4 w-full text-center text-[11px] text-stone-500 underline decoration-dotted underline-offset-4 hover:text-stone-300"
+            className="mt-5 w-full text-center text-xs text-parchment-dim underline decoration-dotted underline-offset-4 transition hover:text-parchment"
           >
             {showEthics ? "Kullanım ilkelerini gizle" : "Kullanım ilkeleri"}
           </button>
           {showEthics && (
-            <p className="mt-3 text-xs leading-relaxed text-stone-400">
+            <p className="mt-3 text-[15px] leading-6 text-parchment-dim">
               Rune okuması yalnızca kendi hayatın için niyet taşımalı — başka
               birinin özgür iradesine karışmak ya da rızası olmadan onun adına
               çalışmak için kullanılmamalı. Gönderdiğin niyet, iyi ya da kötü,
@@ -203,7 +209,7 @@ export default function OraclePage() {
               sorumluluğunu üstlenerek sorduğun okumadır.
             </p>
           )}
-        </section>
+        </MysticCard>
       ) : (
         <section className="w-full">
           <div className="mb-4 flex justify-end">
@@ -212,26 +218,26 @@ export default function OraclePage() {
               onClick={reset}
               aria-label="Yeniden çek"
               title="Yeniden çek"
-              className="shrink-0 rounded-full border border-stone-700 p-2 text-stone-400 transition hover:border-amber-300/50 hover:text-amber-200"
+              className="shrink-0 rounded-full border border-hairline p-2.5 text-gold transition hover:border-hairline-strong hover:bg-surface-gold/50"
             >
               <span className="block text-base leading-none">↻</span>
             </button>
           </div>
 
           {question.trim() && (
-            <p className="mb-4 text-center text-sm italic text-stone-400">
+            <p className="mb-4 text-center font-serif text-lg italic leading-relaxed text-parchment-dim">
               “{question.trim()}”
             </p>
           )}
 
           {!allRevealed && (
-            <p className="mb-5 text-center text-sm text-amber-200/70">
+            <p className="mb-6 text-center text-sm text-gold">
               Anlamlarını görmek için taşlara dokun
             </p>
           )}
 
           {spreadType === "five" ? (
-            <div className="mb-8 grid w-fit grid-cols-3 grid-rows-3 place-items-center gap-4 sm:gap-6 mx-auto">
+            <div className="mx-auto mb-9 grid w-fit grid-cols-3 grid-rows-3 place-items-center gap-4 sm:gap-6">
               {drawn.map((d, i) => {
                 const [col, row] = FIVE_POSITIONS[i];
                 return (
@@ -248,7 +254,7 @@ export default function OraclePage() {
               })}
             </div>
           ) : (
-            <div className="mb-8 flex flex-wrap justify-center gap-6 sm:gap-10">
+            <div className="mb-9 flex flex-wrap justify-center gap-6 sm:gap-10">
               {drawn.map((d, i) => (
                 <RuneStone
                   key={i}
@@ -263,7 +269,7 @@ export default function OraclePage() {
           )}
 
           {revealed.some(Boolean) && (
-            <div className="mb-8 flex flex-col gap-4">
+            <div className="mb-9 flex flex-col gap-4">
               {drawn.map(
                 (d, i) =>
                   revealed[i] && (
@@ -288,33 +294,28 @@ export default function OraclePage() {
           )}
 
           {allRevealed && drawn.length > 1 && (
-            <div className="animate-fade-in mb-8 rounded-2xl border border-amber-200/20 bg-gradient-to-br from-amber-200/5 to-transparent p-5 text-left sm:p-6">
-              <p className="mb-2 text-xs uppercase tracking-[0.2em] text-amber-300/90">
-                Bütünsel Değerlendirme
-              </p>
-              <p className="text-sm leading-relaxed text-stone-300">
+            <MysticCard
+              tone="gold"
+              grain
+              className="animate-fade-in mb-9 p-6 text-left"
+            >
+              <SectionHeader>Bütünsel Değerlendirme</SectionHeader>
+              <p className="prose-reading text-parchment-dim">
                 {buildSynergySummary(spreadType, drawn)}
               </p>
-            </div>
+              <MysticDivider className="mt-5" />
+            </MysticCard>
           )}
 
           <div className="flex flex-wrap justify-center gap-3">
             {!allRevealed && (
-              <button
-                type="button"
-                onClick={revealAll}
-                className="rounded-lg border border-amber-200/30 px-4 py-2 text-sm text-amber-100 transition hover:border-amber-200/60"
-              >
+              <GoldButton variant="ghost" onClick={revealAll}>
                 Tümünü Aç
-              </button>
+              </GoldButton>
             )}
-            <button
-              type="button"
-              onClick={reset}
-              className="rounded-lg border border-stone-700 px-4 py-2 text-sm text-stone-400 transition hover:border-stone-600 hover:text-stone-200"
-            >
+            <GoldButton variant="quiet" onClick={reset}>
               Yeniden Çek
-            </button>
+            </GoldButton>
           </div>
         </section>
       )}
@@ -322,62 +323,62 @@ export default function OraclePage() {
       <button
         type="button"
         onClick={() => setShowAlphabet((v) => !v)}
-        className="mt-12 text-xs uppercase tracking-wider text-stone-400 underline decoration-dotted underline-offset-4 hover:text-stone-200"
+        className="mt-14 text-xs uppercase tracking-[0.18em] text-gold underline decoration-dotted underline-offset-4 transition hover:text-gold-light"
       >
         {showAlphabet ? "Rune Rehberini Gizle" : "Rune Rehberini Göster"}
       </button>
 
       {showAlphabet && (
         <section className="mt-6 w-full">
-          <div className="mb-6 w-full rounded-2xl border border-amber-200/10 bg-stone-900/30 p-5 text-left sm:p-6">
-            <h2 className="mb-3 font-serif text-xl text-amber-50">
+          <MysticCard grain className="mb-8 w-full p-6">
+            <h2 className="mb-4 font-serif text-2xl text-parchment">
               Rune Taşları Nedir?
             </h2>
-            <p className="mb-3 text-sm leading-relaxed text-stone-300">
+            <p className="prose-reading mb-4 text-parchment-dim">
               Elder Futhark, MS 150–800 yılları arasında Kuzey ve Orta
               Avrupa'daki Germen halkları tarafından kullanılan, günümüze
               ulaşan en eski Rune alfabesidir. 24 semboldan oluşur; her Rune
               hem bir ses değeri hem de kendi başına bir sembolizm taşır.
             </p>
-            <p className="mb-3 text-sm leading-relaxed text-stone-300">
+            <p className="prose-reading mb-4 text-parchment-dim">
               Rune'ler sekizerli üç gruba (Aettir) ayrılır:{" "}
-              <span className="text-amber-200">Freyr &amp; Freyja Ailesi</span>{" "}
+              <span className="text-gold-light">Freyr &amp; Freyja Ailesi</span>{" "}
               maddi dünyayı ve günlük yaşamı,{" "}
-              <span className="text-amber-200">Heimdall Ailesi</span> sınavları
-              ve dönüşümü, <span className="text-amber-200">Tyr Ailesi</span>{" "}
+              <span className="text-gold-light">Heimdall Ailesi</span> sınavları
+              ve dönüşümü, <span className="text-gold-light">Tyr Ailesi</span>{" "}
               ise adaleti ve ruhsal olgunluğu temsil eder.
             </p>
-            <p className="text-sm leading-relaxed text-stone-300">
+            <p className="prose-reading text-parchment-dim">
               9 Rune (Gebo, Hagalaz, Nauthiz, Isa, Jera, Eihwaz, Sowilo, Ingwaz,
               Dagaz) simetrik yapıları gereği hiçbir zaman ters dönmez. Her
               Rune ayrıca dört klasik elementten (Ateş, Toprak, Hava, Su)
               biriyle ilişkilendirilir — tılsım tasarlarken birbirini
               tamamlayan elementleri seçmek işine yarayabilir.
             </p>
-          </div>
+          </MysticCard>
 
           {([1, 2, 3] as const).map((aettNum) => (
-            <div key={aettNum} className="mb-6 w-full">
-              <p className="mb-3 text-xs uppercase tracking-[0.2em] text-amber-300/80">
-                {AETT_NAMES[aettNum]}
-              </p>
-              <div className="grid w-full grid-cols-2 gap-3 sm:grid-cols-3">
+            <div key={aettNum} className="mb-8 w-full">
+              <SectionHeader>{AETT_NAMES[aettNum]}</SectionHeader>
+              <div className="grid w-full grid-cols-1 gap-2.5 sm:grid-cols-2">
                 {runes
                   .filter((r) => r.aett === aettNum)
                   .map((r) => (
                     <div
                       key={r.id}
-                      className="flex items-start gap-3 rounded-lg border border-stone-800 bg-stone-900/40 p-3"
+                      className="flex items-center gap-3.5 rounded-lg border border-hairline bg-surface/70 p-3.5"
                     >
-                      <span className="text-2xl text-amber-100">{r.symbol}</span>
-                      <div>
-                        <p className="text-sm text-stone-200">
+                      <span className="shrink-0 text-gold">
+                        <RuneGlyph name={r.name} size={30} strokeWidth={7} glow={false} />
+                      </span>
+                      <div className="min-w-0">
+                        <p className="text-[15px] text-parchment">
                           {r.name}{" "}
-                          <span className="text-[11px] text-stone-500">
+                          <span className="text-xs text-gold">
                             · {r.element}
                           </span>
                         </p>
-                        <p className="text-xs text-stone-400">
+                        <p className="text-[13px] leading-5 text-parchment-dim">
                           {r.upright.keywords.join(", ")}
                         </p>
                       </div>

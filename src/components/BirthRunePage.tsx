@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { calculateBirthProfile, type BirthRuneProfile } from "../data/birthRune";
 import BirthRuneCard from "./BirthRuneCard";
+import MysticCard from "./ui/MysticCard";
+import SectionHeader from "./ui/SectionHeader";
+import GoldButton from "./ui/GoldButton";
+import MysticInput from "./ui/MysticInput";
 
 export default function BirthRunePage() {
   const [day, setDay] = useState("");
@@ -10,6 +14,7 @@ export default function BirthRunePage() {
   const [minute, setMinute] = useState("");
   const [profile, setProfile] = useState<BirthRuneProfile | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   function handleCalculate(e: React.FormEvent) {
     e.preventDefault();
@@ -36,118 +41,145 @@ export default function BirthRunePage() {
 
   function reset() {
     setProfile(null);
+    setOpenIndex(null);
   }
 
-  return (
-    <div className="flex w-full flex-col items-center">
-      {!profile ? (
-        <form
-          onSubmit={handleCalculate}
-          className="w-full max-w-md rounded-2xl border border-amber-200/10 bg-stone-900/50 p-6 shadow-xl backdrop-blur-sm"
-        >
-          <p className="mb-5 text-xs uppercase tracking-wider text-amber-200/80">
-            Doğum Tarihiniz
-          </p>
+  if (profile) {
+    const secondaries = [
+      {
+        title: "Solar Doğum Rune'si",
+        description:
+          "Öz ruhsal karakterinizi ve temel yaşam enerjinizi simgeler.",
+        rune: profile.solarBirthRune,
+      },
+      {
+        title: "Doğum Saati Rune'si",
+        description:
+          "Dış dünyaya gösterdiğiniz maskeyi ve sosyal karakterinizi temsil eder.",
+        rune: profile.birthHourRune,
+      },
+    ];
 
-          <div className="mb-4 grid grid-cols-3 gap-2">
-            <input
-              type="number"
-              inputMode="numeric"
-              placeholder="Gün"
-              value={day}
-              onChange={(e) => setDay(e.target.value)}
-              className="rounded-lg border border-stone-700 bg-stone-950/60 p-2.5 text-center text-sm text-stone-200 placeholder:text-stone-500 focus:border-amber-300/50 focus:outline-none"
-            />
-            <input
-              type="number"
-              inputMode="numeric"
-              placeholder="Ay"
-              value={month}
-              onChange={(e) => setMonth(e.target.value)}
-              className="rounded-lg border border-stone-700 bg-stone-950/60 p-2.5 text-center text-sm text-stone-200 placeholder:text-stone-500 focus:border-amber-300/50 focus:outline-none"
-            />
-            <input
-              type="number"
-              inputMode="numeric"
-              placeholder="Yıl"
-              value={year}
-              onChange={(e) => setYear(e.target.value)}
-              className="rounded-lg border border-stone-700 bg-stone-950/60 p-2.5 text-center text-sm text-stone-200 placeholder:text-stone-500 focus:border-amber-300/50 focus:outline-none"
-            />
+    return (
+      <div className="flex w-full flex-col items-center">
+        <div className="w-full max-w-md">
+          <SectionHeader>Senin Rune Haritan</SectionHeader>
+
+          <BirthRuneCard
+            variant="primary"
+            title="Ana Doğum Rune'n · Kader Yolu"
+            description="Hayattaki temel amacınızı ve potansiyelinizi gösterir."
+            rune={profile.lifePathRune}
+          />
+
+          <div className="mt-4 space-y-3">
+            {secondaries.map((s, i) => (
+              <BirthRuneCard
+                key={s.title}
+                title={s.title}
+                description={s.description}
+                rune={s.rune}
+                expanded={openIndex === i}
+                onToggle={() => setOpenIndex((prev) => (prev === i ? null : i))}
+              />
+            ))}
           </div>
 
-          <p className="mb-2 text-xs uppercase tracking-wider text-amber-200/80">
-            Doğum Saati (isteğe bağlı)
-          </p>
-          <div className="mb-5 grid grid-cols-2 gap-2">
-            <input
-              type="number"
-              inputMode="numeric"
-              placeholder="Saat (0-23)"
-              value={hour}
-              onChange={(e) => setHour(e.target.value)}
-              className="rounded-lg border border-stone-700 bg-stone-950/60 p-2.5 text-center text-sm text-stone-200 placeholder:text-stone-500 focus:border-amber-300/50 focus:outline-none"
-            />
-            <input
-              type="number"
-              inputMode="numeric"
-              placeholder="Dakika"
-              value={minute}
-              onChange={(e) => setMinute(e.target.value)}
-              className="rounded-lg border border-stone-700 bg-stone-950/60 p-2.5 text-center text-sm text-stone-200 placeholder:text-stone-500 focus:border-amber-300/50 focus:outline-none"
-            />
+          <div className="mt-8 flex justify-center">
+            <GoldButton variant="ghost" onClick={reset}>
+              Başka Bir Tarih Hesapla
+            </GoldButton>
           </div>
 
-          {error && <p className="mb-4 text-xs text-red-400">{error}</p>}
-
-          <button
-            type="submit"
-            className="w-full rounded-lg bg-amber-200/90 py-2.5 text-sm font-medium text-stone-900 shadow transition hover:bg-amber-100"
-          >
-            Rune Profilimi Hesapla
-          </button>
-
-          <p className="mt-4 text-center text-xs leading-relaxed text-stone-400">
-            Bu hesaplama modern numerolojik bir yorumdur; tarihsel bir Viking
-            pratiği değildir. Doğum saati bilinmiyorsa öğlen (12:00) varsayılır.
-          </p>
-        </form>
-      ) : (
-        <div className="w-full">
-          <div className="mb-6 flex flex-col gap-4 sm:flex-row">
-            <BirthRuneCard
-              title="Kader Yolu Rune'si"
-              description="Hayattaki temel amacınızı ve potansiyelinizi gösterir."
-              rune={profile.lifePathRune}
-            />
-            <BirthRuneCard
-              title="Solar Doğum Rune'si"
-              description="Öz ruhsal karakterinizi ve temel yaşam enerjinizi simgeler."
-              rune={profile.solarBirthRune}
-            />
-            <BirthRuneCard
-              title="Doğum Saati Rune'si"
-              description="Dış dünyaya gösterdiğiniz maskeyi ve sosyal karakterinizi temsil eder."
-              rune={profile.birthHourRune}
-            />
-          </div>
-
-          <div className="flex justify-center">
-            <button
-              type="button"
-              onClick={reset}
-              className="rounded-lg border border-stone-700 px-4 py-2 text-sm text-stone-400 transition hover:border-stone-600 hover:text-stone-200"
-            >
-              Yeniden Hesapla
-            </button>
-          </div>
-
-          <p className="mt-6 text-center text-xs leading-relaxed text-stone-400">
+          <p className="mt-6 text-center text-[13px] leading-6 text-parchment-dim">
             Bu hesaplama modern numerolojik bir yorumdur; tarihsel bir Viking
             pratiği değildir.
           </p>
         </div>
-      )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex w-full flex-col items-center">
+      <div className="mb-7 max-w-md text-center">
+        <p className="mb-3 text-xs uppercase tracking-[0.18em] text-gold">
+          Doğum Rune'si
+        </p>
+        <h2 className="font-serif text-[28px] leading-tight text-parchment">
+          Doğum tarihinin taşıdığı Rune izini keşfet.
+        </h2>
+        <p className="mt-3 text-[15px] leading-6 text-parchment-dim">
+          Doğum tarihine göre seni temsil eden Rune enerjilerini hesapla.
+        </p>
+      </div>
+
+      <MysticCard grain className="w-full max-w-md p-6">
+        <form onSubmit={handleCalculate}>
+          <SectionHeader align="left">Doğum Tarihi</SectionHeader>
+          <div className="mb-6 grid grid-cols-3 gap-2.5">
+            <MysticInput
+              type="number"
+              inputMode="numeric"
+              placeholder="Gün"
+              aria-label="Doğum günü"
+              value={day}
+              onChange={(e) => setDay(e.target.value)}
+            />
+            <MysticInput
+              type="number"
+              inputMode="numeric"
+              placeholder="Ay"
+              aria-label="Doğum ayı"
+              value={month}
+              onChange={(e) => setMonth(e.target.value)}
+            />
+            <MysticInput
+              type="number"
+              inputMode="numeric"
+              placeholder="Yıl"
+              aria-label="Doğum yılı"
+              value={year}
+              onChange={(e) => setYear(e.target.value)}
+            />
+          </div>
+
+          <SectionHeader align="left">Doğum Saati (isteğe bağlı)</SectionHeader>
+          <div className="mb-6 grid grid-cols-2 gap-2.5">
+            <MysticInput
+              type="number"
+              inputMode="numeric"
+              placeholder="Saat (0-23)"
+              aria-label="Doğum saati"
+              value={hour}
+              onChange={(e) => setHour(e.target.value)}
+            />
+            <MysticInput
+              type="number"
+              inputMode="numeric"
+              placeholder="Dakika"
+              aria-label="Doğum dakikası"
+              value={minute}
+              onChange={(e) => setMinute(e.target.value)}
+            />
+          </div>
+
+          {error && (
+            <p role="alert" className="mb-4 text-sm text-red-400">
+              {error}
+            </p>
+          )}
+
+          <GoldButton type="submit" className="min-h-14 w-full">
+            Doğum Rune'mi Hesapla
+          </GoldButton>
+        </form>
+
+        <p className="mt-5 text-center text-[13px] leading-6 text-parchment-dim">
+          Bu hesaplama modern numerolojik bir yorumdur; tarihsel bir Viking
+          pratiği değildir. Doğum saati bilinmiyorsa öğlen (12:00) varsayılır.
+        </p>
+      </MysticCard>
     </div>
   );
 }

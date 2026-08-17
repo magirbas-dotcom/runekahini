@@ -2,6 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import { runes } from "../data/runes";
 import { RUNE_STROKES, INTENT_PRESETS } from "../data/runeStrokes";
 import { buildCustomSynergy } from "../data/synergy";
+import MysticCard from "./ui/MysticCard";
+import SectionHeader from "./ui/SectionHeader";
+import GoldButton from "./ui/GoldButton";
+import RuneChip from "./ui/RuneChip";
+import IntentPresetCard from "./ui/IntentPresetCard";
+import RunePicker from "./ui/RunePicker";
+import BindruneCanvas from "./ui/BindruneCanvas";
 
 interface Layer {
   name: string;
@@ -19,8 +26,13 @@ const OFFSET_RANGE = 45;
 // fraction of image width/height so the same numbers work at any resolution):
 // scanned both PNGs for the widest gap of non-gold pixels through the center,
 // which lands on the ring's inner edge on every side.
-const FRAME_SQUARE = { centerXFrac: 0.5, centerYFrac: 0.499, radiusFrac: 0.34 };
-const FRAME_PORTRAIT = { centerXFrac: 0.5, centerYFrac: 0.4895, radiusFrac: 0.34 };
+//
+// The square frame's opening is a true circle (390 x 390.5 px of 1254). The
+// portrait frame's is an ellipse (347 x 418.5 px of 941 x 1672) — radiusFrac
+// takes its *narrow* (horizontal) semi-axis, so the glyph can never overrun
+// the ring sideways; the extra vertical room just becomes headroom.
+const FRAME_SQUARE = { centerXFrac: 0.5, centerYFrac: 0.499, radiusFrac: 0.311 };
+const FRAME_PORTRAIT = { centerXFrac: 0.5, centerYFrac: 0.498, radiusFrac: 0.369 };
 const SCREEN_RADIUS = CANVAS_SIZE * FRAME_SQUARE.radiusFrac;
 
 const EXPORT_WIDTH = 1080;
@@ -28,6 +40,24 @@ const EXPORT_HEIGHT = 1920;
 
 function layersFromNames(names: string[]): Layer[] {
   return names.map((name, i) => ({ name, offsetY: DEFAULT_OFFSETS[i] ?? 0 }));
+}
+
+/** Three keywords describing a preset, taken from its own runes' upright
+ *  readings — derived at render time so INTENT_PRESETS stays untouched. */
+function presetKeywords(runeNames: string[]): string {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const pass of [0, 1, 2]) {
+    for (const n of runeNames) {
+      const kw = runes.find((r) => r.name === n)?.upright.keywords[pass];
+      if (kw && !seen.has(kw)) {
+        seen.add(kw);
+        out.push(kw);
+      }
+      if (out.length === 3) return out.join(" · ");
+    }
+  }
+  return out.join(" · ");
 }
 
 export default function BindruneDesigner() {
@@ -206,12 +236,6 @@ export default function BindruneDesigner() {
 
     ctx.textAlign = "center";
 
-    // Small brand mark in the empty space above the ring.
-    ctx.shadowBlur = 0;
-    ctx.fillStyle = "rgba(253, 230, 138, 0.55)";
-    ctx.font = "500 26px Inter, sans-serif";
-    ctx.fillText("RUNE KAHİNİ", textCenterX, 130);
-
     // A dark plaque behind the name/purpose text guarantees legibility no
     // matter what part of the frame's texture ends up underneath it — well
     // clear of the ring's bottom flourish, deep into the frame's empty space.
@@ -269,6 +293,14 @@ export default function BindruneDesigner() {
     ctx.fillStyle = "#e7e5e4";
     ctx.fillText(purposeText, textCenterX, purposeY);
 
+    // Brand mark rides along the bottom of the plaque. It used to sit above
+    // the ring, but the frame artwork has an ornament chain hanging down the
+    // centre there — on the plaque it is clear of every decorated area.
+    ctx.lineWidth = 0;
+    ctx.fillStyle = "rgba(253, 230, 138, 0.5)";
+    ctx.font = "500 22px Inter, sans-serif";
+    ctx.fillText("RUNE KAHİNİ", textCenterX, plaqueTop + 250);
+
     canvas.toBlob(async (blob) => {
       if (!blob) return;
 
@@ -301,119 +333,151 @@ export default function BindruneDesigner() {
       ? preset.synergy
       : buildCustomSynergy(layers.map((l) => l.name));
 
+  const talismanName =
+    mode === "preset" && preset ? preset.name : "Özel Kombinasyon";
+  const talismanIntent =
+    mode === "preset" && preset ? preset.category : "Kendi niyetin";
+
+  const MODES = [
+    { key: "preset" as const, label: "Hazır Niyet" },
+    { key: "custom" as const, label: "Özel" },
+  ];
+
   return (
-    <div className="flex w-full flex-col items-center">
-      <div className="mb-6 text-center">
-        <h2 className="font-serif text-2xl text-amber-50">Niyetini Seç</h2>
-        <p className="mx-auto mt-1 max-w-md text-sm text-stone-400">
-          Her tılsım, iki ya da üç Rune'nin ortak bir gövdede birleşmesiyle
-          doğar — kendi niyetine en yakın olanı seç, ya da alttan kendi
-          kombinasyonunu kur.
+    <div className="flex w-full max-w-md flex-col">
+      <div className="mb-7 text-center">
+        <p className="mb-3 text-xs uppercase tracking-[0.18em] text-gold">
+          Tılsım
+        </p>
+        <h2 className="font-serif text-[28px] leading-tight text-parchment">
+          Kendi bindrune'ını oluştur.
+        </h2>
+        <p className="mx-auto mt-3 max-w-sm text-[15px] leading-6 text-parchment-dim">
+          Niyetini seç, Rune'larını birleştir ve sana özel sembolünü oluştur.
         </p>
       </div>
 
-      <div className="mb-6 grid w-full max-w-lg grid-cols-2 gap-2 sm:grid-cols-3">
-        {INTENT_PRESETS.map((p) => {
-          const primarySymbol =
-            runes.find((r) => r.name === p.runeNames[0])?.symbol ?? "";
-          return (
-            <button
-              key={p.id}
-              type="button"
-              onClick={() => selectPreset(p.id)}
-              className={`flex items-center gap-2.5 rounded-lg border px-2.5 py-2 text-left transition ${
-                mode === "preset" && presetId === p.id
-                  ? "border-amber-300/60 bg-amber-200/10 text-amber-100"
-                  : "border-stone-700 text-stone-400 hover:border-stone-600"
-              }`}
-            >
-              <span
-                className="text-2xl text-amber-200/80"
-                aria-hidden="true"
-              >
-                {primarySymbol}
-              </span>
-              <span>
-                <span className="block text-xs font-medium">{p.name}</span>
-                <span className="block text-[11px] text-stone-500">
-                  {p.category}
-                </span>
-              </span>
-            </button>
-          );
-        })}
+      {/* Mode switch. "Hazır Niyet" re-applies the current intent's runes;
+          "Özel" keeps what's on screen as a starting combination. */}
+      <div
+        role="group"
+        aria-label="Tılsım oluşturma yöntemi"
+        className="mb-8 grid grid-cols-2 gap-1 rounded-card border border-hairline bg-surface/60 p-1"
+      >
+        {MODES.map((m) => (
+          <button
+            key={m.key}
+            type="button"
+            aria-pressed={mode === m.key}
+            onClick={() =>
+              m.key === "preset" ? selectPreset(presetId) : setMode("custom")
+            }
+            className={`rounded-[0.7rem] px-3 py-2.5 text-[13px] uppercase tracking-[0.12em] transition duration-200 ${
+              mode === m.key
+                ? "bg-surface-gold text-gold-light"
+                : "text-parchment-dim hover:text-parchment"
+            }`}
+          >
+            {m.label}
+          </button>
+        ))}
       </div>
 
-      <div className="mb-6 flex flex-col items-center gap-4">
-        <svg
-          id="bindrune-svg"
-          width={CANVAS_SIZE}
-          height={CANVAS_SIZE}
-          viewBox={`0 0 ${CANVAS_SIZE} ${CANVAS_SIZE}`}
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-auto w-full max-w-[400px] rounded-2xl border border-amber-200/15 bg-stone-950"
-        >
-          <defs>
-            <filter id="rune-glow" x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur stdDeviation="3.5" result="blur" />
-              <feMerge>
-                <feMergeNode in="blur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-          </defs>
+      {mode === "preset" ? (
+        <section className="mb-9">
+          <SectionHeader>Niyet</SectionHeader>
+          <div className="grid grid-cols-2 gap-2.5">
+            {INTENT_PRESETS.map((p) => (
+              <IntentPresetCard
+                key={p.id}
+                category={p.category}
+                name={p.name}
+                keywords={presetKeywords(p.runeNames)}
+                markRune={p.runeNames[0]}
+                selected={presetId === p.id}
+                onClick={() => selectPreset(p.id)}
+              />
+            ))}
+          </div>
+        </section>
+      ) : (
+        <section className="mb-9">
+          <SectionHeader>Rune'lar</SectionHeader>
+          <p className="mb-4 text-center text-[13px] leading-5 text-parchment-dim">
+            Tılsımında kullanmak istediğin Rune'ları seç.
+          </p>
 
-          <image
-            href="/bindrune-frame-square.png"
-            x={0}
-            y={0}
-            width={CANVAS_SIZE}
-            height={CANVAS_SIZE}
+          <RunePicker
+            selected={layers.map((l) => l.name)}
+            onToggle={toggleCustomRune}
+            max={MAX_LAYERS}
           />
 
-          {layers.length === 0 && (
-            <text
-              x={CANVAS_SIZE / 2}
-              y={CANVAS_SIZE / 2}
-              textAnchor="middle"
-              fill="#a8a29e"
-              fontSize="14"
-            >
-              Rune seçin
-            </text>
-          )}
-          {layers.map((layer, i) => {
-            const cx = CANVAS_SIZE * FRAME_SQUARE.centerXFrac;
-            const cy = CANVAS_SIZE * FRAME_SQUARE.centerYFrac + layer.offsetY;
-            const tx = cx - 50 * GLYPH_SCALE;
-            const ty = cy - 50 * GLYPH_SCALE;
-            return (
-              <g
-                key={layer.name}
-                transform={`translate(${tx}, ${ty}) scale(${GLYPH_SCALE})`}
-                opacity={OPACITY_STEPS[i] ?? 0.5}
-                filter="url(#rune-glow)"
-              >
-                <path
-                  d={RUNE_STROKES[layer.name]}
-                  stroke="#fbbf24"
-                  strokeWidth={i === 0 ? 4.5 : 3.5}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  fill="none"
-                />
-              </g>
-            );
-          })}
-        </svg>
+          <p className="mt-4 text-center text-[13px] text-gold">
+            {layers.length} / {MAX_LAYERS} Rune seçildi
+          </p>
 
-        {layers.length > 0 && (
-          <div className="w-full max-w-sm space-y-2">
+          {layers.length > 0 && (
+            <div className="mt-4">
+              <p className="mb-2 text-center text-[11px] uppercase tracking-[0.16em] text-gold">
+                Seçilenler
+              </p>
+              <div className="flex flex-wrap justify-center gap-2">
+                {layers.map((l) => (
+                  <button
+                    key={l.name}
+                    type="button"
+                    onClick={() => toggleCustomRune(l.name)}
+                    aria-label={`${l.name} Rune'sini kaldır`}
+                    className="rounded-full transition duration-150 active:scale-[0.98]"
+                  >
+                    <RuneChip>{l.name} ×</RuneChip>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </section>
+      )}
+
+      <section className="mb-9">
+        <SectionHeader>Tılsım Önizleme</SectionHeader>
+
+        <BindruneCanvas
+          layers={layers}
+          size={CANVAS_SIZE}
+          centerXFrac={FRAME_SQUARE.centerXFrac}
+          centerYFrac={FRAME_SQUARE.centerYFrac}
+          glyphScale={GLYPH_SCALE}
+          opacitySteps={OPACITY_STEPS}
+        />
+
+        <div className="mt-5 text-center">
+          <p className="font-serif text-2xl leading-tight text-parchment">
+            {talismanName}
+          </p>
+          <p className="mt-1 text-[11px] uppercase tracking-[0.16em] text-gold">
+            {talismanIntent}
+          </p>
+          {layers.length > 0 && (
+            <p className="mt-2 text-[13px] text-parchment-dim">
+              {layers.map((l) => l.name).join(" · ")}
+            </p>
+          )}
+        </div>
+
+        {layers.length > 1 && (
+          <div className="mt-6 space-y-3">
+            <p className="text-center text-[11px] uppercase tracking-[0.16em] text-gold">
+              Katman Konumu
+            </p>
             {layers.map((layer, i) => (
-              <div key={layer.name} className="flex items-center gap-3 text-xs">
-                <span className="w-24 shrink-0 text-stone-300">
+              <div key={layer.name} className="flex items-center gap-3 text-[13px]">
+                <span className="w-28 shrink-0 text-parchment-dim">
                   {layer.name}
-                  {i === 0 && <span className="ml-1 text-amber-300/80">(ana gövde)</span>}
+                  {i === 0 && (
+                    <span className="ml-1 text-gold">(ana gövde)</span>
+                  )}
                 </span>
                 <input
                   type="range"
@@ -422,63 +486,35 @@ export default function BindruneDesigner() {
                   value={layer.offsetY}
                   onChange={(e) => updateOffset(i, Number(e.target.value))}
                   disabled={i === 0}
-                  className="flex-1 accent-amber-300 disabled:opacity-30"
+                  aria-label={`${layer.name} dikey konumu`}
+                  className="flex-1 accent-[#c7a34a] disabled:opacity-30"
                 />
               </div>
             ))}
           </div>
         )}
 
-        <button
-          type="button"
+        <GoldButton
           onClick={handleSaveTalisman}
           disabled={layers.length === 0}
-          className="rounded-lg bg-amber-200/90 px-5 py-2 text-sm font-medium text-stone-900 shadow transition hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-40"
+          className="mt-7 min-h-14 w-full"
         >
           Tılsımı Kaydet
-        </button>
-        <p className="max-w-xs text-center text-[11px] text-stone-500">
-          Ekranda kare, kaydedilen görsel duvar kağıdı için 9:16 oranında hazırlanır.
+        </GoldButton>
+        <p className="mt-3 text-center text-[13px] leading-5 text-parchment-dim">
+          Ekranda kare, kaydedilen görsel duvar kağıdı için 9:16 oranında
+          hazırlanır.
         </p>
-      </div>
+      </section>
 
       {synergy && (
-        <div className="mb-8 w-full max-w-lg rounded-2xl border border-amber-200/20 bg-gradient-to-br from-amber-200/5 to-transparent p-5 text-left">
-          <p className="mb-2 text-xs uppercase tracking-[0.2em] text-amber-300/90">
-            Sinerji
-          </p>
-          <p className="text-sm leading-relaxed text-stone-300">{synergy}</p>
-        </div>
+        <MysticCard tone="gold" grain className="mb-8 p-6 text-left">
+          <SectionHeader>Sinerji</SectionHeader>
+          <p className="prose-reading text-parchment-dim">{synergy}</p>
+        </MysticCard>
       )}
 
-      <div className="w-full max-w-lg">
-        <p className="mb-3 text-xs uppercase tracking-wider text-amber-200/80">
-          Ya da kendi kombinasyonunu seç ({layers.length}/{MAX_LAYERS})
-        </p>
-        <div className="grid grid-cols-4 gap-2 sm:grid-cols-6">
-          {runes.map((r) => {
-            const active = layers.some((l) => l.name === r.name);
-            return (
-              <button
-                key={r.id}
-                type="button"
-                onClick={() => toggleCustomRune(r.name)}
-                disabled={!active && layers.length >= MAX_LAYERS}
-                className={`flex flex-col items-center gap-1 rounded-lg border p-2 transition ${
-                  active
-                    ? "border-amber-300/60 bg-amber-200/10 text-amber-100"
-                    : "border-stone-800 text-stone-400 hover:border-stone-600 disabled:cursor-not-allowed disabled:opacity-30"
-                }`}
-              >
-                <span className="text-xl">{r.symbol}</span>
-                <span className="text-[10px]">{r.name}</span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      <p className="mt-8 max-w-lg text-center text-xs leading-relaxed text-stone-400">
+      <p className="text-center text-[13px] leading-6 text-parchment-dim">
         Dürüstlük notu: tarihsel bindruneler sade ve işlevseldi — bir kazımanın
         vuruş sayısını azaltmak için Rune'ler ortak bir dikey gövdede
         birleştirilirdi. Bugünün süslü "tasarımcı bindruneleri" (bu araç dahil)

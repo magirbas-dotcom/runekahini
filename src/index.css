@@ -1,14 +1,120 @@
 @import "tailwindcss";
 
+/* Design tokens. Tailwind v4 turns every --color-* here into utilities
+ * (bg-surface, text-gold, border-hairline, …), so these are the single
+ * source of truth — components should never hardcode a raw palette class.
+ *
+ * Note: this block extends Tailwind's built-in palette rather than
+ * replacing it, so screens not yet migrated (BirthRune, Bindrune) keep
+ * rendering with their existing stone/amber classes untouched. */
 @theme {
   --font-serif: "Cinzel", "Georgia", serif;
   --font-sans: "Inter", "Segoe UI", system-ui, sans-serif;
+
+  /* Ground — near-black, warmed slightly so gold sits on it without buzzing */
+  --color-ink: #070706;
+  --color-ink-soft: #0c0b09;
+  --color-surface: #11100e;
+  --color-surface-raised: #17140f;
+  --color-surface-gold: #201a0d;
+
+  /* Gold — used sparingly; goldLight is the "lit" state, goldDark the recess */
+  --color-gold: #c7a34a;
+  --color-gold-light: #e5cf8b;
+  --color-gold-dark: #80652a;
+
+  /* Text. parchment-mute measures 3.94:1 on --color-surface, i.e. below the
+   * WCAG AA 4.5:1 floor — it is for decorative/disabled use only, never body
+   * copy. Body text uses parchment (or parchment-dim at 8.48:1). */
+  --color-parchment: #f2eee7;
+  --color-parchment-dim: #b4aca2;
+  --color-parchment-mute: #77716a;
+
+  /* Hairlines — gold at low alpha reads as engraved edge, not as a border */
+  --color-hairline: rgba(199, 163, 74, 0.24);
+  --color-hairline-strong: rgba(199, 163, 74, 0.55);
+
+  --radius-card: 1rem;
+  --radius-stone: 0.75rem;
 }
 
 body {
   margin: 0;
   font-family: var(--font-sans);
+  background-color: var(--color-ink);
+  color: var(--color-parchment);
   -webkit-font-smoothing: antialiased;
+}
+
+/* Body copy baseline: 16/26 rather than the 14/20 the app used before —
+ * long readings were the hardest thing to read in the old design. */
+.prose-reading {
+  font-size: 1rem;
+  line-height: 1.7rem;
+}
+
+/* One keyboard-focus treatment for the whole app. Selected state is never
+ * carried by colour alone — pickers also render a small diamond marker. */
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+}
+
+/* Browsers draw number inputs with spinners that can't be themed; the birth
+ * date fields are plain numeric entry, so drop them. */
+input[type="number"] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Film grain, layered over a surface to kill the "flat CSS gradient" look.
+ * Generated inline so it costs no extra request and scales to any size. */
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* The carved-stone tile: warm rock body, a lit top edge and a dark bottom
+ * edge (as if lit from above), plus an inner vignette so the glyph sits in
+ * a recess rather than floating on a flat card. */
+.stone-face {
+  background:
+    radial-gradient(
+      ellipse at 50% 22%,
+      rgba(199, 163, 74, 0.1),
+      transparent 62%
+    ),
+    linear-gradient(160deg, #2a2620 0%, #1a1713 45%, #100e0b 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(229, 207, 139, 0.22),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.75),
+    inset 0 0 26px rgba(0, 0, 0, 0.55),
+    0 6px 18px rgba(0, 0, 0, 0.5);
+}
+
+.stone-face-back {
+  background:
+    radial-gradient(
+      ellipse at 50% 20%,
+      rgba(199, 163, 74, 0.06),
+      transparent 60%
+    ),
+    linear-gradient(160deg, #211e19 0%, #15120f 50%, #0b0a08 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(229, 207, 139, 0.14),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.75),
+    inset 0 0 26px rgba(0, 0, 0, 0.6),
+    0 6px 18px rgba(0, 0, 0, 0.5);
 }
 
 @keyframes fade-in {
@@ -45,6 +151,22 @@ body {
   animation: stone-appear 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
+/* Revealed stones breathe very slightly, so a finished spread still feels
+ * alive without anything actually moving on screen. */
+@keyframes stone-breathe {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 6px rgba(199, 163, 74, 0.16));
+  }
+  50% {
+    filter: drop-shadow(0 0 14px rgba(199, 163, 74, 0.34));
+  }
+}
+
+.stone-breathe {
+  animation: stone-breathe 4.5s ease-in-out infinite;
+}
+
 @keyframes shuffle-spin {
   to {
     transform: rotate(360deg);
@@ -55,24 +177,15 @@ body {
   animation: shuffle-spin 0.7s linear infinite;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .stone-flip {
-    animation: fade-in 0.3s ease-out both;
-  }
-  .shuffle-spinner {
-    animation: none;
-  }
-}
-
 @keyframes emblem-pulse {
   0%,
   100% {
     opacity: 0.55;
-    filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.3));
+    filter: drop-shadow(0 0 10px rgba(199, 163, 74, 0.3));
   }
   50% {
     opacity: 0.9;
-    filter: drop-shadow(0 0 22px rgba(251, 191, 36, 0.55));
+    filter: drop-shadow(0 0 22px rgba(199, 163, 74, 0.55));
   }
 }
 
@@ -80,21 +193,15 @@ body {
   animation: emblem-pulse 3.5s ease-in-out infinite;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .emblem-pulse {
-    animation: none;
-  }
-}
-
 @keyframes stone-hint-pulse {
   0%,
   100% {
     opacity: 0.6;
-    box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.25);
+    box-shadow: 0 0 0 0 rgba(199, 163, 74, 0.25);
   }
   50% {
     opacity: 1;
-    box-shadow: 0 0 0 6px rgba(251, 191, 36, 0);
+    box-shadow: 0 0 0 6px rgba(199, 163, 74, 0);
   }
 }
 
@@ -102,8 +209,32 @@ body {
   animation: stone-hint-pulse 2.2s ease-in-out infinite;
 }
 
+/* Played when the bindrune composition changes, so the glyph re-settles
+ * instead of snapping. */
+@keyframes bindrune-settle {
+  from {
+    opacity: 0.85;
+    transform: scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.bindrune-settle {
+  animation: bindrune-settle 240ms ease-out;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .stone-hint-pulse {
+  .stone-flip {
+    animation: fade-in 0.3s ease-out both;
+  }
+  .stone-breathe,
+  .shuffle-spinner,
+  .emblem-pulse,
+  .stone-hint-pulse,
+  .bindrune-settle {
     animation: none;
   }
 }

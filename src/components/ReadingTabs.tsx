@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { RuneReading } from "../data/runes";
+import RuneChip from "./ui/RuneChip";
 
 type Tab = "general" | "love" | "career";
 
@@ -19,27 +20,23 @@ export default function ReadingTabs({ reading }: ReadingTabsProps) {
 
   return (
     <>
-      <div className="mb-3 flex flex-wrap gap-2">
+      <div className="mb-4 flex flex-wrap gap-2">
         {reading.keywords.map((k) => (
-          <span
-            key={k}
-            className="rounded-full border border-amber-200/20 bg-amber-200/5 px-2.5 py-0.5 text-xs text-amber-200/80"
-          >
-            {k}
-          </span>
+          <RuneChip key={k}>{k}</RuneChip>
         ))}
       </div>
 
-      <div className="mb-3 flex gap-1 border-b border-stone-800">
+      <div className="mb-4 flex gap-1 border-b border-hairline">
         {TABS.map((t) => (
           <button
             key={t.key}
             type="button"
             onClick={() => setTab(t.key)}
-            className={`-mb-px border-b-2 px-3 py-1.5 text-xs uppercase tracking-wider transition ${
+            aria-selected={tab === t.key}
+            className={`-mb-px border-b-2 px-3 py-2 text-xs uppercase tracking-[0.14em] transition duration-200 ${
               tab === t.key
-                ? "border-amber-300 text-amber-200"
-                : "border-transparent text-stone-400 hover:text-stone-200"
+                ? "border-gold text-gold-light"
+                : "border-transparent text-parchment-dim hover:text-parchment"
             }`}
           >
             {t.label}
@@ -47,7 +44,7 @@ export default function ReadingTabs({ reading }: ReadingTabsProps) {
         ))}
       </div>
 
-      <p className="text-sm leading-relaxed text-stone-300">{reading[tab]}</p>
+      <p className="prose-reading text-parchment-dim">{reading[tab]}</p>
     </>
   );
 }
