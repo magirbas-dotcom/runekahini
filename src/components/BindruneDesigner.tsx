@@ -349,8 +349,11 @@ export default function BindruneDesigner() {
         <p className="mb-3 text-xs uppercase tracking-[0.18em] text-gold">
           Tılsım
         </p>
+        {/* "BINDRUNE" is written in caps on purpose: Cinzel renders lowercase
+            as small capitals but keeps the tittle on "i", which would spell it
+            "BİNDRUNE" — a Turkish dotted İ on a Norse loanword. */}
         <h2 className="font-serif text-[28px] leading-tight text-parchment">
-          Kendi bindrune'ını oluştur.
+          Kendi BINDRUNE'ını oluştur.
         </h2>
         <p className="mx-auto mt-3 max-w-sm text-[15px] leading-6 text-parchment-dim">
           Niyetini seç, Rune'larını birleştir ve sana özel sembolünü oluştur.

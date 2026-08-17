@@ -9,7 +9,14 @@ export default defineConfig({
     react(),
     tailwindcss(),
     VitePWA({
-      registerType: 'autoUpdate',
+      // 'prompt' rather than 'autoUpdate': a new build waits instead of
+      // swapping itself in, so ReloadPrompt can ask before reloading. With
+      // autoUpdate a returning visitor kept seeing the previous version until
+      // their second launch, with no way to know an update existed.
+      registerType: 'prompt',
+      // Registration is handled by virtual:pwa-register/react in
+      // ReloadPrompt, so the plugin must not also inject its own script.
+      injectRegister: null,
       includeAssets: ['icons/favicon-32.png', 'icons/apple-touch-icon.png'],
       manifest: {
         name: 'Rune Kahini',

@@ -2,6 +2,7 @@ import { useState, type ReactElement } from "react";
 import OraclePage from "./components/OraclePage";
 import BirthRunePage from "./components/BirthRunePage";
 import BindruneDesigner from "./components/BindruneDesigner";
+import ReloadPrompt from "./components/ReloadPrompt";
 import RuneGlyph from "./components/ui/RuneGlyph";
 
 type View = "oracle" | "birthRune" | "bindrune";
@@ -129,6 +130,8 @@ function App() {
           yerine geçmez.
         </footer>
       </div>
+
+      <ReloadPrompt />
     </div>
   );
 }
