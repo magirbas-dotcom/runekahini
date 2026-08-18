@@ -36,58 +36,39 @@ const FIVE_POSITIONS: [number, number][] = [
 ];
 
 function DailyRune() {
-  const todayKey = new Date().toISOString().slice(0, 10);
+  // Both the key and the displayed date come from the local calendar day.
+  // toISOString() would give the UTC day, which in UTC+3 meant the header
+  // showed tomorrow between local midnight and 03:00 while the rune was
+  // still yesterday's.
+  const todayKey = useMemo(() => {
+    const now = new Date();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    return `${now.getFullYear()}-${month}-${day}`;
+  }, []);
   const daily = useMemo(() => drawDailyRune(todayKey), [todayKey]);
-  const [revealed, setRevealed] = useState(false);
+  // The card starts collapsed: its header already names the rune and lists
+  // its keywords, so the full reading stays one tap away rather than filling
+  // the home screen before the user has asked for it.
+  const [detailOpen, setDetailOpen] = useState(false);
   const formattedDate = useMemo(
     () =>
       new Date().toLocaleDateString("tr-TR", {
         day: "numeric",
         month: "long",
-        weekday: "long",
+        year: "numeric",
       }),
     [todayKey],
   );
 
   return (
-    <div className="mb-9 w-full max-w-md space-y-4">
-      <MysticCard grain tone="raised">
-        <div
-          className="pointer-events-none absolute -right-12 top-1/2 h-44 w-44 -translate-y-1/2 rounded-full bg-gold/10 blur-3xl"
-          aria-hidden="true"
-        />
-        <div className="relative p-5">
-          <SectionHeader>Bugünün Rune'si</SectionHeader>
-          <div className="flex items-center gap-5">
-            <RuneStone
-              drawn={daily}
-              revealed={revealed}
-              onClick={revealed ? undefined : () => setRevealed(true)}
-            />
-            <div className="flex-1 text-left">
-              {revealed ? (
-                <>
-                  <p className="font-serif text-2xl leading-tight text-parchment">
-                    {daily.rune.name}
-                  </p>
-                  <p className="mt-1.5 text-[13px] text-gold">{formattedDate}</p>
-                </>
-              ) : (
-                <>
-                  <p className="font-serif text-lg leading-snug text-parchment">
-                    {formattedDate}
-                  </p>
-                  <p className="mt-2 text-[15px] leading-6 text-parchment-dim">
-                    Günün enerjisini öğrenmek için taşa dokun.
-                  </p>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      </MysticCard>
-
-      {revealed && <RuneDetail drawn={daily} />}
+    <div className="mb-6 w-full max-w-md">
+      <SectionHeader>{formattedDate} · Günün Rune'si</SectionHeader>
+      <RuneDetail
+        drawn={daily}
+        expanded={detailOpen}
+        onToggle={() => setDetailOpen((v) => !v)}
+      />
     </div>
   );
 }
@@ -152,16 +133,10 @@ export default function OraclePage() {
 
       {drawn.length === 0 ? (
         <MysticCard grain className="w-full max-w-md p-6">
-          <SectionHeader align="left">Sorun (isteğe bağlı)</SectionHeader>
-          <textarea
-            id="question"
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-            placeholder="Örn. Bu dönemde neye odaklanmalıyım?"
-            rows={3}
-            className="mb-6 w-full resize-none rounded-lg border border-hairline bg-ink-soft/70 p-3.5 text-[15px] leading-6 text-parchment transition placeholder:text-parchment-mute focus:border-hairline-strong focus:outline-none"
-          />
-
+          {/* Spread choice comes first: it's the primary decision and, on a
+              phone, used to sit far enough below the optional question field
+              that it required scrolling before the draw button was even
+              visible. */}
           <SectionHeader align="left">Açılım Seçimi</SectionHeader>
           <div className="mb-6 grid grid-cols-2 gap-2.5">
             {(Object.keys(SPREAD_TITLES) as SpreadType[]).map((type) => (
@@ -174,6 +149,19 @@ export default function OraclePage() {
               />
             ))}
           </div>
+
+          {/* "Sorun" read as the Turkish word for "problem" rather than as
+              "your question" — renamed to an imperative phrase, matching the
+              "Niyetini Seç" tone used in the Tılsım screen. */}
+          <SectionHeader align="left">Bir Soru Sor (İsteğe Bağlı)</SectionHeader>
+          <textarea
+            id="question"
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+            placeholder="Örn. Bu dönemde neye odaklanmalıyım?"
+            rows={3}
+            className="mb-6 w-full resize-none rounded-lg border border-hairline bg-ink-soft/70 p-3.5 text-[15px] leading-6 text-parchment transition placeholder:text-parchment-mute focus:border-hairline-strong focus:outline-none"
+          />
 
           <GoldButton
             onClick={handleDraw}

@@ -45,7 +45,18 @@ export default function RuneGlyph({
     >
       {glow && (
         <defs>
-          <filter id={filterId} x="-50%" y="-50%" width="200%" height="200%">
+          {/* userSpaceOnUse, not the default objectBoundingBox: Isa is a
+              single vertical line whose bounding box is zero pixels wide, so a
+              bbox-relative filter region collapsed to nothing and the glyph
+              rendered blank. The region is stated in viewBox units instead. */}
+          <filter
+            id={filterId}
+            filterUnits="userSpaceOnUse"
+            x="-20"
+            y="-20"
+            width="140"
+            height="140"
+          >
             <feGaussianBlur stdDeviation="2.5" result="blur" />
             <feMerge>
               <feMergeNode in="blur" />

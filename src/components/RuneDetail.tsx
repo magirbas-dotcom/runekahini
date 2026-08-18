@@ -54,12 +54,20 @@ export default function RuneDetail({
       </div>
       {collapsible && (
         <span
-          className={`shrink-0 text-lg text-gold transition-transform duration-200 ${
+          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-hairline-strong bg-surface-gold/60 text-gold-light transition-transform duration-200 ${
             isOpen ? "rotate-180" : ""
           }`}
           aria-hidden="true"
         >
-          ⌄
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path
+              d="M4 6.5 L8 10.5 L12 6.5"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
         </span>
       )}
     </div>

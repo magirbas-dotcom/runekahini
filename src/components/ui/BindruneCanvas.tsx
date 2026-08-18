@@ -50,7 +50,16 @@ export default function BindruneCanvas({
       <defs>
         {/* A native SVG blur rather than a CSS filter — the same glow then
             survives rasterisation into the exported PNG. */}
-        <filter id="rune-glow" x="-50%" y="-50%" width="200%" height="200%">
+        {/* userSpaceOnUse for the same reason as RuneGlyph: a bbox-relative
+            region is degenerate for zero-width glyphs such as Isa. */}
+        <filter
+          id="rune-glow"
+          filterUnits="userSpaceOnUse"
+          x={-size}
+          y={-size}
+          width={size * 3}
+          height={size * 3}
+        >
           <feGaussianBlur stdDeviation="3.5" result="blur" />
           <feMerge>
             <feMergeNode in="blur" />

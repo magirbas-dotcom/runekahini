@@ -685,12 +685,23 @@ export function drawRunes(count: number): DrawnRune[] {
  * day's tone, reused here as a stable daily pick rather than a fresh random draw.
  */
 export function drawDailyRune(dateKey: string): DrawnRune {
-  let hash = 0;
+  // FNV-1a followed by a murmur3-style finalizer. The previous hash
+  // (h * 31 + charCode) moved by exactly 1 when the date did, so consecutive
+  // days walked the rune list in order — Fehu, then Uruz, then Thurisaz. The
+  // avalanche step makes one day's rune tell you nothing about the next.
+  let hash = 2166136261;
   for (let i = 0; i < dateKey.length; i++) {
-    hash = (hash * 31 + dateKey.charCodeAt(i)) >>> 0;
+    hash ^= dateKey.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
   }
+  hash ^= hash >>> 16;
+  hash = Math.imul(hash, 2246822507);
+  hash ^= hash >>> 13;
+  hash = Math.imul(hash, 3266489909);
+  hash = (hash ^ (hash >>> 16)) >>> 0;
+
   const rune = runes[hash % runes.length];
-  const reversed = rune.reversible && (hash >>> 3) % 3 === 0;
+  const reversed = rune.reversible && (hash >>> 8) % 3 === 0;
   return { rune, reversed };
 }
 

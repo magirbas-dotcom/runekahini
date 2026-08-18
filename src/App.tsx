@@ -70,27 +70,30 @@ function App() {
         aria-hidden="true"
       />
 
-      <div className="relative mx-auto flex min-h-screen max-w-3xl flex-col items-center px-4 py-10 sm:py-14">
-        <header className="mb-9 text-center">
+      <div className="relative mx-auto flex min-h-screen max-w-3xl flex-col items-center px-4 py-6 sm:py-14">
+        {/* Header trimmed down from its original size: on a phone it used to
+            take most of the first screen by itself, pushing the actual
+            action (spread choice, draw button) below the fold. */}
+        <header className="mb-6 text-center">
           <span
-            className="emblem-pulse mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full border border-hairline text-gold"
+            className="emblem-pulse mx-auto mb-2.5 flex h-14 w-14 items-center justify-center rounded-full border border-hairline text-gold"
             aria-hidden="true"
           >
-            <RuneGlyph name="Algiz" size={34} strokeWidth={7} />
+            <RuneGlyph name="Algiz" size={30} strokeWidth={7} />
           </span>
-          <p className="mb-2 text-xs uppercase tracking-[0.32em] text-gold">
+          <p className="mb-1.5 text-xs uppercase tracking-[0.32em] text-gold">
             Elder Futhark
           </p>
           <h1 className="font-serif text-4xl text-parchment sm:text-5xl">
             Rune Kahini
           </h1>
-          <p className="mx-auto mt-3 max-w-sm text-[15px] leading-6 text-parchment-dim">
+          <p className="mx-auto mt-2.5 max-w-sm text-[15px] leading-6 text-parchment-dim">
             İçinden bir soru geçir, taşları karıştır ve eski Rune'lerin sana ne
             söylediğini keşfet.
           </p>
         </header>
 
-        <nav className="mb-9 grid w-full max-w-lg grid-cols-3 gap-2">
+        <nav className="mb-6 grid w-full max-w-lg grid-cols-3 gap-2">
           {NAV.map((n) => {
             const active = view === n.key;
             return (
