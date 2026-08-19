@@ -12,22 +12,35 @@ export const RUNE_STROKES: Record<string, string> = {
   Thurisaz: "M40,10 L40,90 M40,30 L65,40 L40,55",
   Ansuz: "M50,10 L50,90 M50,25 L85,40 M50,45 L85,60",
   Raidho: "M40,10 L40,90 M40,10 L65,25 L40,40 M40,55 L70,90",
-  Kenaz: "M30,15 L65,50 L30,85",
+  // Apex on the left, opening right — it was mirrored.
+  Kenaz: "M65,15 L30,50 L65,85",
   Gebo: "M20,15 L80,85 M80,15 L20,85",
   Wunjo: "M35,10 L35,90 M35,10 L70,25 L35,40",
   Hagalaz: "M30,10 L30,90 M70,10 L70,90 M30,35 L70,65",
   Nauthiz: "M50,10 L50,90 M35,35 L65,65",
   Isa: "M50,10 L50,90",
-  Jera: "M30,15 L50,45 L30,75 M70,15 L50,45 L70,75",
+  // Two separate chevrons, upper apex left and lower apex right, set diagonally
+  // with a gap between them. Jera is the only Elder Futhark rune whose parts do
+  // not join, so the halves must never meet — they used to share an apex at the
+  // centre here, which drew a plain X.
+  Jera: "M54,24 L30,40 L54,50 M46,76 L70,60 L46,50",
   Eihwaz: "M50,10 L50,90 M50,25 L65,35 M50,55 L35,65",
-  Perthro: "M35,10 L35,90 M35,10 L65,10 L65,45 L35,45",
+  // An angular cup opening right; it used to be drawn as a closed box on a
+  // stave, which reads as Wunjo/Berkano rather than Perthro.
+  Perthro: "M66,12 L34,28 L34,72 L66,88",
   Algiz: "M50,10 L50,90 M50,30 L20,10 M50,30 L80,10",
   Sowilo: "M25,10 L60,35 L30,55 L70,90",
   Tiwaz: "M50,10 L50,90 M30,30 L50,10 L70,30",
   Berkano: "M35,10 L35,90 M35,10 L65,25 L35,40 M35,40 L65,60 L35,80",
-  Ehwaz: "M30,10 L30,90 M70,10 L70,90 M30,50 L70,50",
-  Mannaz: "M25,10 L25,90 M75,10 L75,90 M25,10 L50,50 L75,10",
-  Laguz: "M50,10 L50,90 M50,55 L25,90",
+  // Two staves joined by a V between their tops — an M. It had a flat
+  // crossbar instead, which drew an H.
+  Ehwaz: "M28,90 L28,12 M72,90 L72,12 M28,12 L50,45 L72,12",
+  // Two staves with crossing diagonals between them. It previously carried
+  // Ehwaz's V, so the two runes were drawn identically.
+  Mannaz: "M25,88 L25,12 M75,88 L75,12 M25,12 L75,48 M75,12 L25,48",
+  // Arm leaves the top of the stave to the right; it used to hang off the
+  // middle to the left.
+  Laguz: "M50,12 L50,88 M50,12 L78,34",
   Ingwaz: "M50,20 L80,50 L50,80 L20,50 Z",
   Dagaz: "M20,20 L20,80 M80,20 L80,80 M20,20 L80,80 M20,80 L80,20",
   Othala: "M50,15 L75,40 L50,65 L25,40 Z M50,65 L30,90 M50,65 L70,90",
