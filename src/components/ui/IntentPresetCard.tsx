@@ -41,7 +41,7 @@ export default function IntentPresetCard({
       )}
 
       <span className={selected ? "text-gold-light" : "text-parchment-dim"}>
-        <RuneGlyph name={markRune} size={24} strokeWidth={7} glow={false} />
+        <RuneGlyph name={markRune} size={24} glow={false} />
       </span>
 
       <span

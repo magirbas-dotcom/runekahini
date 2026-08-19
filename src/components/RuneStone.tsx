@@ -61,15 +61,13 @@ export default function RuneStone({
           >
             {drawn && (
               <span className="relative flex items-center justify-center">
-                {/* The cut under the lit stroke. It must never be wider than
-                    the gold copy above it: at strokeWidth 7 against the gold 6
-                    it spilled out past the highlight, which swallowed thin
-                    single-stroke runes like Isa in black. */}
+                {/* The cut beneath the lit glyph: the same outline offset by a
+                    pixel, so what shows is a shadow along one edge rather than
+                    a second mark. */}
                 <span className="absolute translate-x-[1px] translate-y-[1px] text-black/60">
                   <RuneGlyph
                     name={drawn.rune.name}
                     size={54}
-                    strokeWidth={6}
                     reversed={drawn.reversed}
                     glow={false}
                   />
@@ -78,7 +76,6 @@ export default function RuneStone({
                   <RuneGlyph
                     name={drawn.rune.name}
                     size={54}
-                    strokeWidth={6}
                     reversed={drawn.reversed}
                   />
                 </span>

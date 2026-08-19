@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { runes } from "../data/runes";
-import { RUNE_STROKES, INTENT_PRESETS } from "../data/runeStrokes";
+import { INTENT_PRESETS } from "../data/runeStrokes";
+import { RUNE_GLYPHS, GLYPH_FIT_SCALE } from "../data/runeGlyphs";
 import { buildCustomSynergy } from "../data/synergy";
 import MysticCard from "./ui/MysticCard";
 import SectionHeader from "./ui/SectionHeader";
@@ -21,6 +22,14 @@ const MAX_LAYERS = 4;
 const CANVAS_SIZE = 400;
 const GLYPH_SCALE = 1.6;
 const OFFSET_RANGE = 45;
+
+// Canvas cannot read the CSS custom properties, so the design tokens the
+// exported image needs are mirrored here. Keep these in step with the
+// @theme block in index.css.
+const GOLD = "#c7a34a";           // --color-gold
+const GOLD_LIGHT = "#e5cf8b";     // --color-gold-light
+const PARCHMENT = "#f2eee7";      // --color-parchment
+const INK_RGB = "7, 7, 6";        // --color-ink
 
 // The ring's position/size within each frame image, measured once (as a
 // fraction of image width/height so the same numbers work at any resolution):
@@ -174,6 +183,8 @@ export default function BindruneDesigner() {
     const glyphScale = GLYPH_SCALE * scaleRatio;
 
     layers.forEach((layer, i) => {
+      const glyph = RUNE_GLYPHS[layer.name];
+      if (!glyph) return;
       const cx = centerX;
       const cy = centerY + layer.offsetY * scaleRatio;
       const tx = cx - 50 * glyphScale;
@@ -182,14 +193,15 @@ export default function BindruneDesigner() {
       ctx.save();
       ctx.translate(tx, ty);
       ctx.scale(glyphScale, glyphScale);
+      // Same mapping glyphTransform performs for the SVG preview, so the
+      // exported image matches what was composed on screen.
+      ctx.translate(50 - glyph.cx * GLYPH_FIT_SCALE, 50 - glyph.cy * GLYPH_FIT_SCALE);
+      ctx.scale(GLYPH_FIT_SCALE, GLYPH_FIT_SCALE);
       ctx.globalAlpha = OPACITY_STEPS[i] ?? 0.5;
-      ctx.strokeStyle = "#fbbf24";
-      ctx.lineWidth = i === 0 ? 4.5 : 3.5;
-      ctx.lineCap = "round";
-      ctx.lineJoin = "round";
-      ctx.shadowColor = "#fbbf24";
+      ctx.fillStyle = GOLD;
+      ctx.shadowColor = GOLD;
       ctx.shadowBlur = 6;
-      ctx.stroke(new Path2D(RUNE_STROKES[layer.name]));
+      ctx.fill(new Path2D(glyph.d));
       ctx.restore();
     });
   }
@@ -242,7 +254,7 @@ export default function BindruneDesigner() {
     const plaqueWidth = 880;
     const plaqueHeight = 280;
     const plaqueTop = circleBottom + 200;
-    ctx.fillStyle = "rgba(8, 6, 5, 0.6)";
+    ctx.fillStyle = `rgba(${INK_RGB}, 0.6)`;
     drawPlaqueRect(
       ctx,
       textCenterX - plaqueWidth / 2,
@@ -267,12 +279,12 @@ export default function BindruneDesigner() {
     );
     ctx.lineJoin = "round";
     ctx.lineWidth = 10;
-    ctx.strokeStyle = "rgba(8, 6, 5, 0.9)";
+    ctx.strokeStyle = `rgba(${INK_RGB}, 0.9)`;
     ctx.font = `700 ${nameSize}px Cinzel, Georgia, serif`;
     ctx.strokeText(name, textCenterX, nameY);
-    ctx.shadowColor = "#fbbf24";
+    ctx.shadowColor = GOLD;
     ctx.shadowBlur = 18;
-    ctx.fillStyle = "#fde68a";
+    ctx.fillStyle = GOLD_LIGHT;
     ctx.fillText(name, textCenterX, nameY);
 
     const purposeText = purpose.toLocaleUpperCase("tr-TR");
@@ -287,17 +299,17 @@ export default function BindruneDesigner() {
     );
     ctx.shadowBlur = 0;
     ctx.lineWidth = 7;
-    ctx.strokeStyle = "rgba(8, 6, 5, 0.9)";
+    ctx.strokeStyle = `rgba(${INK_RGB}, 0.9)`;
     ctx.font = `500 ${purposeSize}px Inter, sans-serif`;
     ctx.strokeText(purposeText, textCenterX, purposeY);
-    ctx.fillStyle = "#e7e5e4";
+    ctx.fillStyle = PARCHMENT;
     ctx.fillText(purposeText, textCenterX, purposeY);
 
     // Brand mark rides along the bottom of the plaque. It used to sit above
     // the ring, but the frame artwork has an ornament chain hanging down the
     // centre there — on the plaque it is clear of every decorated area.
     ctx.lineWidth = 0;
-    ctx.fillStyle = "rgba(253, 230, 138, 0.5)";
+    ctx.fillStyle = "rgba(229, 207, 139, 0.5)";
     ctx.font = "500 22px Inter, sans-serif";
     ctx.fillText("RUNE KAHİNİ", textCenterX, plaqueTop + 250);
 

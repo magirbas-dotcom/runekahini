@@ -197,7 +197,7 @@ export const ZODIAC_SIGNS: ZodiacSign[] = [
 
 /**
  * Simplified single-stroke glyphs for the twelve signs, normalized to the same
- * 100x100 box as RUNE_STROKES so the existing glyph renderer works unchanged.
+ * 100x100 box as the rune glyphs, so signs and runes render alike.
  * These are legible approximations drawn for this app, not reproductions of
  * any particular typeface.
  */

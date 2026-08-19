@@ -1,38 +1,37 @@
 import { useId } from "react";
-import { RUNE_STROKES } from "../../data/runeStrokes";
+import { RUNE_GLYPHS, glyphTransform } from "../../data/runeGlyphs";
 
 interface RuneGlyphProps {
-  /** Rune name as keyed in RUNE_STROKES, e.g. "Hagalaz". */
+  /** Rune name as keyed in RUNE_GLYPHS, e.g. "Hagalaz". */
   name: string;
   size?: number;
   /** Draws the glyph upside down, for a reversed draw. */
   reversed?: boolean;
-  strokeWidth?: number;
   glow?: boolean;
   className?: string;
 }
 
 /**
- * Renders a rune as real SVG strokes from RUNE_STROKES rather than as the
- * Unicode character. The Unicode glyphs depend on whatever runic font the
- * device happens to have and can't carry a glow or a stroke weight; these
- * paths are ours, so the same glyph scales cleanly from a 20px list icon to
- * a full-size stone face and can actually be lit.
+ * Renders a rune from the traced reference outlines rather than the Unicode
+ * character, so the same glyph scales from a 26px picker tile to a full-size
+ * stone face without depending on the device having a runic font, and can be
+ * lit and recoloured.
  *
- * Colour comes from `currentColor`, so callers set it with text-gold /
- * text-gold-light like any other text.
+ * The outlines are filled, not stroked: they carry their own hand-drawn weight,
+ * including the tapered ends a uniform stroke width cannot express. Colour comes
+ * from `currentColor`, so callers set it with text-gold / text-gold-light like
+ * any other text.
  */
 export default function RuneGlyph({
   name,
   size = 48,
   reversed = false,
-  strokeWidth = 6,
   glow = true,
   className = "",
 }: RuneGlyphProps) {
   const filterId = useId();
-  const path = RUNE_STROKES[name];
-  if (!path) return null;
+  const glyph = RUNE_GLYPHS[name];
+  if (!glyph) return null;
 
   return (
     <svg
@@ -45,10 +44,9 @@ export default function RuneGlyph({
     >
       {glow && (
         <defs>
-          {/* userSpaceOnUse, not the default objectBoundingBox: Isa is a
-              single vertical line whose bounding box is zero pixels wide, so a
-              bbox-relative filter region collapsed to nothing and the glyph
-              rendered blank. The region is stated in viewBox units instead. */}
+          {/* userSpaceOnUse, not the default objectBoundingBox: a bbox-relative
+              region collapses on glyphs whose outline is a straight bar, which
+              used to leave Isa unpainted. */}
           <filter
             id={filterId}
             filterUnits="userSpaceOnUse"
@@ -69,13 +67,9 @@ export default function RuneGlyph({
         transform={reversed ? "rotate(180 50 50)" : undefined}
         filter={glow ? `url(#${filterId})` : undefined}
       >
-        <path
-          d={path}
-          stroke="currentColor"
-          strokeWidth={strokeWidth}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
+        <g transform={glyphTransform(glyph)}>
+          <path d={glyph.d} fill="currentColor" />
+        </g>
       </g>
     </svg>
   );

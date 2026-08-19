@@ -58,7 +58,7 @@ export default function ZodiacCard({ sign, activeRuneName }: ZodiacCardProps) {
                   isActive ? "text-gold-light" : "text-parchment-dim"
                 }`}
               >
-                <RuneGlyph name={name} size={34} strokeWidth={6} glow={isActive} />
+                <RuneGlyph name={name} size={34} glow={isActive} />
               </span>
               <p className="font-serif text-lg leading-tight text-parchment">
                 {name}

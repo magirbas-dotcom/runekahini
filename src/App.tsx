@@ -79,7 +79,7 @@ function App() {
             className="emblem-pulse mx-auto mb-2.5 flex h-14 w-14 items-center justify-center rounded-full border border-hairline text-gold"
             aria-hidden="true"
           >
-            <RuneGlyph name="Algiz" size={30} strokeWidth={7} />
+            <RuneGlyph name="Algiz" size={30} />
           </span>
           <p className="mb-1.5 text-xs uppercase tracking-[0.32em] text-gold">
             Elder Futhark

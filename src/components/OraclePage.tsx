@@ -363,7 +363,7 @@ export default function OraclePage() {
                       className="flex items-center gap-3.5 rounded-lg border border-hairline bg-surface/70 p-3.5"
                     >
                       <span className="shrink-0 text-gold">
-                        <RuneGlyph name={r.name} size={30} strokeWidth={7} glow={false} />
+                        <RuneGlyph name={r.name} size={30} glow={false} />
                       </span>
                       <div className="min-w-0">
                         <p className="text-[15px] text-parchment">

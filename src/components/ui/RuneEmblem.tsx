@@ -46,7 +46,7 @@ export default function RuneEmblem({
         </>
       )}
       <span className="relative text-gold-light">
-        <RuneGlyph name={name} size={size} strokeWidth={6} reversed={reversed} />
+        <RuneGlyph name={name} size={size} reversed={reversed} />
       </span>
     </div>
   );

@@ -80,7 +80,7 @@ export default function BirthRuneCard({
         className="flex w-full items-center gap-4 text-left"
       >
         <span className="shrink-0 text-gold-light">
-          <RuneGlyph name={rune.name} size={38} strokeWidth={6} />
+          <RuneGlyph name={rune.name} size={38} />
         </span>
         <span className="min-w-0 flex-1">
           <span className="block text-[11px] uppercase tracking-[0.16em] text-gold">

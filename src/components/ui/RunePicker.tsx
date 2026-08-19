@@ -41,7 +41,7 @@ export default function RunePicker({ selected, onToggle, max }: RunePickerProps)
                 aria-hidden="true"
               />
             )}
-            <RuneGlyph name={r.name} size={26} strokeWidth={7} glow={false} />
+            <RuneGlyph name={r.name} size={26} glow={false} />
             <span className="text-[10px] leading-none">{r.name}</span>
           </button>
         );

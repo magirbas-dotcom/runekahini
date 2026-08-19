@@ -28,7 +28,7 @@ export default function RuneDetail({
   const header = (
     <div className="flex items-center gap-4">
       <span className="shrink-0 text-gold-light">
-        <RuneGlyph name={rune.name} size={44} strokeWidth={6} reversed={reversed} />
+        <RuneGlyph name={rune.name} size={44} reversed={reversed} />
       </span>
       <div className="flex-1 text-left">
         <h3 className="font-serif text-2xl leading-tight text-parchment">

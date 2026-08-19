@@ -1,4 +1,4 @@
-import { RUNE_STROKES } from "../../data/runeStrokes";
+import { RUNE_GLYPHS, glyphTransform } from "../../data/runeGlyphs";
 
 export interface BindruneLayer {
   name: string;
@@ -78,7 +78,7 @@ export default function BindruneCanvas({
           x={size / 2}
           y={size / 2}
           textAnchor="middle"
-          fill="#a8a29e"
+          fill="#b4aca2"
           fontSize="14"
         >
           Rune seçin
@@ -86,6 +86,8 @@ export default function BindruneCanvas({
       ) : (
         <g key={signature} className="bindrune-settle">
           {layers.map((layer, i) => {
+            const glyph = RUNE_GLYPHS[layer.name];
+            if (!glyph) return null;
             const cx = size * centerXFrac;
             const cy = size * centerYFrac + layer.offsetY;
             const tx = cx - 50 * glyphScale;
@@ -97,14 +99,17 @@ export default function BindruneCanvas({
                 opacity={opacitySteps[i] ?? 0.5}
                 filter="url(#rune-glow)"
               >
-                <path
-                  d={RUNE_STROKES[layer.name]}
-                  stroke="#fbbf24"
-                  strokeWidth={i === 0 ? 4.5 : 3.5}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  fill="none"
-                />
+                {/* Filled. The glyph outlines are thin enough that stacking
+                    several on one stave still reads — which is exactly what an
+                    earlier, heavier set could not do.
+                    Colour is --color-gold, the same tone the ring artwork
+                    averages (#be9742 measured), so the mark reads as cut into
+                    the frame rather than laid on top of it. It used to be
+                    #fbbf24 — the same hue but around twice the saturation,
+                    which is why it sat apart from everything around it. */}
+                <g transform={glyphTransform(glyph)}>
+                  <path d={glyph.d} fill="#c7a34a" />
+                </g>
               </g>
             );
           })}
