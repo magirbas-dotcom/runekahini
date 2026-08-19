@@ -30,8 +30,11 @@ export default function BindruneCanvas({
   glyphScale,
   opacitySteps,
 }: BindruneCanvasProps) {
-  // Replays the settle animation whenever the composition changes.
-  const signature = layers.map((l) => `${l.name}:${l.offsetY}`).join("|");
+  // Keyed on which runes are present, deliberately not on their offsets: with
+  // offsets in the key every slider tick remounted the group and replayed the
+  // settle animation, so dragging one layer made the whole bindrune pulse as
+  // though every glyph were moving.
+  const signature = layers.map((l) => l.name).join("|");
 
   return (
     <svg

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { calculateBirthProfile, type BirthRuneProfile } from "../data/birthRune";
 import BirthRuneCard from "./BirthRuneCard";
+import ZodiacCard from "./ZodiacCard";
 import MysticCard from "./ui/MysticCard";
 import SectionHeader from "./ui/SectionHeader";
 import GoldButton from "./ui/GoldButton";
@@ -47,9 +48,11 @@ export default function BirthRunePage() {
   if (profile) {
     const secondaries = [
       {
+        // The zodiac card above already explains which of the sign's two runes
+        // the birth date lands on, so this one only has to carry the reading.
         title: "Solar Doğum Rune'si",
         description:
-          "Öz ruhsal karakterinizi ve temel yaşam enerjinizi simgeler.",
+          "Doğum gününe düşen Rune'nin ayrıntılı okuması.",
         rune: profile.solarBirthRune,
       },
       {
@@ -64,6 +67,13 @@ export default function BirthRunePage() {
       <div className="flex w-full flex-col items-center">
         <div className="w-full max-w-md">
           <SectionHeader>Senin Rune Haritan</SectionHeader>
+
+          <div className="mb-4">
+            <ZodiacCard
+              sign={profile.zodiac}
+              activeRuneName={profile.solarBirthRune.name}
+            />
+          </div>
 
           <BirthRuneCard
             variant="primary"
@@ -92,8 +102,9 @@ export default function BirthRunePage() {
           </div>
 
           <p className="mt-6 text-center text-[13px] leading-6 text-parchment-dim">
-            Bu hesaplama modern numerolojik bir yorumdur; tarihsel bir Viking
-            pratiği değildir.
+            Bu harita modern bir yorumdur; tarihsel bir Viking pratiği değildir.
+            Burç–Rune eşleşmesi de hiçbir İskandinav kaynağında geçmez —
+            24 Rune'ü 12 burca ikişerli dağıtmak çağdaş bir kurgudur.
           </p>
         </div>
       </div>

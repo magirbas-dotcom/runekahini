@@ -336,12 +336,18 @@ export default function OraclePage() {
               ve dönüşümü, <span className="text-gold-light">Tyr Ailesi</span>{" "}
               ise adaleti ve ruhsal olgunluğu temsil eder.
             </p>
-            <p className="prose-reading text-parchment-dim">
+            <p className="prose-reading mb-4 text-parchment-dim">
               9 Rune (Gebo, Hagalaz, Nauthiz, Isa, Jera, Eihwaz, Sowilo, Ingwaz,
               Dagaz) simetrik yapıları gereği hiçbir zaman ters dönmez. Her
               Rune ayrıca dört klasik elementten (Ateş, Toprak, Hava, Su)
               biriyle ilişkilendirilir — tılsım tasarlarken birbirini
               tamamlayan elementleri seçmek işine yarayabilir.
+            </p>
+            <p className="prose-reading text-parchment-dim">
+              Bazı modern setlerde 25. bir <span className="text-gold-light">boş
+              Rune</span> bulunur. Bu, kadim yazıtlarda ya da Rune şiirlerinde
+              geçmez; 1982'de Ralph Blum'un eklediği çağdaş bir icattır. Elder
+              Futhark 24 semboldür ve bu uygulama o saf hâline sadık kalır.
             </p>
           </MysticCard>
 

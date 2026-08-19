@@ -1,41 +1,5 @@
 import { runeById, type Rune } from "./runes";
-
-// Solar takvimi: Güneş'in yıl boyunca her Rune'de ~15 gün kaldığı varsayılan yarı-ay
-// döngüsü. Bu, Gemini ile hazırlanan spesifikasyondaki tabloya dayanır ve modern/
-// popüler bir yorumdur — Viking dönemine ait doğrulanmış bir takvim değildir.
-interface SolarInterval {
-  start: [number, number]; // [ay, gün]
-  end: [number, number];
-  runeName: string;
-}
-
-const SOLAR_INTERVALS: SolarInterval[] = [
-  { start: [1, 13], end: [1, 28], runeName: "Perthro" },
-  { start: [1, 28], end: [2, 13], runeName: "Algiz" },
-  { start: [2, 13], end: [2, 27], runeName: "Sowilo" },
-  { start: [2, 27], end: [3, 14], runeName: "Tiwaz" },
-  { start: [3, 14], end: [3, 30], runeName: "Berkano" },
-  { start: [3, 30], end: [4, 14], runeName: "Ehwaz" },
-  { start: [4, 14], end: [4, 29], runeName: "Mannaz" },
-  { start: [4, 29], end: [5, 14], runeName: "Laguz" },
-  { start: [5, 14], end: [5, 29], runeName: "Ingwaz" },
-  { start: [5, 29], end: [6, 14], runeName: "Othala" },
-  { start: [6, 14], end: [6, 29], runeName: "Dagaz" },
-  { start: [6, 29], end: [7, 14], runeName: "Fehu" },
-  { start: [7, 14], end: [7, 29], runeName: "Uruz" },
-  { start: [7, 29], end: [8, 13], runeName: "Thurisaz" },
-  { start: [8, 13], end: [8, 28], runeName: "Ansuz" },
-  { start: [8, 28], end: [9, 13], runeName: "Raidho" },
-  { start: [9, 13], end: [9, 28], runeName: "Kenaz" },
-  { start: [9, 28], end: [10, 13], runeName: "Gebo" },
-  { start: [10, 13], end: [10, 28], runeName: "Wunjo" },
-  { start: [10, 28], end: [11, 13], runeName: "Hagalaz" },
-  { start: [11, 13], end: [11, 28], runeName: "Nauthiz" },
-  { start: [11, 28], end: [12, 13], runeName: "Isa" },
-  { start: [12, 13], end: [12, 28], runeName: "Jera" },
-  { start: [12, 28], end: [12, 31], runeName: "Eihwaz" },
-  { start: [1, 1], end: [1, 13], runeName: "Eihwaz" },
-];
+import { solarRuneForDate, zodiacForDate, type ZodiacSign } from "./zodiac";
 
 interface HourInterval {
   start: [number, number]; // [saat, dakika]
@@ -90,22 +54,16 @@ export function calculateLifePathRuneIndex(day: number, month: number, year: num
   return total === 0 ? 24 : total;
 }
 
+/**
+ * Solar Doğum Rune'si. The calendar is now the zodiac one: each sign spans two
+ * runes, the initiating one in its first half and the maturing one in its
+ * second, with the Elder Futhark running in sequence from the spring equinox.
+ * The previous table started Fehu in late June, which put every sign against a
+ * rune its own pairing disagreed with. Like that table, this is a modern
+ * interpretation — there is no attested Norse zodiac calendar.
+ */
 export function calculateSolarBirthRune(month: number, day: number): string {
-  const current: [number, number] = [month, day];
-  const isBefore = (a: [number, number], b: [number, number]) =>
-    a[0] < b[0] || (a[0] === b[0] && a[1] < b[1]);
-  const isBeforeOrEqual = (a: [number, number], b: [number, number]) =>
-    a[0] < b[0] || (a[0] === b[0] && a[1] <= b[1]);
-
-  for (const { start, end, runeName } of SOLAR_INTERVALS) {
-    const isYearWrapSegment = start[0] === 12 && start[1] === 28 && end[0] === 12 && end[1] === 31;
-    if (isYearWrapSegment) {
-      if (isBeforeOrEqual(start, current) && isBeforeOrEqual(current, end)) return runeName;
-      continue;
-    }
-    if (isBeforeOrEqual(start, current) && isBefore(current, end)) return runeName;
-  }
-  return "Eihwaz";
+  return solarRuneForDate(month, day);
 }
 
 export function calculateBirthHourRune(hour: number, minute: number): string {
@@ -122,6 +80,8 @@ export interface BirthRuneProfile {
   lifePathRune: Rune;
   solarBirthRune: Rune;
   birthHourRune: Rune;
+  /** The birth date's zodiac sign and the rune pair that governs it. */
+  zodiac: ZodiacSign;
 }
 
 export function calculateBirthProfile(
@@ -143,5 +103,10 @@ export function calculateBirthProfile(
     throw new Error("Rune profili hesaplanamadı.");
   }
 
-  return { lifePathRune, solarBirthRune, birthHourRune };
+  return {
+    lifePathRune,
+    solarBirthRune,
+    birthHourRune,
+    zodiac: zodiacForDate(month, day),
+  };
 }
