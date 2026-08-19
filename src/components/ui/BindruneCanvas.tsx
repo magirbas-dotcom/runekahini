@@ -1,40 +1,52 @@
-import { RUNE_GLYPHS, glyphTransform } from "../../data/runeGlyphs";
+import { RUNE_GLYPHS, glyphTransform, sealLayout } from "../../data/runeGlyphs";
 
-export interface BindruneLayer {
-  name: string;
-  offsetY: number;
-}
+/**
+ * Two ways of composing the chosen runes.
+ *
+ * "bindrune" is the historical one: a ligature, its runes stacked over a single
+ * shared stave so they touch and read as one mark. That overlap is what makes a
+ * bind rune a bind rune rather than runes written in a row.
+ *
+ * "medallion" gives each rune its own circle, packed inside the ring. Legible
+ * at a glance and needs no adjusting, but it is a modern seal, not a ligature.
+ */
+export type TalismanForm = "bindrune" | "medallion";
+
+/** Layer opacity in bind-rune form, so overlapping runes stay tellable apart. */
+const BIND_OPACITY = [1, 0.85, 0.72, 0.6];
 
 interface BindruneCanvasProps {
-  layers: BindruneLayer[];
+  /** Chosen rune names, in selection order. */
+  names: string[];
+  form: TalismanForm;
+  /** Vertical nudge per rune. Bind-rune form only. */
+  offsets: Record<string, number>;
   /** viewBox edge length; the caller owns this so export math stays in sync. */
   size: number;
   centerXFrac: number;
   centerYFrac: number;
+  /** Ring radius as a fraction of `size`. */
+  radiusFrac: number;
   glyphScale: number;
-  opacitySteps: number[];
 }
 
-/**
- * On-screen talisman preview: the ornate ring artwork with the bindrune
- * layered into it. The frame is the same artwork family the PNG export
- * composites onto (square here, 9:16 there) and the glyph geometry — centre,
- * scale, per-layer Y offset, stroke weights, opacity ramp — is identical to
- * what BindruneDesigner hands the exporter, so the preview is a true preview.
- */
 export default function BindruneCanvas({
-  layers,
+  names,
+  form,
+  offsets,
   size,
   centerXFrac,
   centerYFrac,
+  radiusFrac,
   glyphScale,
-  opacitySteps,
 }: BindruneCanvasProps) {
-  // Keyed on which runes are present, deliberately not on their offsets: with
-  // offsets in the key every slider tick remounted the group and replayed the
-  // settle animation, so dragging one layer made the whole bindrune pulse as
-  // though every glyph were moving.
-  const signature = layers.map((l) => l.name).join("|");
+  // Keyed on the composition so the settle animation replays when it changes,
+  // but not on every slider tick.
+  const signature = `${form}:${names.join("|")}`;
+
+  const cx = size * centerXFrac;
+  const cy = size * centerYFrac;
+  const ringRadius = size * radiusFrac;
 
   return (
     <svg
@@ -45,15 +57,15 @@ export default function BindruneCanvas({
       className="mx-auto block h-auto w-full max-w-[400px] rounded-card border border-hairline bg-ink"
       role="img"
       aria-label={
-        layers.length
-          ? `Tılsım önizlemesi: ${layers.map((l) => l.name).join(", ")}`
+        names.length
+          ? `Tılsım önizlemesi: ${names.join(", ")}`
           : "Tılsım önizlemesi — henüz Rune seçilmedi"
       }
     >
       <defs>
         {/* A native SVG blur rather than a CSS filter — the same glow then
-            survives rasterisation into the exported PNG. */}
-        {/* userSpaceOnUse for the same reason as RuneGlyph: a bbox-relative
+            survives rasterisation into the exported PNG.
+            userSpaceOnUse for the same reason as RuneGlyph: a bbox-relative
             region is degenerate for zero-width glyphs such as Isa. */}
         <filter
           id="rune-glow"
@@ -63,7 +75,7 @@ export default function BindruneCanvas({
           width={size * 3}
           height={size * 3}
         >
-          <feGaussianBlur stdDeviation="3.5" result="blur" />
+          <feGaussianBlur stdDeviation="3" result="blur" />
           <feMerge>
             <feMergeNode in="blur" />
             <feMergeNode in="SourceGraphic" />
@@ -73,7 +85,7 @@ export default function BindruneCanvas({
 
       <image href="/bindrune-frame-square.png" x={0} y={0} width={size} height={size} />
 
-      {layers.length === 0 ? (
+      {names.length === 0 ? (
         <text
           x={size / 2}
           y={size / 2}
@@ -85,30 +97,53 @@ export default function BindruneCanvas({
         </text>
       ) : (
         <g key={signature} className="bindrune-settle">
-          {layers.map((layer, i) => {
-            const glyph = RUNE_GLYPHS[layer.name];
+          {names.map((name, i) => {
+            const glyph = RUNE_GLYPHS[name];
             if (!glyph) return null;
-            const cx = size * centerXFrac;
-            const cy = size * centerYFrac + layer.offsetY;
-            const tx = cx - 50 * glyphScale;
-            const ty = cy - 50 * glyphScale;
+
+            if (form === "bindrune") {
+              // Every rune at full size on one centre line; glyphTransform is
+              // asked to align staves rather than bounding boxes, which is what
+              // makes the runes actually bind instead of merely overlap.
+              const y = cy + (offsets[name] ?? 0);
+              return (
+                <g
+                  key={name}
+                  transform={`translate(${cx - 50 * glyphScale}, ${y - 50 * glyphScale}) scale(${glyphScale})`}
+                  opacity={BIND_OPACITY[i] ?? 0.6}
+                  filter="url(#rune-glow)"
+                >
+                  <g transform={glyphTransform(glyph, undefined, true)}>
+                    <path d={glyph.d} fill="#c7a34a" />
+                  </g>
+                </g>
+              );
+            }
+
+            const slot = sealLayout(i, names.length, ringRadius, glyphScale);
+            const x = cx + slot.dx;
+            const y = cy + slot.dy;
             return (
-              <g
-                key={layer.name}
-                transform={`translate(${tx}, ${ty}) scale(${glyphScale})`}
-                opacity={opacitySteps[i] ?? 0.5}
-                filter="url(#rune-glow)"
-              >
-                {/* Filled. The glyph outlines are thin enough that stacking
-                    several on one stave still reads — which is exactly what an
-                    earlier, heavier set could not do.
-                    Colour is --color-gold, the same tone the ring artwork
-                    averages (#be9742 measured), so the mark reads as cut into
-                    the frame rather than laid on top of it. It used to be
-                    #fbbf24 — the same hue but around twice the saturation,
-                    which is why it sat apart from everything around it. */}
-                <g transform={glyphTransform(glyph)}>
-                  <path d={glyph.d} fill="#c7a34a" />
+              <g key={name}>
+                <circle
+                  cx={x}
+                  cy={y}
+                  r={slot.r}
+                  fill="none"
+                  stroke="#c7a34a"
+                  strokeWidth={1.6}
+                  opacity={0.55}
+                />
+                {/* Colour is --color-gold, the tone the ring artwork averages
+                    (#be9742 measured), so the marks read as cut into the frame
+                    rather than laid on top of it. */}
+                <g
+                  transform={`translate(${x - 50 * slot.scale}, ${y - 50 * slot.scale}) scale(${slot.scale})`}
+                  filter="url(#rune-glow)"
+                >
+                  <g transform={glyphTransform(glyph)}>
+                    <path d={glyph.d} fill="#c7a34a" />
+                  </g>
                 </g>
               </g>
             );
