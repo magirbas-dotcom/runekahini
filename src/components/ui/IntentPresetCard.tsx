@@ -1,9 +1,9 @@
 import RuneGlyph from "./RuneGlyph";
 
 interface IntentPresetCardProps {
-  /** The intent itself, e.g. "Koruma" — shown as the heading. */
+  /** The intent itself, e.g. "Koruma" — the small label above the name. */
   category: string;
-  /** The talisman's given name, e.g. "Kuzey Muhafızı". */
+  /** The talisman's given name, e.g. "Kuzey Muhafızı" — the card's headline. */
   name: string;
   /** Three keywords derived from the preset's runes, pre-joined. */
   keywords: string;
@@ -26,7 +26,7 @@ export default function IntentPresetCard({
       type="button"
       onClick={onClick}
       aria-pressed={selected}
-      className={`relative flex h-full flex-col items-start gap-2 rounded-card border p-3.5 text-left transition duration-200 active:scale-[0.98] ${
+      className={`relative flex h-full flex-col items-center gap-1.5 rounded-card border p-3.5 text-center transition duration-200 active:scale-[0.98] ${
         selected
           ? "border-hairline-strong bg-surface-gold/70"
           : "border-hairline bg-surface/60 hover:border-hairline-strong"
@@ -40,23 +40,32 @@ export default function IntentPresetCard({
         />
       )}
 
-      <span className={selected ? "text-gold-light" : "text-parchment-dim"}>
-        <RuneGlyph name={markRune} size={24} glow={false} />
+      <span
+        className={`mb-0.5 ${selected ? "text-gold-light" : "text-parchment-dim"}`}
+      >
+        <RuneGlyph name={markRune} size={22} glow={false} />
       </span>
 
+      {/* Category is a quiet eyebrow: small, spaced, dim. The name is the
+          headline: larger, serif, bright. Separating them by size *and*
+          colour keeps them apart even on an unselected card. */}
       <span
-        className={`text-[13px] font-medium uppercase tracking-[0.12em] ${
-          selected ? "text-gold-light" : "text-parchment"
-        }`}
+        className="min-h-3 text-[10px] uppercase leading-3 tracking-[0.18em] text-gold"
       >
         {category}
       </span>
 
-      <span className="font-serif text-[15px] leading-tight text-parchment">
+      <span
+        className={`min-h-[2.3em] font-serif text-[17px] leading-[1.15] ${
+          selected ? "text-gold-light" : "text-parchment"
+        }`}
+      >
         {name}
       </span>
 
-      <span className="text-[11px] leading-4 text-parchment-dim">{keywords}</span>
+      <span className="min-h-8 text-[11px] leading-4 text-parchment-dim">
+        {keywords}
+      </span>
     </button>
   );
 }

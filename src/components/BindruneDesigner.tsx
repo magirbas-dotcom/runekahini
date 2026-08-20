@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { runes } from "../data/runes";
-import { INTENT_PRESETS } from "../data/runeStrokes";
+import {
+  INTENT_PRESETS,
+  PRESET_GROUPS,
+  type PresetGroupId,
+} from "../data/runeStrokes";
 import { RUNE_GLYPHS, GLYPH_FIT_SCALE, sealLayout } from "../data/runeGlyphs";
 import { buildCustomSynergy } from "../data/synergy";
 import MysticCard from "./ui/MysticCard";
@@ -10,6 +14,7 @@ import RuneChip from "./ui/RuneChip";
 import IntentPresetCard from "./ui/IntentPresetCard";
 import RunePicker from "./ui/RunePicker";
 import BindruneCanvas, { type TalismanForm } from "./ui/BindruneCanvas";
+import TalismanFormCard from "./ui/TalismanFormCard";
 
 const MAX_LAYERS = 4;
 /** Starting vertical spread for a bind rune, so a new stack is not fully
@@ -74,6 +79,11 @@ function presetKeywords(runeNames: string[]): string {
 export default function BindruneDesigner() {
   const [mode, setMode] = useState<"preset" | "custom">("preset");
   const [presetId, setPresetId] = useState(INTENT_PRESETS[0].id);
+  // One intent group open at a time — 33 presets in a flat grid ran far past
+  // the fold on a phone.
+  const [openGroup, setOpenGroup] = useState<PresetGroupId | null>(
+    INTENT_PRESETS[0].group,
+  );
   const [form, setForm] = useState<TalismanForm>("bindrune");
   const [layers, setLayers] = useState<string[]>(INTENT_PRESETS[0].runeNames);
   // Keyed by rune name so a nudge survives adding or removing another rune.
@@ -391,79 +401,58 @@ export default function BindruneDesigner() {
     mode === "preset" && preset ? preset.category : "Kendi niyetin";
 
   const FORMS = [
-    // Written in caps already: the page is lang="tr", so text-transform would
-    // uppercase the "i" to a dotted "İ" on a Norse loanword.
-    { key: "bindrune" as const, label: "BINDRUNE" },
-    { key: "medallion" as const, label: "Madalyon" },
+    // Written in caps already: the page is lang="tr", so both Cinzel's small
+    // caps and text-transform would raise the "i" to a dotted "İ".
+    {
+      key: "bindrune" as const,
+      label: "BINDRUNE",
+      hint: "Ortak gövdede birleşir",
+    },
+    {
+      key: "medallion" as const,
+      label: "MADALYON",
+      hint: "Her Rune kendi dairesinde",
+    },
   ];
 
   const MODES = [
-    { key: "preset" as const, label: "Hazır Niyet" },
-    { key: "custom" as const, label: "Özel" },
+    { key: "preset" as const, label: "Hazır Niyetler" },
+    { key: "custom" as const, label: "Kendi Seçimim" },
   ];
 
   return (
     <div className="flex w-full max-w-md flex-col">
-      <div className="mb-7 text-center">
-        <p className="mb-3 text-xs uppercase tracking-[0.18em] text-gold">
-          Tılsım
-        </p>
-        <h2 className="font-serif text-[28px] leading-tight text-parchment">
-          Kendi tılsımını oluştur.
+      <div className="mb-8 text-center">
+        {/* clamp + nowrap keeps the title on one line down to 320px. */}
+        <h2 className="whitespace-nowrap font-serif text-[clamp(19px,5.8vw,28px)] leading-tight text-parchment">
+          Kendi tılsımını oluştur
         </h2>
         <p className="mx-auto mt-3 max-w-sm text-[15px] leading-6 text-parchment-dim">
           Niyetini seç, Rune'larını birleştir ve sana özel sembolünü oluştur.
         </p>
       </div>
 
-      {/* Which shape the talisman takes. A bind rune is a ligature — its runes
-          overlap on one stave — while the medallion gives each its own circle. */}
+      {/* Which runes go on the talisman. Rendered as tabs attached to the
+          section below, so it reads as "which list am I looking at" rather
+          than as a second option sitting next to the form choice. */}
       <div
-        role="group"
-        aria-label="Tılsım biçimi"
-        className="mb-4 grid grid-cols-2 gap-1 rounded-card border border-hairline bg-surface/60 p-1"
-      >
-        {FORMS.map((f) => (
-          <button
-            key={f.key}
-            type="button"
-            aria-pressed={form === f.key}
-            onClick={() => setForm(f.key)}
-            className={`rounded-[0.7rem] px-3 py-2.5 text-[13px] uppercase tracking-[0.12em] transition duration-200 ${
-              form === f.key
-                ? "bg-surface-gold text-gold-light"
-                : "text-parchment-dim hover:text-parchment"
-            }`}
-          >
-            {f.label}
-          </button>
-        ))}
-      </div>
-      <p className="mb-7 text-center text-[12px] leading-5 text-parchment-dim">
-        {form === "bindrune"
-          ? "Rune'ler ortak bir gövdede üst üste binerek tek bir işaret olur — tarihsel bindrune budur."
-          : "Her Rune kendi dairesinde durur; okunması kolay, modern bir mühür."}
-      </p>
-
-      {/* Mode switch. "Hazır Niyet" re-applies the current intent's runes;
-          "Özel" keeps what's on screen as a starting combination. */}
-      <div
-        role="group"
-        aria-label="Tılsım oluşturma yöntemi"
-        className="mb-8 grid grid-cols-2 gap-1 rounded-card border border-hairline bg-surface/60 p-1"
+        role="tablist"
+        aria-label="Tılsım içeriği"
+        className="mb-6 flex border-b border-hairline"
       >
         {MODES.map((m) => (
           <button
             key={m.key}
             type="button"
-            aria-pressed={mode === m.key}
+            role="tab"
+            aria-selected={mode === m.key}
             onClick={() =>
               m.key === "preset" ? selectPreset(presetId) : setMode("custom")
             }
-            className={`rounded-[0.7rem] px-3 py-2.5 text-[13px] uppercase tracking-[0.12em] transition duration-200 ${
+            className={`-mb-px flex-1 border-b-2 px-3 pb-3 text-[13px] uppercase tracking-[0.12em] transition duration-200 ${
               mode === m.key
-                ? "bg-surface-gold text-gold-light"
-                : "text-parchment-dim hover:text-parchment"
+                ? "border-gold text-gold-light"
+                : "border-transparent text-parchment-dim hover:text-parchment"
             }`}
           >
             {m.label}
@@ -473,24 +462,72 @@ export default function BindruneDesigner() {
 
       {mode === "preset" ? (
         <section className="mb-9">
-          <SectionHeader>Niyet</SectionHeader>
-          <div className="grid grid-cols-2 gap-2.5">
-            {INTENT_PRESETS.map((p) => (
-              <IntentPresetCard
-                key={p.id}
-                category={p.category}
-                name={p.name}
-                keywords={presetKeywords(p.runeNames)}
-                markRune={p.runeNames[0]}
-                selected={presetId === p.id}
-                onClick={() => selectPreset(p.id)}
-              />
-            ))}
-          </div>
+          {PRESET_GROUPS.map((g) => {
+            const items = INTENT_PRESETS.filter((p) => p.group === g.id);
+            const open = openGroup === g.id;
+            const chosen = items.find((p) => p.id === presetId);
+            return (
+              <div
+                key={g.id}
+                className={`mb-2 overflow-hidden rounded-card border transition-colors duration-200 ${
+                  chosen
+                    ? "border-hairline-strong bg-surface-gold/25"
+                    : "border-hairline bg-surface/40"
+                }`}
+              >
+                <button
+                  type="button"
+                  aria-expanded={open}
+                  onClick={() => setOpenGroup(open ? null : g.id)}
+                  className="flex w-full items-center gap-3 px-4 py-3.5 text-left"
+                >
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-[12px] uppercase tracking-[0.16em] text-gold">
+                      {g.label}
+                    </span>
+                    <span className="mt-1 block text-[12px] leading-4 text-parchment-dim">
+                      {items.length} niyet
+                    </span>
+                  </span>
+                  <span
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-hairline-strong bg-surface-gold/60 text-gold-light transition-transform duration-200 ${
+                      open ? "rotate-180" : ""
+                    }`}
+                    aria-hidden="true"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path
+                        d="M4 6.5 L8 10.5 L12 6.5"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </span>
+                </button>
+
+                {open && (
+                  <div className="grid auto-rows-fr grid-cols-2 gap-2.5 px-3 pb-3">
+                    {items.map((p) => (
+                      <IntentPresetCard
+                        key={p.id}
+                        category={p.category}
+                        name={p.name}
+                        keywords={presetKeywords(p.runeNames)}
+                        markRune={p.runeNames[0]}
+                        selected={presetId === p.id}
+                        onClick={() => selectPreset(p.id)}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </section>
       ) : (
         <section className="mb-9">
-          <SectionHeader>Rune'lar</SectionHeader>
           <p className="mb-4 text-center text-[13px] leading-5 text-parchment-dim">
             Tılsımında kullanmak istediğin Rune'ları seç.
           </p>
@@ -530,6 +567,22 @@ export default function BindruneDesigner() {
 
       <section className="mb-9">
         <SectionHeader>Tılsım Önizleme</SectionHeader>
+
+        {/* The form belongs beside the preview: it changes how the talisman is
+            drawn, not what goes on it. Keeping it up with the intent list made
+            the two choices look like alternatives to one another. */}
+        <div className="mb-5 grid grid-cols-2 gap-2.5">
+          {FORMS.map((fm) => (
+            <TalismanFormCard
+              key={fm.key}
+              kind={fm.key}
+              label={fm.label}
+              hint={fm.hint}
+              selected={form === fm.key}
+              onClick={() => setForm(fm.key)}
+            />
+          ))}
+        </div>
 
         <BindruneCanvas
           names={layers}
