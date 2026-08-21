@@ -64,6 +64,22 @@ kullanılır: `ink`, `ink-soft`, `surface`, `surface-raised`, `surface-gold`, `g
 - `src/data/birthRune.ts` — Kader Yolu (numeroloji), Solar (artık `zodiac.ts`'e delege eder), Doğum Saati.
 - `src/data/synergy.ts` — `buildSynergySummary()` (açılımlar), `buildCustomSynergy()` (özel tılsım).
 
+### Kalıcılık
+
+- `src/data/storage.ts` — **cihazda saklamanın tek kapısı.** Bileşenler `localStorage`'a doğrudan
+  dokunmaz. Tutulanlar: doğum bilgisi (`birth`), son 30 okuma (`readings`), son tılsım taslağı
+  (`talisman`). Anahtarlar `runekahini.v1.*` altında sürümlenir.
+- **Hiçbir veri sunucuya gitmez.** Doğum tarihi/saati kişisel veridir; cihazda kaldığı sürece
+  KVKK anlamında veri sorumlusu sıfatı doğmuyor. Üyelik/senkron istenirse bu değişir — o zaman
+  Apple 5.1.1(v) uyarınca uygulama içinden hesap silme de zorunlu hale gelir.
+- Okuma ve yazma **sessizce başarısız olabilir** (gizli sekme, dolu kota) ve olmalı da: kalıcılık
+  bir kolaylık, gereksinim değil. Diskten gelen her kayıt kullanılmadan önce doğrulanır — elle
+  kurcalanmış veya eski şemadan kalmış veri varsayılana düşer, ekranı bozmaz.
+- Kullanıcının kendi yazdığı metin (`ReadingHistory` içindeki soru) **gövde fontuyla** basılır;
+  Cinzel küçük-kapital bastığı için Türkçe "i" harfini noktasız I'ya çeviriyordu.
+- İleride Capacitor'a taşınırsa `@capacitor/preferences`'a geçilmeli (iOS'ta WKWebView
+  localStorage'ını sistem baskı altında temizleyebiliyor). Değişiklik bu tek dosyayla sınırlı kalır.
+
 ### Ekranlar
 
 - `src/components/OraclePage.tsx` — "Rune Okuması": zeminde `<tarih> · GÜNÜN RUNE'Sİ` başlığı + kapalı gelen

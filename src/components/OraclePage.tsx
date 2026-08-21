@@ -9,6 +9,8 @@ import MysticDivider from "./ui/MysticDivider";
 import GoldButton from "./ui/GoldButton";
 import RuneGlyph from "./ui/RuneGlyph";
 import SpreadOptionCard from "./ui/SpreadOptionCard";
+import ReadingHistory from "./ReadingHistory";
+import { appendReading, loadReadings, type StoredReading } from "../data/storage";
 
 type SpreadType = "single" | "three" | "four" | "five";
 
@@ -82,6 +84,9 @@ export default function OraclePage() {
   const [showAlphabet, setShowAlphabet] = useState(false);
   const [showEthics, setShowEthics] = useState(false);
   const [isDrawing, setIsDrawing] = useState(false);
+  // Geçmiş yalnızca ilk render'da diskten okunur; sonrasında kaydetme
+  // fonksiyonunun döndürdüğü liste ile ilerler.
+  const [history, setHistory] = useState<StoredReading[]>(loadReadings);
 
   const count =
     spreadType === "single" ? 1 : spreadType === "three" ? 3 : spreadType === "four" ? 4 : 5;
@@ -96,6 +101,14 @@ export default function OraclePage() {
       setDrawn(result);
       setRevealed(new Array(result.length).fill(false));
       setIsDrawing(false);
+      // Çekilen taşlar açılmadan da kaydedilir: okuma çekildiği anda olmuştur.
+      setHistory(
+        appendReading({
+          spread: SPREAD_TITLES[spreadType],
+          question: question.trim(),
+          runes: result.map((d) => ({ name: d.rune.name, reversed: d.reversed })),
+        }),
+      );
     }, 550);
   }
 
@@ -306,6 +319,13 @@ export default function OraclePage() {
             </GoldButton>
           </div>
         </section>
+      )}
+
+      {drawn.length === 0 && (
+        <ReadingHistory
+          readings={history}
+          onCleared={() => setHistory([])}
+        />
       )}
 
       <button

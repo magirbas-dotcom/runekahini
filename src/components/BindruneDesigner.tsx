@@ -15,6 +15,7 @@ import IntentPresetCard from "./ui/IntentPresetCard";
 import RunePicker from "./ui/RunePicker";
 import BindruneCanvas, { type TalismanForm } from "./ui/BindruneCanvas";
 import TalismanFormCard from "./ui/TalismanFormCard";
+import { loadTalisman, saveTalisman } from "../data/storage";
 
 const MAX_LAYERS = 4;
 /** Starting vertical spread for a bind rune, so a new stack is not fully
@@ -77,21 +78,52 @@ function presetKeywords(runeNames: string[]): string {
 }
 
 export default function BindruneDesigner() {
-  const [mode, setMode] = useState<"preset" | "custom">("preset");
-  const [presetId, setPresetId] = useState(INTENT_PRESETS[0].id);
+  // Son tasarım cihazda saklanıyorsa oradan devam et. Kaydedilen değerler
+  // serbest metin olduğu için hepsi doğrulanır: elle kurcalanmış ya da eski
+  // sürümden kalmış bir kayıt varsayılana düşer, ekranı bozmaz.
+  const restored = useState(() => {
+    const v = loadTalisman();
+    if (!v) return null;
+    const names = v.layers.filter((n) => n in RUNE_GLYPHS).slice(0, MAX_LAYERS);
+    if (names.length === 0) return null;
+    return {
+      mode: v.mode === "custom" ? ("custom" as const) : ("preset" as const),
+      form: v.form === "medallion" ? ("medallion" as const) : ("bindrune" as const),
+      preset: INTENT_PRESETS.find((p) => p.id === v.presetId) ?? INTENT_PRESETS[0],
+      layers: names,
+      offsets: v.offsets ?? {},
+    };
+  })[0];
+  const first = restored?.preset ?? INTENT_PRESETS[0];
+
+  const [mode, setMode] = useState<"preset" | "custom">(restored?.mode ?? "preset");
+  const [presetId, setPresetId] = useState(first.id);
   // One intent group open at a time — 33 presets in a flat grid ran far past
   // the fold on a phone.
-  const [openGroup, setOpenGroup] = useState<PresetGroupId | null>(
-    INTENT_PRESETS[0].group,
-  );
-  const [form, setForm] = useState<TalismanForm>("bindrune");
-  const [layers, setLayers] = useState<string[]>(INTENT_PRESETS[0].runeNames);
+  const [openGroup, setOpenGroup] = useState<PresetGroupId | null>(first.group);
+  const [form, setForm] = useState<TalismanForm>(restored?.form ?? "bindrune");
+  const [layers, setLayers] = useState<string[]>(restored?.layers ?? first.runeNames);
   // Keyed by rune name so a nudge survives adding or removing another rune.
   const [offsets, setOffsets] = useState<Record<string, number>>(() =>
-    Object.fromEntries(
-      INTENT_PRESETS[0].runeNames.map((n, i) => [n, DEFAULT_OFFSETS[i] ?? 0]),
-    ),
+    restored
+      ? Object.fromEntries(
+          restored.layers.map((n, i) => [
+            n,
+            typeof restored.offsets[n] === "number"
+              ? restored.offsets[n]
+              : (DEFAULT_OFFSETS[i] ?? 0),
+          ]),
+        )
+      : Object.fromEntries(
+          first.runeNames.map((n, i) => [n, DEFAULT_OFFSETS[i] ?? 0]),
+        ),
   );
+
+  // Her değişiklikte yaz. Kayıt küçük ve nadir değişiyor; ayrı bir
+  // "kaydet" adımı istemeye değmez.
+  useEffect(() => {
+    saveTalisman({ form, mode, presetId, layers, offsets });
+  }, [form, mode, presetId, layers, offsets]);
 
   const preset = INTENT_PRESETS.find((p) => p.id === presetId);
 

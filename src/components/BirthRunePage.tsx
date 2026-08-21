@@ -6,13 +6,23 @@ import MysticCard from "./ui/MysticCard";
 import SectionHeader from "./ui/SectionHeader";
 import GoldButton from "./ui/GoldButton";
 import MysticInput from "./ui/MysticInput";
+import {
+  clearBirthInput,
+  loadBirthInput,
+  saveBirthInput,
+} from "../data/storage";
 
 export default function BirthRunePage() {
-  const [day, setDay] = useState("");
-  const [month, setMonth] = useState("");
-  const [year, setYear] = useState("");
-  const [hour, setHour] = useState("");
-  const [minute, setMinute] = useState("");
+  // Doğum bilgisi cihazda saklanıyorsa formu onunla aç — kullanıcı her
+  // gelişinde aynı tarihi yeniden yazmasın. useState'in lazy başlatıcısı,
+  // okumanın yalnızca ilk render'da yapılmasını sağlar.
+  const saved = useState(loadBirthInput)[0];
+  const [day, setDay] = useState(saved?.day ?? "");
+  const [month, setMonth] = useState(saved?.month ?? "");
+  const [year, setYear] = useState(saved?.year ?? "");
+  const [hour, setHour] = useState(saved?.hour ?? "");
+  const [minute, setMinute] = useState(saved?.minute ?? "");
+  const [remembered, setRemembered] = useState(saved !== null);
   const [profile, setProfile] = useState<BirthRuneProfile | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -37,7 +47,19 @@ export default function BirthRunePage() {
       return;
     }
 
+    saveBirthInput({ day, month, year, hour, minute });
+    setRemembered(true);
     setProfile(calculateBirthProfile(d, m, y, h, min));
+  }
+
+  function forget() {
+    clearBirthInput();
+    setRemembered(false);
+    setDay("");
+    setMonth("");
+    setYear("");
+    setHour("");
+    setMinute("");
   }
 
   function reset() {
@@ -185,6 +207,19 @@ export default function BirthRunePage() {
             Doğum Rune'mi Hesapla
           </GoldButton>
         </form>
+
+        {remembered && (
+          <p className="mt-4 text-center text-[12px] leading-5 text-parchment-dim">
+            Doğum bilgin bu cihazda saklanıyor.{" "}
+            <button
+              type="button"
+              onClick={forget}
+              className="text-gold underline underline-offset-2"
+            >
+              Unut
+            </button>
+          </p>
+        )}
 
         <p className="mt-5 text-center text-[13px] leading-6 text-parchment-dim">
           Bu hesaplama modern numerolojik bir yorumdur; tarihsel bir Viking
