@@ -364,5 +364,15 @@ Yeni içerik eklerken bu çizgi korunur: eşleşme/sistem alınır, iddialı tar
 3. **Kullanıcı onayı** → `git push origin main` → Vercel otomatik deploy.
 4. Bundle hash karşılaştırması ile canlı doğrulama.
 
+**askrune.app (2026-10-01):**
+- **Domain:** Kullanıcı Cloudflare'den aldı.
+- **Yayın:** Site Cloudflare Workers'ın statik varlık özelliğiyle yayınlanıyor. `wrangler.jsonc` (`assets.directory`
+  `./dist`) ve GitHub bağlantısıyla çalışıyor. Cloudflare'de build komutu `npm run build`, deploy komutu
+  `npx wrangler deploy`.
+- **Önbellek:** `public/_headers`, `sw.js`, `index.html` ve manifestin her açılışta yeniden doğrulanmasını
+  sağlar. Hash'li `assets/` dosyaları kalıcı önbelleğe alınır.
+- **Vercel:** Geçiş süresince paralel çalışır. Tarayıcı verisi (geçmiş, doğum bilgisi, tılsım) adrese bağlı,
+  yeni adrese kendiliğinden geçmez.
+
 Not: service worker `prompt` modunda olduğu için mevcut kullanıcılar yeni sürümü ancak bildirimden sonra
 görür; telefonda test ederken uygulamayı kapatıp açmak gerekebilir.

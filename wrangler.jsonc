@@ -1,0 +1,14 @@
+// Cloudflare Workers (static assets) — serves the built PWA at askrune.app.
+// Cloudflare builds from GitHub: build command `npm run build`, deploy command
+// `npx wrangler deploy`. No Worker script: the site is the `dist` folder.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "runekahini",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    // The app has no client-side routes, but an unknown path should still
+    // land on the app rather than a bare 404.
+    "not_found_handling": "single-page-application"
+  }
+}
