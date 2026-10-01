@@ -18,6 +18,8 @@ interface CarvedRuneProps {
   light?: Light;
   /** Leave the stone blank (face-down). */
   blank?: boolean;
+  /** Thumbnail mode — see GildedCut. For lists and grids. */
+  lite?: boolean;
   className?: string;
 }
 
@@ -38,6 +40,7 @@ export default function CarvedRune({
   depth = 1.6,
   light = DEFAULT_LIGHT,
   blank = false,
+  lite = false,
   className = "",
 }: CarvedRuneProps) {
   const bind = runes.length > 1;
@@ -73,7 +76,7 @@ export default function CarvedRune({
       <image href={stone} x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMid meet" />
       {!blank && (
         <g transform={`translate(${offset} ${offset}) scale(${face})`}>
-          <GildedCut shapes={shapes} light={light} depth={depth} outline={0.7} />
+          <GildedCut shapes={shapes} light={light} depth={depth} outline={0.7} lite={lite} />
         </g>
       )}
     </svg>

@@ -45,7 +45,7 @@ kullanılır: `ink`, `ink-soft`, `surface`, `surface-raised`, `surface-gold`, `g
   dekoratif/pasif öğelerde. Gövde metni `parchment` veya `parchment-dim` (8.48:1).
 - Gövde metni tabanı 16/26 (`.prose-reading`).
 - Ortak primitifler `src/components/ui/` altında: `MysticCard`, `SectionHeader`, `GoldButton`, `RuneChip`,
-  `MysticDivider`, `MysticInput`, `SpreadOptionCard`, `RuneGlyph`, `ZodiacGlyph`, `RuneEmblem`,
+  `MysticDivider`, `MysticInput`, `SpreadOptionCard`, `ZodiacGlyph`, `OrnateHeader`, `RelicCorners`,
   `IntentPresetCard`, `RunePicker`, `CarvedRune`, `GildedCut`, `TalismanMedallion`, `Talisman3D`. Yeni kart/buton/etiket yazmadan önce buraya bakın.
 - Animasyonlar daima `prefers-reduced-motion: reduce` ile kapatılabilir olmalı.
 
@@ -155,6 +155,34 @@ gerektiriyor (Higgsfield Seedance, 6 sn döngü ~42 kredi, kullanıcı onayı ge
   madalyon. Madalyon SVG'si uygulamadan serileştirilip sharp/librsvg ile çizildi, rune ikon için %35
   büyütüldü. Ayrı `icon-maskable-512.png` var (içerik %80 güvenli alanda). Önizleme ve ara render'lar
   `../rune-kahini-mobile/design/icons/` altında.
+
+### Eser arayüzü: kontroller objelerle aynı dünyadan (2026-10-01)
+
+Kullanıcı: kutular, giriş ve seçim alanları yeni tasarıma uymuyordu, "jenerik uygulama arayüzü" duruyordu. Önce
+Rune Okuması'nda prototip yapıldı, kullanıcı geri bildirimleriyle ayarlandı, sonra tüm sayfalara yayıldı.
+Stiller `index.css` içinde "Relic UI" bölümünde.
+
+- **`.relic-panel`** (`MysticCard ornate`): oyma taş levha, eğim + derinlik gölgesi + `RelicCorners` altın köşe
+  süsleri. **Ekran başına yalnızca bir ana panel** için: okuma formu, doğum formu.
+- **`.relic-card`**: `MysticCard`'ın varsayılanı. Aynı levha, köşe süsü yok. `tone="gold"` → `.is-gold`.
+- **`.altar-option`**: seçim yuvaları (açılım, niyet, form, malzeme, rune seçici, burç rune'ları). Yuvanın içi
+  **siyah değil, ışık almış sıcak taş**. Kullanıcı ilk sürümü "çok karanlık, anlaşılmaz" buldu. Renk diyara göre
+  `--altar-hi/-mid/-lit` değişkenlerinden gelir: ateşte kahve, kutupta buz mavisi, ormanda zeytin. Seçilince
+  bütün yuva ışır: yaldızlı çift çerçeve, nefes alan ışık, `.altar-stone` parlaması, tek seferlik
+  `.altar-sweep`. Seçili etiket **aynı yazı tipi ve boyutta, düz altın + hafif ışıma** kalır. Cinzel'e geçip
+  degradeyle boyamak yazıyı kenarlara dayadı ve küçük boyutta okunmaz yaptı.
+- **`OrnateHeader`**: elmas uçlu çizgiler arasında yaldızlı Cinzel başlık. `lg` (19 px) panel içi ana başlıklar,
+  `md` (16 px) `SectionHeader`'ın ortalı varyantı. Kullanıcı ilk 15 px'i küçük buldu.
+- **`.inscription`** (soru alanı, `MysticInput`): içe gömülü yazı tableti, ince altın çerçeve, odakta altın
+  ışıma. **Satır çizgisi yok.** İki kez denendi, ikisinde de kullanıcı beğenmedi. İlk "kutusuz yazıt satırı"
+  ise alan olarak fark edilmiyordu.
+- **`.plaque`** (`GoldButton` primary): varak altın plaket, oyulmuş Cinzel yazı, 1,08 rem, tek satır
+  (`nowrap`, dar harf aralığı). "Taşları Çek" 14 px'te okunmuyordu.
+- **`.relic-range`**: oyma yarık + altın sikke tutamak kaydırma çubuğu.
+- **Küçük rune'lar = `CarvedRune lite`** (filtresiz yaldız + kontur). Listelerde ve ızgaralarda kullanılır:
+  rune seçici (24 adet), niyet kartları, geçmiş, rehber, açılım minyatürleri. Mobilde 24 filtreli SVG kaydırmayı
+  ağırlaştırır. Büyük tekil taşlar tam `CarvedRune`. `RuneGlyph` ve `RuneEmblem` artık kullanılmadığı için
+  silindi.
 
 ## Mimari / önemli dosyalar
 

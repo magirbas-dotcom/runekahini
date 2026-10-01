@@ -2,7 +2,8 @@ import { runes } from "../data/runes";
 import type { ZodiacSign } from "../data/zodiac";
 import MysticCard from "./ui/MysticCard";
 import MysticDivider from "./ui/MysticDivider";
-import RuneGlyph from "./ui/RuneGlyph";
+import CarvedRune from "./ui/CarvedRune";
+import { REALMS } from "../theme/realms";
 import ZodiacGlyph from "./ui/ZodiacGlyph";
 
 interface ZodiacCardProps {
@@ -44,21 +45,13 @@ export default function ZodiacCard({ sign, activeRuneName }: ZodiacCardProps) {
           return (
             <div
               key={name}
-              className={`rounded-lg border p-3.5 ${
-                isActive
-                  ? "border-hairline-strong bg-surface-gold/70"
-                  : "border-hairline bg-surface/60"
-              }`}
+              className={`altar-option p-3.5 ${isActive ? "is-selected" : ""}`}
             >
               <p className="text-[10px] uppercase tracking-[0.14em] text-gold">
                 {ROLE_LABELS[i]}
               </p>
-              <span
-                className={`mx-auto my-2 block w-fit ${
-                  isActive ? "text-gold-light" : "text-parchment-dim"
-                }`}
-              >
-                <RuneGlyph name={name} size={34} glow={isActive} />
+              <span className="altar-stone mx-auto my-2 block w-fit">
+                <CarvedRune stone={REALMS.aurora.stone} runes={[name]} size={46} lite />
               </span>
               <p className="font-serif text-lg leading-tight text-parchment">
                 {name}

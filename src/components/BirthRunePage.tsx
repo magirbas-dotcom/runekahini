@@ -4,6 +4,7 @@ import BirthRuneCard from "./BirthRuneCard";
 import ZodiacCard from "./ZodiacCard";
 import MysticCard from "./ui/MysticCard";
 import SectionHeader from "./ui/SectionHeader";
+import OrnateHeader from "./ui/OrnateHeader";
 import GoldButton from "./ui/GoldButton";
 import MysticInput from "./ui/MysticInput";
 import {
@@ -147,10 +148,10 @@ export default function BirthRunePage() {
         </p>
       </div>
 
-      <MysticCard grain className="w-full max-w-md p-6">
+      <MysticCard ornate grain className="w-full max-w-md px-6 py-7">
         <form onSubmit={handleCalculate}>
-          <SectionHeader align="left">Doğum Tarihi</SectionHeader>
-          <div className="mb-6 grid grid-cols-3 gap-2.5">
+          <OrnateHeader>Doğum Tarihi</OrnateHeader>
+          <div className="mb-7 grid grid-cols-3 gap-2.5">
             <MysticInput
               type="number"
               inputMode="numeric"
@@ -177,8 +178,9 @@ export default function BirthRunePage() {
             />
           </div>
 
-          <SectionHeader align="left">Doğum Saati (isteğe bağlı)</SectionHeader>
-          <div className="mb-6 grid grid-cols-2 gap-2.5">
+          <OrnateHeader className="mb-2">Doğum Saati</OrnateHeader>
+          <p className="mb-3 text-center text-xs text-parchment-dim">İsteğe bağlı</p>
+          <div className="mb-7 grid grid-cols-2 gap-2.5">
             <MysticInput
               type="number"
               inputMode="numeric"

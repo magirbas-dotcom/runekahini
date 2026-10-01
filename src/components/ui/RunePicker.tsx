@@ -1,5 +1,6 @@
 import { runes } from "../../data/runes";
-import RuneGlyph from "./RuneGlyph";
+import CarvedRune from "./CarvedRune";
+import { REALMS } from "../../theme/realms";
 
 interface RunePickerProps {
   /** Names of currently chosen runes, in selection order. */
@@ -10,9 +11,9 @@ interface RunePickerProps {
 }
 
 /**
- * The 24 Elder Futhark runes as a pickable grid. Glyphs are drawn without a
- * glow filter here — 24 simultaneous SVG filters is a real scroll cost on
- * mobile, and the glow belongs on the talisman itself, not the picker.
+ * The 24 Elder Futhark runes as a pickable grid of small carved stones. The
+ * stones use CarvedRune's lite mode (no filter) — 24 simultaneous SVG filters
+ * is a real scroll cost on mobile.
  */
 export default function RunePicker({ selected, onToggle, max }: RunePickerProps) {
   const atLimit = selected.length >= max;
@@ -29,10 +30,8 @@ export default function RunePicker({ selected, onToggle, max }: RunePickerProps)
             onClick={() => onToggle(r.name)}
             disabled={disabled}
             aria-pressed={active}
-            className={`relative flex min-h-[68px] flex-col items-center justify-center gap-1 rounded-lg border p-2 transition duration-150 active:scale-[0.98] ${
-              active
-                ? "border-hairline-strong bg-surface-gold/70 text-gold-light"
-                : "border-hairline bg-surface/60 text-parchment-dim hover:border-hairline-strong hover:text-parchment disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-hairline"
+            className={`altar-option relative flex min-h-[74px] flex-col items-center justify-center gap-1 p-2 active:scale-[0.98] ${
+              active ? "is-selected" : ""
             }`}
           >
             {active && (
@@ -41,8 +40,10 @@ export default function RunePicker({ selected, onToggle, max }: RunePickerProps)
                 aria-hidden="true"
               />
             )}
-            <RuneGlyph name={r.name} size={26} glow={false} />
-            <span className="text-[10px] leading-none">{r.name}</span>
+            <span className="altar-stone block">
+              <CarvedRune stone={REALMS.forest.stone} runes={[r.name]} size={34} lite />
+            </span>
+            <span className="altar-label text-[10px] leading-none">{r.name}</span>
           </button>
         );
       })}

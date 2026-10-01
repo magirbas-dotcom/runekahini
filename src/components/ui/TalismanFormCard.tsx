@@ -49,13 +49,12 @@ export default function TalismanFormCard({
       type="button"
       onClick={onClick}
       aria-pressed={selected}
-      className={`flex flex-col items-center gap-2 rounded-card border p-3.5 text-center transition duration-200 active:scale-[0.98] ${
-        selected
-          ? "border-hairline-strong bg-surface-gold/70"
-          : "border-hairline bg-surface/60 hover:border-hairline-strong"
+      className={`altar-option relative flex flex-col items-center gap-2 overflow-hidden p-3.5 text-center active:scale-[0.98] ${
+        selected ? "is-selected" : ""
       }`}
     >
-      <span className={selected ? "text-gold-light" : "text-parchment-dim"}>
+      {selected && <span className="altar-sweep" aria-hidden="true" />}
+      <span className={selected ? "text-gold-light" : "text-parchment"}>
         <FormDiagram kind={kind} />
       </span>
       <span

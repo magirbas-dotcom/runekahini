@@ -5,9 +5,11 @@ import RuneStone from "./RuneStone";
 import RuneDetail from "./RuneDetail";
 import MysticCard from "./ui/MysticCard";
 import SectionHeader from "./ui/SectionHeader";
+import OrnateHeader from "./ui/OrnateHeader";
 import MysticDivider from "./ui/MysticDivider";
 import GoldButton from "./ui/GoldButton";
-import RuneGlyph from "./ui/RuneGlyph";
+import CarvedRune from "./ui/CarvedRune";
+import { REALMS } from "../theme/realms";
 import SpreadOptionCard from "./ui/SpreadOptionCard";
 import ReadingHistory from "./ReadingHistory";
 import { appendReading, loadReadings, type StoredReading } from "../data/storage";
@@ -145,13 +147,13 @@ export default function OraclePage() {
       {drawn.length === 0 && <DailyRune />}
 
       {drawn.length === 0 ? (
-        <MysticCard grain className="w-full max-w-md p-6">
+        <MysticCard ornate grain className="w-full max-w-md px-6 py-7">
           {/* Spread choice comes first: it's the primary decision and, on a
               phone, used to sit far enough below the optional question field
               that it required scrolling before the draw button was even
               visible. */}
-          <SectionHeader align="left">Açılım Seçimi</SectionHeader>
-          <div className="mb-6 grid grid-cols-2 gap-2.5">
+          <OrnateHeader>Açılım Seçimi</OrnateHeader>
+          <div className="mb-7 grid grid-cols-2 gap-3">
             {(Object.keys(SPREAD_TITLES) as SpreadType[]).map((type) => (
               <SpreadOptionCard
                 key={type}
@@ -166,14 +168,15 @@ export default function OraclePage() {
           {/* "Sorun" read as the Turkish word for "problem" rather than as
               "your question" — renamed to an imperative phrase, matching the
               "Niyetini Seç" tone used in the Tılsım screen. */}
-          <SectionHeader align="left">Bir Soru Sor (İsteğe Bağlı)</SectionHeader>
+          <OrnateHeader className="mb-2">Bir Soru Sor</OrnateHeader>
+          <p className="mb-2 text-center text-xs text-parchment-dim">İsteğe bağlı</p>
           <textarea
             id="question"
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
             placeholder="Örn. Bu dönemde neye odaklanmalıyım?"
             rows={3}
-            className="mb-6 w-full resize-none rounded-lg border border-hairline bg-ink-soft/70 p-3.5 text-[15px] leading-6 text-parchment transition placeholder:text-parchment-mute focus:border-hairline-strong focus:outline-none"
+            className="inscription mb-7"
           />
 
           <GoldButton
@@ -380,11 +383,15 @@ export default function OraclePage() {
                   .map((r) => (
                     <div
                       key={r.id}
-                      className="flex items-center gap-3.5 rounded-lg border border-hairline bg-surface/70 p-3.5"
+                      className="relic-card flex items-center gap-3.5 p-3"
                     >
-                      <span className="shrink-0 text-gold">
-                        <RuneGlyph name={r.name} size={30} glow={false} />
-                      </span>
+                      <CarvedRune
+                        stone={REALMS.fire.stone}
+                        runes={[r.name]}
+                        size={46}
+                        lite
+                        className="shrink-0 drop-shadow-[0_3px_5px_rgba(0,0,0,0.6)]"
+                      />
                       <div className="min-w-0">
                         <p className="text-[15px] text-parchment">
                           {r.name}{" "}

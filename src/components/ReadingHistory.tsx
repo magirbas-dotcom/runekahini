@@ -2,7 +2,8 @@ import { useState } from "react";
 import { clearReadings, type StoredReading } from "../data/storage";
 import MysticCard from "./ui/MysticCard";
 import SectionHeader from "./ui/SectionHeader";
-import RuneGlyph from "./ui/RuneGlyph";
+import CarvedRune from "./ui/CarvedRune";
+import { REALMS } from "../theme/realms";
 
 interface ReadingHistoryProps {
   readings: StoredReading[];
@@ -100,14 +101,14 @@ export default function ReadingHistory({
                         key={`${r.id}-${i}`}
                         className="flex items-center gap-1.5 text-[12px] text-parchment-dim"
                       >
-                        <span className="text-gold-light">
-                          <RuneGlyph
-                            name={rn.name}
-                            size={18}
-                            reversed={rn.reversed}
-                            glow={false}
-                          />
-                        </span>
+                        <CarvedRune
+                          stone={REALMS.fire.stone}
+                          runes={[rn.name]}
+                          reversed={rn.reversed}
+                          size={28}
+                          lite
+                          className="drop-shadow-[0_2px_3px_rgba(0,0,0,0.6)]"
+                        />
                         {rn.name}
                         {rn.reversed && <span className="text-gold">(T)</span>}
                       </span>

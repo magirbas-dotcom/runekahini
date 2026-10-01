@@ -31,6 +31,12 @@ interface GildedCutProps {
   depth: number;
   /** Outline growth around the cut, in user units. */
   outline: number;
+  /**
+   * Thumbnail mode: gold leaf and outline only — no inner-shadow filter and no
+   * sheen. At list sizes the shading is invisible anyway, and a grid of 24
+   * filtered SVGs is a real scroll cost on phones.
+   */
+  lite?: boolean;
 }
 
 /**
@@ -48,7 +54,7 @@ interface GildedCutProps {
  * one side of the shape, then tinted. Everything is native SVG, so the same
  * markup rasterises unchanged when the talisman is exported as a PNG.
  */
-export default function GildedCut({ shapes, light, depth, outline }: GildedCutProps) {
+export default function GildedCut({ shapes, light, depth, outline, lite = false }: GildedCutProps) {
   const id = useId();
   const shade = { dx: -light.x * depth, dy: -light.y * depth };
   const lit = { dx: light.x * depth * 0.7, dy: light.y * depth * 0.7 };
@@ -95,14 +101,22 @@ export default function GildedCut({ shapes, light, depth, outline }: GildedCutPr
         </filter>
       </defs>
 
-      <g transform={`translate(${lip.dx} ${lip.dy})`} opacity={0.22}>
-        {shapes({ color: "#fff4e4", extra: 0 })}
-      </g>
+      {!lite && (
+        <g transform={`translate(${lip.dx} ${lip.dy})`} opacity={0.22}>
+          {shapes({ color: "#fff4e4", extra: 0 })}
+        </g>
+      )}
       {shapes({ color: "rgba(0,0,0,0.6)", extra: outline })}
-      <g filter={`url(#${id}-carve)`}>{shapes({ color: `url(#${id}-gold)`, extra: 0 })}</g>
-      <g style={{ mixBlendMode: "screen" }} opacity={0.6}>
-        {shapes({ color: `url(#${id}-sheen)`, extra: 0 })}
-      </g>
+      {lite ? (
+        shapes({ color: `url(#${id}-gold)`, extra: 0 })
+      ) : (
+        <>
+          <g filter={`url(#${id}-carve)`}>{shapes({ color: `url(#${id}-gold)`, extra: 0 })}</g>
+          <g style={{ mixBlendMode: "screen" }} opacity={0.6}>
+            {shapes({ color: `url(#${id}-sheen)`, extra: 0 })}
+          </g>
+        </>
+      )}
     </>
   );
 }

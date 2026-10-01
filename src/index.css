@@ -52,6 +52,10 @@ body {
  * accent without a component knowing. Surfaces turn translucent so the
  * scene shows through cards. Gilded rune carvings stay gold everywhere. */
 .realm-fire {
+  /* Altar recess light: candle-warm brown. */
+  --altar-hi: 150, 105, 55;
+  --altar-mid: 70, 48, 26;
+  --altar-lit: 255, 196, 110;
   --color-gold: #e5b45c;
   --color-gold-light: #f0c46a;
   --color-surface: rgba(17, 14, 10, 0.82);
@@ -61,6 +65,10 @@ body {
   --color-hairline-strong: rgba(229, 180, 92, 0.55);
 }
 .realm-aurora {
+  /* Altar recess light: moonlit frost blue. */
+  --altar-hi: 70, 115, 140;
+  --altar-mid: 26, 44, 62;
+  --altar-lit: 140, 240, 220;
   --color-gold: #7ee8d2;
   --color-gold-light: #c9fbef;
   --color-gold-dark: #2f8f7d;
@@ -71,6 +79,10 @@ body {
   --color-hairline-strong: rgba(126, 232, 210, 0.55);
 }
 .realm-forest {
+  /* Altar recess light: sun through leaves, olive. */
+  --altar-hi: 120, 125, 60;
+  --altar-mid: 44, 52, 24;
+  --altar-lit: 240, 225, 130;
   --color-gold: #e2cf7a;
   --color-gold-light: #f3e39a;
   --color-gold-dark: #8a7a35;
@@ -360,6 +372,255 @@ input[type="number"]::-webkit-inner-spin-button {
 
 .bindrune-settle {
   animation: bindrune-settle 240ms ease-out;
+}
+
+/* ── Relic UI: controls made of the same stuff as the objects ──────────
+ * Panels read as carved slate, selections as gilded frames, fields as lines
+ * inscribed in stone, the main action as a gold-leaf plaque. Colours come from
+ * the realm variables, so each tab keeps its own accent. */
+
+/* A carved slate panel: dark stone, a bevel lit from above, depth below. */
+.relic-panel {
+  position: relative;
+  border: 1px solid color-mix(in oklab, var(--color-gold) 26%, transparent);
+  border-radius: 1.1rem;
+  background:
+    radial-gradient(120% 70% at 50% 0%, rgba(255, 236, 190, 0.06), transparent 60%),
+    linear-gradient(180deg, rgba(22, 19, 15, 0.9), rgba(10, 9, 7, 0.92));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 236, 190, 0.12),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.7),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.35),
+    inset 0 0 40px rgba(0, 0, 0, 0.45),
+    0 18px 40px rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(3px);
+}
+.relic-panel.grain::after {
+  border-radius: inherit;
+}
+/* Gold corner brackets, drawn by RelicCorners. */
+.relic-corner {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  color: var(--color-gold);
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+/* A choice on the altar: a recess in warm, candle-lit stone — not black, so
+ * the dark basalt stones stand out against it. Chosen, the whole recess lights
+ * up: gilt double frame, warm light breathing inside, every stone glowing, a
+ * sweep of light, gold lettering. */
+.altar-option {
+  position: relative;
+  border-radius: 0.9rem;
+  color: var(--color-parchment-dim);
+  background:
+    radial-gradient(85% 75% at 50% 38%, rgba(var(--altar-hi, 150, 105, 55), 0.42), rgba(var(--altar-mid, 70, 48, 26), 0.38) 55%, rgba(12, 10, 8, 0.55) 100%);
+  box-shadow:
+    inset 0 2px 8px rgba(0, 0, 0, 0.55),
+    inset 0 -1px 0 rgba(255, 236, 190, 0.08),
+    inset 0 0 0 1px rgba(255, 220, 160, 0.1);
+  transition: background 0.35s ease, box-shadow 0.35s ease, color 0.35s ease;
+}
+.altar-option:hover {
+  color: var(--color-parchment);
+  background:
+    radial-gradient(85% 75% at 50% 38%, rgba(var(--altar-hi, 150, 105, 55), 0.55), rgba(var(--altar-mid, 70, 48, 26), 0.45) 55%, rgba(12, 10, 8, 0.55) 100%);
+}
+.altar-stone {
+  transition: filter 0.35s ease, transform 0.35s ease;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.75));
+}
+.altar-option.is-selected {
+  color: var(--color-gold-light);
+  background:
+    radial-gradient(85% 75% at 50% 40%, rgba(var(--altar-lit, 255, 196, 110), 0.5), rgba(var(--altar-hi, 150, 105, 55), 0.42) 50%, rgba(var(--altar-mid, 40, 26, 12), 0.6) 100%);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in oklab, var(--color-gold) 90%, transparent),
+    inset 0 0 0 4px rgba(0, 0, 0, 0.3),
+    inset 0 0 0 5px color-mix(in oklab, var(--color-gold) 45%, transparent),
+    inset 0 0 26px rgba(var(--altar-lit, 255, 190, 100), 0.32),
+    0 0 26px color-mix(in oklab, var(--color-gold) 40%, transparent),
+    0 0 60px color-mix(in oklab, var(--color-gold) 15%, transparent);
+  animation: altar-breathe 3.2s ease-in-out infinite;
+}
+.altar-option.is-selected .altar-stone {
+  filter: drop-shadow(0 0 6px rgba(var(--altar-lit, 255, 205, 120), 0.85)) drop-shadow(0 2px 2px rgba(0, 0, 0, 0.6));
+  transform: translateY(-1px) scale(1.06);
+}
+.altar-option.is-selected .altar-stone-lead {
+  filter: brightness(1.15);
+}
+/* Same face and size as unselected, so the label never reflows into the
+ * frame; a solid bright gold with a soft glow instead of a gradient, which
+ * was hard to read at this size. */
+.altar-option.is-selected .altar-label {
+  color: var(--color-gold-light);
+  font-weight: 600;
+  text-shadow:
+    0 0 10px rgba(var(--altar-lit, 255, 200, 110), 0.55),
+    0 1px 1px rgba(0, 0, 0, 0.6);
+}
+@keyframes altar-breathe {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.12); }
+}
+.altar-option:disabled {
+  /* Dimmed but still legible: these are runes you could pick after removing one. */
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+/* One band of light across the recess at the moment it is chosen. */
+.altar-sweep {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(110deg, transparent 35%, rgba(255, 240, 200, 0.45) 50%, transparent 65%);
+  background-size: 260% 100%;
+  mix-blend-mode: screen;
+  animation: medallion-sweep 1s ease-out forwards;
+}
+
+/* Ordinary content cards in the relic language: the slate bevel without the
+ * corner fittings, which stay reserved for a screen's one main panel. */
+.relic-card {
+  position: relative;
+  border: 1px solid color-mix(in oklab, var(--color-gold) 22%, transparent);
+  border-radius: 1rem;
+  background:
+    radial-gradient(120% 60% at 50% 0%, rgba(255, 236, 190, 0.05), transparent 60%),
+    linear-gradient(180deg, rgba(20, 17, 13, 0.86), rgba(10, 9, 7, 0.9));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 236, 190, 0.1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.65),
+    0 10px 28px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(3px);
+}
+.relic-card.is-gold {
+  border-color: color-mix(in oklab, var(--color-gold) 45%, transparent);
+  background:
+    radial-gradient(110% 70% at 50% 0%, color-mix(in oklab, var(--color-gold) 14%, transparent), transparent 65%),
+    linear-gradient(180deg, rgba(24, 20, 13, 0.88), rgba(10, 9, 7, 0.92));
+}
+
+/* Slider: an engraved groove with a small gold coin for a thumb. */
+.relic-range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 22px;
+  background: transparent;
+}
+.relic-range::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.55);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.8), 0 1px 0 rgba(255, 236, 190, 0.1);
+}
+.relic-range::-moz-range-track {
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.55);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.8), 0 1px 0 rgba(255, 236, 190, 0.1);
+}
+.relic-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  margin-top: -8px;
+  border-radius: 50%;
+  border: 1px solid #6b4a12;
+  background: radial-gradient(circle at 35% 30%, #fff1bd, #e2bd62 40%, #a77a24 85%);
+  box-shadow: inset 0 0 0 3px rgba(255, 236, 180, 0.25), 0 2px 6px rgba(0, 0, 0, 0.6);
+}
+.relic-range::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid #6b4a12;
+  background: radial-gradient(circle at 35% 30%, #fff1bd, #e2bd62 40%, #a77a24 85%);
+  box-shadow: inset 0 0 0 3px rgba(255, 236, 180, 0.25), 0 2px 6px rgba(0, 0, 0, 0.6);
+}
+.relic-range:disabled {
+  opacity: 0.35;
+}
+
+/* A writing tablet sunk into the slate: a slightly lighter recessed panel
+ * with a fine gilt edge, so it plainly reads as a place to write. No ruled
+ * lines — tried twice (bare, then inside the tablet) and both looked busy.
+ * Focus lights the edge in gold. */
+.inscription {
+  width: 100%;
+  resize: none;
+  border: 1px solid color-mix(in oklab, var(--color-gold) 38%, transparent);
+  border-radius: 0.75rem;
+  padding: 0.75rem 0.95rem;
+  color: var(--color-parchment);
+  font-size: 16px;
+  line-height: 26px;
+  background:
+    linear-gradient(180deg, rgba(255, 236, 190, 0.07), rgba(255, 236, 190, 0.03)),
+    rgba(0, 0, 0, 0.25);
+  box-shadow:
+    inset 0 2px 8px rgba(0, 0, 0, 0.6),
+    inset 0 -1px 0 rgba(255, 236, 190, 0.08),
+    0 1px 0 rgba(255, 236, 190, 0.06);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.inscription::placeholder {
+  color: var(--color-parchment-dim);
+  font-style: italic;
+}
+.inscription:focus {
+  outline: none;
+  border-color: color-mix(in oklab, var(--color-gold) 90%, transparent);
+  box-shadow:
+    inset 0 2px 8px rgba(0, 0, 0, 0.6),
+    0 0 0 3px color-mix(in oklab, var(--color-gold) 18%, transparent),
+    0 0 18px color-mix(in oklab, var(--color-gold) 25%, transparent);
+}
+
+/* The main action as a gold-leaf plaque: leaf gradient, a raised bevel, and
+ * lettering cut into it. */
+.plaque {
+  border: 1px solid #6b4a12;
+  background: linear-gradient(
+    180deg,
+    #f8e7ac 0%,
+    #ebc970 26%,
+    #d6aa4a 54%,
+    #b38630 80%,
+    #c99a38 100%
+  );
+  /* Lettering: Cinzel sets lower case as small capitals, so at the button's
+   * original 14px the word was tiny and hard to read on gold — larger, darker
+   * ink, and a crisp light edge below so it reads as cut in. */
+  color: #1a1003;
+  font-family: var(--font-serif);
+  font-size: 1.08rem;
+  font-weight: 600;
+  /* Tight enough that the longest label ("Doğum Rune'mi Hesapla") stays on
+   * one line on a 375px phone. */
+  letter-spacing: 0.05em;
+  padding-inline: 0.75rem;
+  white-space: nowrap;
+  text-shadow: 0 1px 0 rgba(255, 246, 215, 0.7);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 252, 235, 0.75),
+    inset 0 -2px 0 rgba(90, 60, 10, 0.55),
+    inset 0 0 0 2px rgba(255, 236, 180, 0.18),
+    0 6px 18px rgba(0, 0, 0, 0.45),
+    0 0 22px rgba(226, 180, 90, 0.18);
+}
+.plaque:hover {
+  filter: brightness(1.06);
+}
+.plaque:active {
+  box-shadow:
+    inset 0 2px 4px rgba(90, 60, 10, 0.5),
+    inset 0 -1px 0 rgba(255, 252, 235, 0.4),
+    0 3px 10px rgba(0, 0, 0, 0.45);
 }
 
 /* ── Hero, intro and transitions ───────────────────────────────────── */

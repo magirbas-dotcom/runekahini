@@ -1,43 +1,34 @@
 import type { ReactNode } from "react";
+import OrnateHeader from "./OrnateHeader";
 
 interface SectionHeaderProps {
   children: ReactNode;
-  /** Centred headings get the flanking rules; left-aligned ones are a bare label. */
+  /** Centred: an ornate gilded title between cards. Left: a quiet gilded label inside a card. */
   align?: "center" | "left";
   className?: string;
 }
 
 /**
- * The small gold all-caps section label — replaces the
- * `text-xs uppercase tracking-[0.2em] text-amber-300/90` string that appeared
- * in seven places. Centred variant adds the engraved rules either side.
+ * Section titles in the relic language. Centred ones are OrnateHeader at the
+ * smaller size (gilded lettering between diamond-tipped rules); left-aligned
+ * ones, used as labels inside cards, are spaced gold capitals with a diamond.
  */
 export default function SectionHeader({
   children,
   align = "center",
   className = "",
 }: SectionHeaderProps) {
-  const label = (
-    <span className="text-xs uppercase tracking-[0.18em] text-gold">
-      {children}
-    </span>
-  );
-
   if (align === "left") {
-    return <div className={`mb-3 ${className}`}>{label}</div>;
+    return (
+      <div className={`mb-3 flex items-center gap-2 ${className}`}>
+        <span className="block h-1.5 w-1.5 rotate-45 bg-gold" aria-hidden="true" />
+        <span className="text-xs uppercase tracking-[0.18em] text-gold">{children}</span>
+      </div>
+    );
   }
-
   return (
-    <div className={`mb-4 flex items-center justify-center gap-3 ${className}`}>
-      <span
-        className="h-px max-w-16 flex-1 bg-gradient-to-r from-transparent to-hairline-strong"
-        aria-hidden="true"
-      />
-      {label}
-      <span
-        className="h-px max-w-16 flex-1 bg-gradient-to-l from-transparent to-hairline-strong"
-        aria-hidden="true"
-      />
-    </div>
+    <OrnateHeader size="md" className={className}>
+      {children}
+    </OrnateHeader>
   );
 }

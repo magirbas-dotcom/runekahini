@@ -2,8 +2,8 @@ import { AETT_NAMES, type Rune } from "../data/runes";
 import ReadingTabs from "./ReadingTabs";
 import MysticCard from "./ui/MysticCard";
 import MysticDivider from "./ui/MysticDivider";
-import RuneEmblem from "./ui/RuneEmblem";
-import RuneGlyph from "./ui/RuneGlyph";
+import CarvedRune from "./ui/CarvedRune";
+import { REALMS } from "../theme/realms";
 
 interface BirthRuneCardProps {
   /** The role this rune plays, e.g. "Kader Yolu Rune'si". */
@@ -34,7 +34,12 @@ export default function BirthRuneCard({
           {title}
         </p>
 
-        <RuneEmblem name={rune.name} size={82} className="mx-auto" />
+        <CarvedRune
+          stone={REALMS.aurora.stone}
+          runes={[rune.name]}
+          size={120}
+          className="reveal-flare mx-auto drop-shadow-[0_10px_18px_rgba(0,0,0,0.6)]"
+        />
 
         <h3 className="mt-4 font-serif text-[32px] leading-tight text-parchment">
           {rune.name}
@@ -57,7 +62,7 @@ export default function BirthRuneCard({
           <ReadingTabs reading={rune.upright} />
         </div>
 
-        <div className="mt-6 rounded-lg border border-hairline bg-ink-soft/70 p-4 text-left">
+        <div className="inscription mt-6 p-4 text-left">
           <p className="mb-1.5 text-[11px] uppercase tracking-[0.16em] text-gold">
             Pratik İpucu
           </p>
@@ -79,9 +84,13 @@ export default function BirthRuneCard({
         aria-expanded={isOpen}
         className="flex w-full items-center gap-4 text-left"
       >
-        <span className="shrink-0 text-gold-light">
-          <RuneGlyph name={rune.name} size={38} />
-        </span>
+        <CarvedRune
+          stone={REALMS.aurora.stone}
+          runes={[rune.name]}
+          size={52}
+          lite
+          className="shrink-0 drop-shadow-[0_3px_6px_rgba(0,0,0,0.55)]"
+        />
         <span className="min-w-0 flex-1">
           <span className="block text-[11px] uppercase tracking-[0.16em] text-gold">
             {title}

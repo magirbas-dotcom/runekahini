@@ -466,9 +466,9 @@ export default function BindruneDesigner() {
             onClick={() =>
               m.key === "preset" ? selectPreset(presetId) : setMode("custom")
             }
-            className={`-mb-px flex-1 border-b-2 px-3 pb-3 text-[13px] uppercase tracking-[0.12em] transition duration-200 ${
+            className={`-mb-px flex-1 border-b-2 px-3 pb-3 font-serif text-[15px] tracking-[0.08em] transition duration-200 ${
               mode === m.key
-                ? "border-gold text-gold-light"
+                ? "border-gold text-gold-light [text-shadow:0_0_10px_color-mix(in_oklab,var(--color-gold)_55%,transparent)]"
                 : "border-transparent text-parchment-dim hover:text-parchment"
             }`}
           >
@@ -486,10 +486,8 @@ export default function BindruneDesigner() {
             return (
               <div
                 key={g.id}
-                className={`mb-2 overflow-hidden rounded-card border transition-colors duration-200 ${
-                  chosen
-                    ? "border-hairline-strong bg-surface-gold/25"
-                    : "border-hairline bg-surface/40"
+                className={`relic-card mb-2.5 overflow-hidden transition-colors duration-200 ${
+                  chosen ? "is-gold" : ""
                 }`}
               >
                 <button
@@ -499,7 +497,8 @@ export default function BindruneDesigner() {
                   className="flex w-full items-center gap-3 px-4 py-3.5 text-left"
                 >
                   <span className="min-w-0 flex-1">
-                    <span className="block text-[12px] uppercase tracking-[0.16em] text-gold">
+                    <span className="flex items-center gap-2 font-serif text-[16px] tracking-[0.06em] text-gold-light">
+                      <span className="block h-1.5 w-1.5 rotate-45 bg-gold" aria-hidden="true" />
                       {g.label}
                     </span>
                     <span className="mt-1 block text-[12px] leading-4 text-parchment-dim">
@@ -601,7 +600,7 @@ export default function BindruneDesigner() {
           ))}
         </div>
 
-        <div className="mb-5 grid grid-cols-3 gap-2" role="radiogroup" aria-label="Madalyon">
+        <div className="mb-5 grid grid-cols-3 gap-2.5" role="radiogroup" aria-label="Madalyon">
           {MEDALLION_IDS.map((id) => (
             <button
               key={id}
@@ -609,14 +608,13 @@ export default function BindruneDesigner() {
               role="radio"
               aria-checked={material === id}
               onClick={() => setMaterial(id)}
-              className={`flex items-center justify-center gap-2 rounded-card border px-2 py-2 text-[13px] transition active:scale-[0.98] ${
-                material === id
-                  ? "border-hairline-strong bg-surface-gold text-gold-light"
-                  : "border-hairline bg-surface text-parchment-dim hover:border-hairline-strong"
+              className={`altar-option relative flex flex-col items-center justify-center gap-1.5 overflow-hidden px-2 pb-2.5 pt-3 active:scale-[0.98] ${
+                material === id ? "is-selected" : ""
               }`}
             >
-              <img src={MEDALLIONS[id].src} alt="" className="h-7 w-7" />
-              {MEDALLIONS[id].name}
+              {material === id && <span key={id} className="altar-sweep" aria-hidden="true" />}
+              <img src={MEDALLIONS[id].src} alt="" className="altar-stone h-11 w-11" />
+              <span className="altar-label text-[13px]">{MEDALLIONS[id].name}</span>
             </button>
           ))}
         </div>
@@ -672,7 +670,7 @@ export default function BindruneDesigner() {
                   onChange={(e) => updateOffset(name, Number(e.target.value))}
                   disabled={i === 0}
                   aria-label={`${name} dikey konumu`}
-                  className="flex-1 accent-[#c7a34a] disabled:opacity-30"
+                  className="relic-range flex-1"
                 />
               </div>
             ))}

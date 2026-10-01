@@ -1,4 +1,5 @@
-import RuneGlyph from "./RuneGlyph";
+import CarvedRune from "./CarvedRune";
+import { REALMS } from "../../theme/realms";
 
 interface IntentPresetCardProps {
   /** The intent itself, e.g. "Koruma" — the small label above the name. */
@@ -26,24 +27,23 @@ export default function IntentPresetCard({
       type="button"
       onClick={onClick}
       aria-pressed={selected}
-      className={`relative flex h-full flex-col items-center gap-1.5 rounded-card border p-3.5 text-center transition duration-200 active:scale-[0.98] ${
-        selected
-          ? "border-hairline-strong bg-surface-gold/70"
-          : "border-hairline bg-surface/60 hover:border-hairline-strong"
+      className={`altar-option relative flex h-full flex-col items-center gap-1.5 overflow-hidden p-3.5 text-center active:scale-[0.98] ${
+        selected ? "is-selected" : ""
       }`}
     >
-      {/* Selection is marked by a shape as well as colour. */}
+      {/* Selection is marked by a shape as well as colour and light. */}
       {selected && (
-        <span
-          className="absolute right-3 top-3 h-1.5 w-1.5 rotate-45 bg-gold"
-          aria-hidden="true"
-        />
+        <>
+          <span className="altar-sweep" aria-hidden="true" />
+          <span
+            className="absolute right-3 top-3 h-1.5 w-1.5 rotate-45 bg-gold"
+            aria-hidden="true"
+          />
+        </>
       )}
 
-      <span
-        className={`mb-0.5 ${selected ? "text-gold-light" : "text-parchment-dim"}`}
-      >
-        <RuneGlyph name={markRune} size={22} glow={false} />
+      <span className="altar-stone mb-0.5 block">
+        <CarvedRune stone={REALMS.forest.stone} runes={[markRune]} size={40} lite />
       </span>
 
       {/* Category is a quiet eyebrow: small, spaced, dim. The name is the
