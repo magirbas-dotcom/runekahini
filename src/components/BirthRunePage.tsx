@@ -12,6 +12,9 @@ import {
   loadBirthInput,
   saveBirthInput,
 } from "../data/storage";
+import { REALMS } from "../theme/realms";
+import ShareCardButton from "./share/ShareCardButton";
+import { drawBirthCard } from "./share/resultCards";
 
 export default function BirthRunePage() {
   // Doğum bilgisi cihazda saklanıyorsa formu onunla aç — kullanıcı her
@@ -61,6 +64,17 @@ export default function BirthRunePage() {
     setYear("");
     setHour("");
     setMinute("");
+  }
+
+  /** "12 Mart 1990", plus "· 14:30" when a birth time was given. */
+  function birthDateText() {
+    const date = new Date(Number(year), Number(month) - 1, Number(day)).toLocaleDateString("tr-TR", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+    if (hour === "") return date;
+    return `${date} · ${hour.padStart(2, "0")}:${(minute || "0").padStart(2, "0")}`;
   }
 
   function reset() {
@@ -118,8 +132,28 @@ export default function BirthRunePage() {
             ))}
           </div>
 
-          <div className="mt-8 flex justify-center">
-            <GoldButton variant="ghost" onClick={reset}>
+          <ShareCardButton
+            stone={REALMS.aurora.stone}
+            filename="dogum-rune-haritasi.png"
+            title="Rune Haritan"
+            className="mt-8 min-h-12 w-full"
+            draw={(assets) =>
+              drawBirthCard(
+                {
+                  lifePath: profile.lifePathRune,
+                  solar: profile.solarBirthRune,
+                  hour: profile.birthHourRune,
+                  zodiacId: profile.zodiac.id,
+                  zodiacName: profile.zodiac.name,
+                  dateText: birthDateText(),
+                },
+                assets,
+              )
+            }
+          />
+
+          <div className="mt-4 flex justify-center">
+            <GoldButton variant="quiet" onClick={reset}>
               Başka Bir Tarih Hesapla
             </GoldButton>
           </div>

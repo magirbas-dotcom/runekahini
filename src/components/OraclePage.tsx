@@ -13,6 +13,8 @@ import { REALMS } from "../theme/realms";
 import SpreadOptionCard from "./ui/SpreadOptionCard";
 import ReadingHistory from "./ReadingHistory";
 import { appendReading, loadReadings, type StoredReading } from "../data/storage";
+import ShareCardButton from "./share/ShareCardButton";
+import { drawReadingCard } from "./share/resultCards";
 
 type SpreadType = "single" | "three" | "four" | "five";
 
@@ -309,6 +311,30 @@ export default function OraclePage() {
               </p>
               <MysticDivider className="mt-5" />
             </MysticCard>
+          )}
+
+          {allRevealed && (
+            <div className="mx-auto mb-5 w-full max-w-md">
+              <ShareCardButton
+                stone={REALMS.fire.stone}
+                filename="rune-okumasi.png"
+                title="Rune Okuması"
+                className="min-h-12 w-full"
+                draw={(assets) =>
+                  drawReadingCard(
+                    {
+                      spread: spreadType,
+                      spreadTitle: SPREAD_TITLES[spreadType],
+                      labels: SPREAD_LABELS[spreadType],
+                      drawn,
+                      question,
+                      date: new Date(),
+                    },
+                    assets,
+                  )
+                }
+              />
+            </div>
           )}
 
           <div className="flex flex-wrap justify-center gap-3">

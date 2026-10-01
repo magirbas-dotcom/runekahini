@@ -191,6 +191,46 @@ Stiller `index.css` içinde "Relic UI" bölümünde.
   ağırlaştırır. Büyük tekil taşlar tam `CarvedRune`. `RuneGlyph` ve `RuneEmblem` artık kullanılmadığı için
   silindi.
 
+### Sonuç kartları: okuma ve doğum rune'si paylaşımı (2026-10-01)
+
+Kullanıcı önerisi: tılsımdaki gibi, Rune Okuması ve Doğum Rune'si sonuçları da özetlenip görsel olarak
+kaydedilebilsin. Zemini kullanıcı getirdi (yaldızlı örgü çerçeveli eski parşömen, sağ altta çakıl taşları,
+`src/assets/cards/parchment.webp`). Kullanıcı kırmızı lekelerin kalmasını istedi.
+
+- **Boyut 1080×1920 (9:16 hikâye).** Tılsım duvar kâğıdı olduğu için 1080×2340. Sonuç kartı paylaşmak
+  için, bu yüzden Instagram/WhatsApp hikâye oranında.
+- **Açık zemin, koyu mürekkep.** Ekranlar koyu diyarlarda kalır, kart ise "uygulamadan çıkan belge" gibi
+  durur. Yazı mürekkep kahvesi, küçük etiketler çerçevenin koyu kırmızısında.
+- `src/components/share/cardCanvas.ts`: ortak canvas yardımcıları. Tılsım dışa aktarımı da artık bunları
+  kullanıyor: `loadImage`, `spaced`, `fitFontSize`, `wrapLines`, `shareCanvas` (paylaşım menüsü, yoksa
+  indirme).
+  - `carveStone`: `CarvedRune` + `GildedCut`'ın piksel karşılığı (dudak ışığı, koyu kontur, altın varak,
+    iki iç gölge). SVG filtresi ve `ctx.filter` kullanmaz. SVG filtreleri bazı telefonlarda dağılıyordu,
+    Safari canvas'ında da `filter` yok.
+- `src/components/share/resultCards.ts`: `drawReadingCard` (4 açılımın her biri için ayrı yerleşim) ve
+  `drawBirthCard`.
+  - Özet olarak rune'un üç anahtar kelimesi kullanılır, yeni metin yazılmadı. Tek rune ve Kader Yolu
+    rune'sinde genel okumanın ilk cümlesi de eklenir.
+  - Gövde iki kez yerleşir: önce ölçmek için boş bir canvas'a, sonra çerçevenin içinde ortalanmış olarak
+    (`centred`). Böylece tek taş da 5'li haç da sayfayı doldurur.
+  - `CONTENT_BOTTOM` 1580: altındaki sağ köşede çakıllar başlar, içerik oraya inmemeli.
+  - **Doğum kartı sırası (kullanıcı isteği):** "Doğum Rune'si" üst yazısı, çember içinde yaldızlı burç
+    sembolü (`ZODIAC_STROKES`), büyük burç adı, doğum tarihi · saati, çizgi, Kader Yolu ve ardından Güneş
+    ve Doğum Saati rune'leri. Kader Yolu'nun yorum cümlesi yer açmak için çıkarıldı.
+  - **Okunurluk (kullanıcı isteği: küçük yazılar zor okunuyordu):** ikincil metin `#3e2812` ve 500
+    kalınlıkta. Anahtar kelimeler 36 px, etiketler 28 px/600, hiçbir metin 23 px'in altına inmez.
+  - **Altlık:** web adresi yok (kullanıcı isteği). "Rune Kahini" alt örgü bandının hemen üstünde (y 1822).
+    O yükseklikte çakıl ve yapraklar sağdan x≈620'ye kadar giriyor. Bu yüzden yazı sayfaya değil, sol
+    çerçeve ile çakıllar arasındaki boşluğa ortalanır (`FOOT_X` 445).
+  - Rune adları Cinzel'de `ı` ile yazılır (`runeName`). Sayfa `lang="tr"` olduğu için Cinzel'in küçük
+    büyük harfli `i`'si noktalı İ çıkıyordu ("SOWİLO"). Türkçe başlıklarda (Şimdi, Haritan) noktalı İ doğru
+    olduğu için yalnızca rune adlarına uygulanır.
+  - Kartta kullanılan Inter italik hiçbir ekranda geçmediği için `document.fonts.ready` onu yüklemiyor.
+    `loadFonts` her yüzü adıyla ister.
+- `ShareCardButton`: "Kartı Kaydet". Görseller bileşen açılınca önceden yüklenir, çünkü dokunuşta yükleme
+  paylaşımın "kullanıcı eylemi" sayılmasını bozabiliyor (tılsımdaki dersle aynı). Okumada tüm taşlar
+  açılınca, doğum haritasında sonuçların altında görünür.
+
 ## Mimari / önemli dosyalar
 
 ### Veri

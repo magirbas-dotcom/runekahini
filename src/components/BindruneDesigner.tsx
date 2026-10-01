@@ -21,6 +21,7 @@ import { MEDALLIONS, MEDALLION_IDS, type MedallionId } from "../theme/medallions
 import { REALMS } from "../theme/realms";
 import { DEFAULT_LIGHT } from "../theme/light";
 import { engraveMedallion } from "./ui/engraveCanvas";
+import { fitFontSize, loadImage, shareCanvas, spaced } from "./share/cardCanvas";
 
 const MAX_LAYERS = 4;
 /** Starting vertical spread for a bind rune, so a new stack is not fully
@@ -51,11 +52,6 @@ const EXPORT_MEDALLION_Y = 0.46;
 /** Lettering sizes and gaps, at EXPORT_SCALE. */
 const T = (px: number) => Math.round(px * EXPORT_SCALE);
 
-
-/** Spaced capitals for canvas lettering; Turkish casing keeps the dotted İ. */
-function spaced(t: string): string {
-  return t.toLocaleUpperCase("tr-TR").split("").join(" ");
-}
 
 /** Three keywords describing a preset, taken from its own runes' upright
  *  readings — derived at render time so INTENT_PRESETS stays untouched. */
@@ -177,48 +173,6 @@ export default function BindruneDesigner() {
 
   function updateOffset(name: string, value: number) {
     setOffsets((prev) => ({ ...prev, [name]: value }));
-  }
-
-  function downloadBlob(blob: Blob) {
-    const pngUrl = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = pngUrl;
-    a.download = "tilsim-duvar-kagidi.png";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    // Revoking immediately can race ahead of the browser actually reading
-    // the blob for the download, silently dropping it — give it a beat.
-    setTimeout(() => URL.revokeObjectURL(pngUrl), 2000);
-  }
-
-  function loadImage(src: string): Promise<HTMLImageElement> {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.onload = () => resolve(img);
-      img.onerror = reject;
-      img.src = src;
-    });
-  }
-
-  /** Shrinks font size until `text` fits within `maxWidth`, so long custom
-   *  combinations ("Wunjo + Kenaz + Tiwaz + Eihwaz") don't overrun the plaque. */
-  function fitFontSize(
-    ctx: CanvasRenderingContext2D,
-    text: string,
-    maxWidth: number,
-    weight: string,
-    family: string,
-    maxSize: number,
-    minSize: number,
-  ): number {
-    let size = maxSize;
-    while (size > minSize) {
-      ctx.font = `${weight} ${size}px ${family}`;
-      if (ctx.measureText(text).width <= maxWidth) break;
-      size -= 2;
-    }
-    return size;
   }
 
   /** Draws the cover-fitted realm scene, darkened for the medallion and text. */
@@ -380,31 +334,7 @@ export default function BindruneDesigner() {
     ctx.fillStyle = "rgba(226,207,122,0.6)";
     ctx.fillText(spaced("Rune Kahini"), cx, EXPORT_HEIGHT - 120);
 
-    canvas.toBlob(async (blob) => {
-      if (!blob) return;
-
-      // Mobile: hand the image to the native share sheet, which offers
-      // "Save to Photos" / "Fotoğraflara Kaydet" directly — a plain
-      // <a download> link mostly just opens the image on iOS Safari and
-      // lands in a generic Downloads folder (not the gallery) on Android.
-      const file = new File([blob], "tilsim-duvar-kagidi.png", { type: "image/png" });
-      const nav = navigator as Navigator & {
-        canShare?: (data: { files: File[] }) => boolean;
-        share?: (data: { files: File[]; title?: string }) => Promise<void>;
-      };
-
-      if (nav.canShare?.({ files: [file] }) && nav.share) {
-        try {
-          await nav.share({ files: [file], title: "Tılsım" });
-          return;
-        } catch (err) {
-          if (err instanceof Error && err.name === "AbortError") return;
-          // Share failed for another reason — fall back to a plain download.
-        }
-      }
-
-      downloadBlob(blob);
-    }, "image/png");
+    shareCanvas(canvas, "tilsim-duvar-kagidi.png", "Tılsım");
   }
 
   const synergy =
