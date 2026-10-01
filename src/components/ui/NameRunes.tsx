@@ -54,11 +54,11 @@ export default function NameRunes({ words, className = "" }: NameRunesProps) {
                 {l.runes.map((rune, ri) => (
                   <CarvedRune
                     key={ri}
-                    stone={REALMS.forest.stone}
+                    stone={REALMS.fire.stone}
                     runes={[rune]}
                     size={size}
-                    face={0.7}
-                    weight={3.2}
+                    face={0.72}
+                    weight={3.4}
                     lite
                     className="drop-shadow-[0_3px_5px_rgba(0,0,0,0.6)]"
                   />

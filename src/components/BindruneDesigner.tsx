@@ -539,7 +539,7 @@ export default function BindruneDesigner() {
               )}
 
               <ShareCardButton
-                stone={REALMS.forest.stone}
+                stone={REALMS.fire.stone}
                 filename="rune-ile-yazilisi.png"
                 title="Rune ile Yazılışı"
                 

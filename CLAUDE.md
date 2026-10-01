@@ -215,6 +215,8 @@ yazılar genişletildi (isim, kelime ya da kısa söz) ve sekme önce "Sen Yaz",
   başına düşmez.
 - **Tılsım:** İsmin farklı rune'larından ilk dördü kullanılır (`MAX_LAYERS`). Dörtten fazlaysa ekran bunu
   söyler. Duvar kâğıdında yazılan metin başlık, "Kişisel Tılsım" amaç olur. İsim `talisman.nameText` olarak saklanır.
+- **Taşlar koyu bazalt** (`REALMS.fire.stone`, Rune Seç ile aynı): Tılsım diyarının yeşil yosunlu taşında
+  altın rune'lar seçilmiyordu (kullanıcı geri bildirimi).
 - `drawNameCard` (parşömen, 1080×1920): İsim başlıkta, taşlar satırlarda, altında her farklı rune'un iki
   anahtar kelimesi yer alır. Taş boyutu, hiçbir kelime bölünmeyecek en büyük boyut olarak seçilir.
 
