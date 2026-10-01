@@ -23,6 +23,10 @@ export default defineConfig({
         // photos and stone images to the network — a reading opened offline
         // showed bare cards. WebP covers all of them (~2 MB in total).
         globPatterns: ['**/*.{js,css,html,svg,png,webp,woff2}'],
+        // The service worker answers every navigation with the app shell; the
+        // static legal/support pages are real pages and must be let through,
+        // or opening askrune.app/gizlilik from the installed app shows the app.
+        navigateFallbackDenylist: [/^\/(gizlilik|privacy|destek|support)(\/|$)/],
       },
       manifest: {
         name: 'Rune Kahini',

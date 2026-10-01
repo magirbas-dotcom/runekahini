@@ -371,6 +371,19 @@ Yeni içerik eklerken bu çizgi korunur: eşleşme/sistem alınır, iddialı tar
   `npx wrangler deploy`.
 - **Önbellek:** `public/_headers`, `sw.js`, `index.html` ve manifestin her açılışta yeniden doğrulanmasını
   sağlar. Hash'li `assets/` dosyaları kalıcı önbelleğe alınır.
+- **Gizlilik ve destek sayfaları:** `public/gizlilik`, `privacy`, `destek`, `support` (her biri `index.html`, ortak
+  stil `public/legal/legal.css`). Uygulamanın parçası değiller, düz HTML. Mağazalar bu adresleri istiyor.
+  - Web fontu yüklemezler.
+  - Service worker bu yolları uygulama kabuğuna yönlendirmez (`navigateFallbackDenylist`).
+  - Uygulama altbilgisinde bağlantıları var.
+  - Vite geliştirme sunucusu `/gizlilik/` adresinde uygulamayı açar, `/gizlilik/index.html` ile bakılmalı.
+    Cloudflare klasör adresini kendisi çözer.
+  - **Yazı tipleri sitenin kendi sunucusundan yüklenir (2026-10-01).** Google Fonts kaldırıldı; `@fontsource/cinzel` ve
+    `@fontsource/inter`, yalnızca Latin ve Latin genişletilmiş setler, `main.tsx` içinde import ediliyor. Böylece web sürümü
+    hiçbir dış sunucuya bağlanmıyor ve gizlilik metni de bunu söylüyor. Yeni ağırlık gerekirse oraya iki set
+    (latin ve latin-ext) birlikte eklenir.
+  - Metinlerdeki iddialar koda bağlı.
+    Yeni bir dış servis ya da analiz aracı eklenirse iki dildeki gizlilik metni de güncellenmeli.
 - **Vercel:** Geçiş süresince paralel çalışır. Tarayıcı verisi (geçmiş, doğum bilgisi, tılsım) adrese bağlı,
   yeni adrese kendiliğinden geçmez.
 

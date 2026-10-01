@@ -1,5 +1,24 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+// Fonts are served from this site rather than Google Fonts, so a visit sends
+// nothing to a third party (see the privacy page). Only the Latin and
+// Latin Extended subsets: Turkish needs the latter (ş, ğ, İ, ı).
+import '@fontsource/cinzel/latin-500.css'
+import '@fontsource/cinzel/latin-ext-500.css'
+import '@fontsource/cinzel/latin-600.css'
+import '@fontsource/cinzel/latin-ext-600.css'
+import '@fontsource/inter/latin-400.css'
+import '@fontsource/inter/latin-ext-400.css'
+import '@fontsource/inter/latin-400-italic.css'
+import '@fontsource/inter/latin-ext-400-italic.css'
+import '@fontsource/inter/latin-500.css'
+import '@fontsource/inter/latin-ext-500.css'
+import '@fontsource/inter/latin-500-italic.css'
+import '@fontsource/inter/latin-ext-500-italic.css'
+import '@fontsource/inter/latin-600.css'
+import '@fontsource/inter/latin-ext-600.css'
+import '@fontsource/inter/latin-700.css'
+import '@fontsource/inter/latin-ext-700.css'
 import './index.css'
 import App from './App.tsx'
 

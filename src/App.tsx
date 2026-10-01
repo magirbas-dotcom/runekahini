@@ -125,6 +125,17 @@ function App() {
         <footer className="mt-16 text-center text-xs leading-relaxed text-parchment-dim">
           Eğlence ve öz-yansıma amaçlıdır — tıbbi, hukuki ya da finansal tavsiye
           yerine geçmez.
+          {/* Static pages in public/, outside the app (and outside the
+              service worker's app-shell fallback, see vite.config.ts). */}
+          <span className="mt-3 block">
+            <a href="/gizlilik/" className="underline decoration-dotted underline-offset-4 hover:text-parchment">
+              Gizlilik
+            </a>
+            <span className="mx-2" aria-hidden="true">·</span>
+            <a href="/destek/" className="underline decoration-dotted underline-offset-4 hover:text-parchment">
+              Destek
+            </a>
+          </span>
         </footer>
       </div>
 
