@@ -5,7 +5,7 @@ import {
   PRESET_GROUPS,
   type PresetGroupId,
 } from "../data/runeStrokes";
-import { RUNE_GLYPHS, GLYPH_FIT_SCALE, sealLayout } from "../data/runeGlyphs";
+import { RUNE_GLYPHS } from "../data/runeGlyphs";
 import { buildCustomSynergy } from "../data/synergy";
 import MysticCard from "./ui/MysticCard";
 import SectionHeader from "./ui/SectionHeader";
@@ -13,51 +13,52 @@ import GoldButton from "./ui/GoldButton";
 import RuneChip from "./ui/RuneChip";
 import IntentPresetCard from "./ui/IntentPresetCard";
 import RunePicker from "./ui/RunePicker";
-import BindruneCanvas, { type TalismanForm } from "./ui/BindruneCanvas";
+import Talisman3D from "./ui/Talisman3D";
+import TalismanMedallion, { type TalismanForm } from "./ui/TalismanMedallion";
 import TalismanFormCard from "./ui/TalismanFormCard";
 import { loadTalisman, saveTalisman } from "../data/storage";
+import { MEDALLIONS, MEDALLION_IDS, type MedallionId } from "../theme/medallions";
+import { REALMS } from "../theme/realms";
 
 const MAX_LAYERS = 4;
 /** Starting vertical spread for a bind rune, so a new stack is not fully
  *  coincident before the user touches a slider. */
 const DEFAULT_OFFSETS = [0, -22, 22, -42];
-const OFFSET_RANGE = 55;
-/** Mirrors BIND_OPACITY in BindruneCanvas. */
-const BIND_OPACITY = [1, 0.85, 0.72, 0.6];
-const CANVAS_SIZE = 400;
-const GLYPH_SCALE = 1.6;
+// Wide enough to pull two runes fully apart along the stave: the composition
+// is re-centred and shrunk to fit the field (TalismanMedallion bindFit), so a
+// large spread no longer runs off the medallion.
+const OFFSET_RANGE = 90;
+// Canvas cannot read the CSS custom properties, so the colours the exported
+// image needs are mirrored here (forest realm + gold leaf, see index.css).
+const GOLD_DEEP = "#8a6420";
+const GOLD_LEAF = "#fff1bd";
+const GOLD_MID = "#e2cf7a";
+const PARCHMENT_DIM = "#cfc6b8";
 
-// Canvas cannot read the CSS custom properties, so the design tokens the
-// exported image needs are mirrored here. Keep these in step with the
-// @theme block in index.css.
-const GOLD = "#c7a34a";           // --color-gold
-const GOLD_LIGHT = "#e5cf8b";     // --color-gold-light
-const PARCHMENT = "#f2eee7";      // --color-parchment
-const INK_RGB = "7, 7, 6";        // --color-ink
-
-// The ring's position/size within each frame image, measured once (as a
-// fraction of image width/height so the same numbers work at any resolution):
-// scanned both PNGs for the widest gap of non-gold pixels through the center,
-// which lands on the ring's inner edge on every side.
-//
-// The square frame's opening is a true circle (390 x 390.5 px of 1254). The
-// portrait frame's is an ellipse (347 x 418.5 px of 941 x 1672) — radiusFrac
-// takes its *narrow* (horizontal) semi-axis, so the glyph can never overrun
-// the ring sideways; the extra vertical room just becomes headroom.
-const FRAME_SQUARE = { centerXFrac: 0.5, centerYFrac: 0.499, radiusFrac: 0.311 };
-const FRAME_PORTRAIT = { centerXFrac: 0.5, centerYFrac: 0.498, radiusFrac: 0.369 };
-const SCREEN_RADIUS = CANVAS_SIZE * FRAME_SQUARE.radiusFrac;
-
-// 9:19.5 rather than 9:16 — the ratio most current phones use. A 9:16 image
-// set as wallpaper gets scaled up to cover a taller screen, which cropped the
-// frame's sides off. The frame is also inset inside that canvas, so the
-// remaining margin absorbs whatever a differently proportioned screen crops.
+// 9:19.5 rather than 9:16 — the ratio most current phones use, so the image
+// covers a modern screen as wallpaper without the sides being cropped off.
 const EXPORT_WIDTH = 1080;
 const EXPORT_HEIGHT = 2340;
-/** Frame artwork aspect (941 x 1672). */
-const FRAME_ASPECT = 941 / 1672;
-/** Frame width as a fraction of the canvas. */
-const FRAME_INSET = 0.86;
+/** Medallion edge in the export, and where its centre sits (fraction of height). */
+const EXPORT_MEDALLION = 980;
+const EXPORT_MEDALLION_Y = 0.39;
+
+/** Reads an image URL into a data: URL. An SVG drawn into a canvas via <img>
+ *  may not fetch anything external, so the medallion photo is inlined. */
+async function toDataUrl(src: string): Promise<string> {
+  const blob = await (await fetch(src)).blob();
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(r.result as string);
+    r.onerror = reject;
+    r.readAsDataURL(blob);
+  });
+}
+
+/** Spaced capitals for canvas lettering; Turkish casing keeps the dotted İ. */
+function spaced(t: string): string {
+  return t.toLocaleUpperCase("tr-TR").split("").join(" ");
+}
 
 /** Three keywords describing a preset, taken from its own runes' upright
  *  readings — derived at render time so INTENT_PRESETS stays untouched. */
@@ -92,6 +93,9 @@ export default function BindruneDesigner() {
       preset: INTENT_PRESETS.find((p) => p.id === v.presetId) ?? INTENT_PRESETS[0],
       layers: names,
       offsets: v.offsets ?? {},
+      material: (MEDALLION_IDS as string[]).includes(v.material ?? "")
+        ? (v.material as MedallionId)
+        : ("gold" as const),
     };
   })[0];
   const first = restored?.preset ?? INTENT_PRESETS[0];
@@ -102,6 +106,7 @@ export default function BindruneDesigner() {
   // the fold on a phone.
   const [openGroup, setOpenGroup] = useState<PresetGroupId | null>(first.group);
   const [form, setForm] = useState<TalismanForm>(restored?.form ?? "bindrune");
+  const [material, setMaterial] = useState<MedallionId>(restored?.material ?? "gold");
   const [layers, setLayers] = useState<string[]>(restored?.layers ?? first.runeNames);
   // Keyed by rune name so a nudge survives adding or removing another rune.
   const [offsets, setOffsets] = useState<Record<string, number>>(() =>
@@ -122,20 +127,37 @@ export default function BindruneDesigner() {
   // Her değişiklikte yaz. Kayıt küçük ve nadir değişiyor; ayrı bir
   // "kaydet" adımı istemeye değmez.
   useEffect(() => {
-    saveTalisman({ form, mode, presetId, layers, offsets });
-  }, [form, mode, presetId, layers, offsets]);
+    saveTalisman({ form, mode, presetId, layers, offsets, material });
+  }, [form, mode, presetId, layers, offsets, material]);
 
   const preset = INTENT_PRESETS.find((p) => p.id === presetId);
 
-  // Preload the export frame ahead of time — fetching it only when the user
-  // clicks "Kaydet" adds enough async delay that some browsers stop treating
-  // the resulting <a download> click as user-initiated and silently drop it.
-  const frameImageRef = useRef<HTMLImageElement | null>(null);
+  // Everything the export draws is fetched ahead of time — fetching only when
+  // the user taps "Kaydet" adds enough async delay that some browsers stop
+  // treating the resulting <a download> click as user-initiated and drop it.
+  const [medallionData, setMedallionData] = useState<{ id: MedallionId; url: string } | null>(
+    null,
+  );
+  useEffect(() => {
+    let live = true;
+    toDataUrl(MEDALLIONS[material].src)
+      .then((url) => {
+        if (live) setMedallionData({ id: material, url });
+      })
+      .catch(() => {});
+    return () => {
+      live = false;
+    };
+  }, [material]);
+  const sceneRef = useRef<HTMLImageElement | null>(null);
   useEffect(() => {
     const img = new Image();
-    img.src = "/bindrune-frame-portrait.png";
-    frameImageRef.current = img;
+    img.src = REALMS.forest.background;
+    sceneRef.current = img;
   }, []);
+  /** Off-screen, untilted copy of the medallion — serialised for the export. */
+  const exportSvgRef = useRef<SVGSVGElement>(null);
+  const exportReady = medallionData?.id === material;
 
   function selectPreset(id: string) {
     const p = INTENT_PRESETS.find((x) => x.id === id);
@@ -204,79 +226,52 @@ export default function BindruneDesigner() {
     return size;
   }
 
-  function drawPlaqueRect(
-    ctx: CanvasRenderingContext2D,
-    x: number,
-    y: number,
-    w: number,
-    h: number,
-    r: number,
-  ) {
-    if (typeof ctx.roundRect === "function") {
-      ctx.beginPath();
-      ctx.roundRect(x, y, w, h, r);
-      ctx.fill();
-    } else {
-      ctx.fillRect(x, y, w, h);
-    }
+  /** Draws the cover-fitted realm scene, darkened for the medallion and text. */
+  function drawScene(ctx: CanvasRenderingContext2D, scene: HTMLImageElement) {
+    const W = EXPORT_WIDTH;
+    const H = EXPORT_HEIGHT;
+    const k = Math.max(W / scene.naturalWidth, H / scene.naturalHeight);
+    const sw = scene.naturalWidth * k;
+    const sh = scene.naturalHeight * k;
+    ctx.fillStyle = "#050604";
+    ctx.fillRect(0, 0, W, H);
+    ctx.drawImage(scene, (W - sw) / 2, (H - sh) / 2, sw, sh);
+
+    const fade = ctx.createLinearGradient(0, 0, 0, H);
+    fade.addColorStop(0, "rgba(4,6,4,0.45)");
+    fade.addColorStop(0.45, "rgba(4,6,4,0.55)");
+    fade.addColorStop(0.68, "rgba(4,6,4,0.82)");
+    fade.addColorStop(1, "rgba(4,6,4,0.96)");
+    ctx.fillStyle = fade;
+    ctx.fillRect(0, 0, W, H);
+
+    const vignette = ctx.createRadialGradient(W / 2, H * 0.42, W * 0.35, W / 2, H * 0.42, H * 0.75);
+    vignette.addColorStop(0, "rgba(0,0,0,0)");
+    vignette.addColorStop(1, "rgba(0,0,0,0.75)");
+    ctx.fillStyle = vignette;
+    ctx.fillRect(0, 0, W, H);
   }
 
-  /** Draws the current layer stack onto a 2D canvas context centered at
-   *  (centerX, centerY) with the glyph sized to fit a circle of `radius`. */
-  function drawLayers(
-    ctx: CanvasRenderingContext2D,
-    centerX: number,
-    centerY: number,
-    radius: number,
-  ) {
-    const scaleRatio = radius / SCREEN_RADIUS;
-    const glyphScale = GLYPH_SCALE * scaleRatio;
-
-    layers.forEach((name, i) => {
-      const glyph = RUNE_GLYPHS[name];
-      if (!glyph) return;
-
-      let x = centerX;
-      let y = centerY;
-      let scale = glyphScale;
-
-      if (form === "bindrune") {
-        y = centerY + (offsets[name] ?? 0) * scaleRatio;
-        ctx.globalAlpha = BIND_OPACITY[i] ?? 0.6;
-      } else {
-        const slot = sealLayout(i, layers.length, radius, glyphScale);
-        x = centerX + slot.dx;
-        y = centerY + slot.dy;
-        scale = slot.scale;
-
-        ctx.save();
-        ctx.strokeStyle = GOLD;
-        ctx.lineWidth = 1.6 * scaleRatio;
-        ctx.globalAlpha = 0.55;
-        ctx.beginPath();
-        ctx.arc(x, y, slot.r, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.restore();
-      }
-
-      ctx.save();
-      ctx.globalAlpha = form === "bindrune" ? BIND_OPACITY[i] ?? 0.6 : 1;
-      ctx.translate(x - 50 * scale, y - 50 * scale);
-      ctx.scale(scale, scale);
-      // Same mapping glyphTransform performs for the SVG preview, so the
-      // exported image matches what was composed on screen. In bind-rune form
-      // the glyph is shifted onto the shared stave rather than its bbox.
-      ctx.translate(
-        50 - glyph.cx * GLYPH_FIT_SCALE + (form === "bindrune" ? glyph.staveDx : 0),
-        50 - glyph.cy * GLYPH_FIT_SCALE,
-      );
-      ctx.scale(GLYPH_FIT_SCALE, GLYPH_FIT_SCALE);
-      ctx.fillStyle = GOLD;
-      ctx.shadowColor = GOLD;
-      ctx.shadowBlur = 6;
-      ctx.fill(new Path2D(glyph.d));
-      ctx.restore();
-    });
+  /** A short gold rule with a diamond in the middle — the text block's divider. */
+  function drawOrnament(ctx: CanvasRenderingContext2D, cx: number, y: number, half: number) {
+    ctx.save();
+    ctx.strokeStyle = "rgba(226,207,122,0.55)";
+    ctx.fillStyle = "rgba(226,207,122,0.8)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(cx - half, y);
+    ctx.lineTo(cx - 18, y);
+    ctx.moveTo(cx + 18, y);
+    ctx.lineTo(cx + half, y);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx, y - 9);
+    ctx.lineTo(cx + 9, y);
+    ctx.lineTo(cx, y + 9);
+    ctx.lineTo(cx - 9, y);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
   }
 
   async function handleSaveTalisman() {
@@ -284,11 +279,26 @@ export default function BindruneDesigner() {
     // them — otherwise the canvas silently falls back to a generic serif.
     await document.fonts?.ready?.catch(() => {});
 
-    const cached = frameImageRef.current;
-    const frame =
+    const svgEl = exportSvgRef.current;
+    if (!svgEl || !exportReady) return;
+    const cached = sceneRef.current;
+    const scene =
       cached && cached.complete && cached.naturalWidth > 0
         ? cached
-        : await loadImage("/bindrune-frame-portrait.png");
+        : await loadImage(REALMS.forest.background);
+
+    // The medallion is the very same SVG as the preview, serialised and
+    // rasterised — preview and export cannot drift apart.
+    const svgBlob = new Blob([new XMLSerializer().serializeToString(svgEl)], {
+      type: "image/svg+xml",
+    });
+    const svgUrl = URL.createObjectURL(svgBlob);
+    let medallion: HTMLImageElement;
+    try {
+      medallion = await loadImage(svgUrl);
+    } finally {
+      URL.revokeObjectURL(svgUrl);
+    }
 
     const canvas = document.createElement("canvas");
     canvas.width = EXPORT_WIDTH;
@@ -296,104 +306,72 @@ export default function BindruneDesigner() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // The frame sits inset on a black field. Its own edges are already black,
-    // so the padding continues the artwork rather than framing it.
-    const frameW = EXPORT_WIDTH * FRAME_INSET;
-    const frameH = frameW / FRAME_ASPECT;
-    const frameX = (EXPORT_WIDTH - frameW) / 2;
-    const frameY = (EXPORT_HEIGHT - frameH) / 2;
-    // Every measurement below was tuned when the frame spanned 1080px, so they
-    // are scaled by however much it has shrunk.
-    const fs = frameW / 1080;
+    const W = EXPORT_WIDTH;
+    const cx = W / 2;
+    const my = EXPORT_HEIGHT * EXPORT_MEDALLION_Y;
+    drawScene(ctx, scene);
 
-    ctx.fillStyle = "#000000";
-    ctx.fillRect(0, 0, EXPORT_WIDTH, EXPORT_HEIGHT);
-    ctx.drawImage(frame, frameX, frameY, frameW, frameH);
+    // Warm light pooled behind the medallion.
+    const aura = ctx.createRadialGradient(cx, my, 0, cx, my, EXPORT_MEDALLION * 0.62);
+    aura.addColorStop(0, "rgba(255,214,140,0.34)");
+    aura.addColorStop(0.55, "rgba(226,170,80,0.12)");
+    aura.addColorStop(1, "rgba(226,170,80,0)");
+    ctx.fillStyle = aura;
+    ctx.fillRect(0, 0, W, EXPORT_HEIGHT);
 
-    const ringX = frameX + frameW * FRAME_PORTRAIT.centerXFrac;
-    const ringY = frameY + frameH * FRAME_PORTRAIT.centerYFrac;
-    const ringR = frameW * FRAME_PORTRAIT.radiusFrac;
-    drawLayers(ctx, ringX, ringY, ringR);
+    ctx.save();
+    ctx.shadowColor = "rgba(0,0,0,0.85)";
+    ctx.shadowBlur = 70;
+    ctx.shadowOffsetY = 34;
+    ctx.drawImage(
+      medallion,
+      cx - EXPORT_MEDALLION / 2,
+      my - EXPORT_MEDALLION / 2,
+      EXPORT_MEDALLION,
+      EXPORT_MEDALLION,
+    );
+    ctx.restore();
 
-    // Talisman name + purpose, lettered into the frame's empty space below
-    // the ring, plus a small brand mark — makes a saved image self-explanatory
-    // instead of just a bare glowing symbol.
-    const name =
-      mode === "preset" && preset
-        ? preset.name
-        : layers.join(" + ");
-    const purpose =
-      mode === "preset" && preset ? preset.category : "Özel Kombinasyon";
-
-    const textCenterX = ringX;
-    const circleBottom = ringY + ringR;
-
+    // Lettering below the medallion: purpose, name in gilded capitals, a
+    // divider, the runes themselves, and the brand at the foot.
+    const name = mode === "preset" && preset ? preset.name : layers.join(" + ");
+    const purpose = mode === "preset" && preset ? preset.category : "Özel Kombinasyon";
+    const textTop = my + EXPORT_MEDALLION / 2 + 40;
+    const textMax = W - 160;
     ctx.textAlign = "center";
+    ctx.textBaseline = "alphabetic";
 
-    // A dark plaque behind the name/purpose text guarantees legibility no
-    // matter what part of the frame's texture ends up underneath it — well
-    // clear of the ring's bottom flourish, deep into the frame's empty space.
-    const plaqueWidth = 880 * fs;
-    const plaqueHeight = 280 * fs;
-    const plaqueTop = circleBottom + 200 * fs;
-    ctx.fillStyle = `rgba(${INK_RGB}, 0.6)`;
-    drawPlaqueRect(
-      ctx,
-      textCenterX - plaqueWidth / 2,
-      plaqueTop,
-      plaqueWidth,
-      plaqueHeight,
-      28 * fs,
-    );
+    ctx.font = "500 32px Inter, sans-serif";
+    ctx.fillStyle = "rgba(243,227,154,0.85)";
+    ctx.fillText(spaced(purpose), cx, textTop + 40);
 
-    const nameY = plaqueTop + 120 * fs;
-    const purposeY = plaqueTop + 205 * fs;
-    const textMaxWidth = plaqueWidth - 100 * fs;
-
-    const nameSize = fitFontSize(
-      ctx,
-      name,
-      textMaxWidth,
-      "700",
-      "Cinzel, Georgia, serif",
-      72 * fs,
-      36 * fs,
-    );
-    ctx.lineJoin = "round";
-    ctx.lineWidth = 10 * fs;
-    ctx.strokeStyle = `rgba(${INK_RGB}, 0.9)`;
+    const nameSize = fitFontSize(ctx, name, textMax, "700", "Cinzel, Georgia, serif", 92, 44);
     ctx.font = `700 ${nameSize}px Cinzel, Georgia, serif`;
-    ctx.strokeText(name, textCenterX, nameY);
-    ctx.shadowColor = GOLD;
-    ctx.shadowBlur = 18 * fs;
-    ctx.fillStyle = GOLD_LIGHT;
-    ctx.fillText(name, textCenterX, nameY);
+    const nameY = textTop + 74 + nameSize;
+    const half = Math.min(ctx.measureText(name).width / 2, textMax / 2);
+    const leaf = ctx.createLinearGradient(cx - half, nameY - nameSize, cx + half, nameY);
+    leaf.addColorStop(0, GOLD_DEEP);
+    leaf.addColorStop(0.35, GOLD_MID);
+    leaf.addColorStop(0.5, GOLD_LEAF);
+    leaf.addColorStop(0.65, GOLD_MID);
+    leaf.addColorStop(1, GOLD_DEEP);
+    ctx.save();
+    ctx.shadowColor = "rgba(0,0,0,0.9)";
+    ctx.shadowBlur = 18;
+    ctx.shadowOffsetY = 4;
+    ctx.fillStyle = leaf;
+    ctx.fillText(name, cx, nameY);
+    ctx.restore();
 
-    const purposeText = purpose.toLocaleUpperCase("tr-TR");
-    const purposeSize = fitFontSize(
-      ctx,
-      purposeText,
-      textMaxWidth,
-      "500",
-      "Inter, sans-serif",
-      36 * fs,
-      20 * fs,
-    );
-    ctx.shadowBlur = 0;
-    ctx.lineWidth = 7 * fs;
-    ctx.strokeStyle = `rgba(${INK_RGB}, 0.9)`;
-    ctx.font = `500 ${purposeSize}px Inter, sans-serif`;
-    ctx.strokeText(purposeText, textCenterX, purposeY);
-    ctx.fillStyle = PARCHMENT;
-    ctx.fillText(purposeText, textCenterX, purposeY);
+    drawOrnament(ctx, cx, nameY + 56, 190);
 
-    // Brand mark rides along the bottom of the plaque. It used to sit above
-    // the ring, but the frame artwork has an ornament chain hanging down the
-    // centre there — on the plaque it is clear of every decorated area.
-    ctx.lineWidth = 0;
-    ctx.fillStyle = "rgba(229, 207, 139, 0.5)";
-    ctx.font = `500 ${22 * fs}px Inter, sans-serif`;
-    ctx.fillText("RUNE KAHİNİ", textCenterX, plaqueTop + 250 * fs);
+    ctx.font = "400 34px Inter, sans-serif";
+    ctx.fillStyle = PARCHMENT_DIM;
+    ctx.fillText(layers.join("  ·  "), cx, nameY + 126);
+
+    ctx.font = "600 26px Cinzel, Georgia, serif";
+    ctx.fillStyle = "rgba(226,207,122,0.6)";
+    ctx.fillText(spaced("Rune Kahini"), cx, EXPORT_HEIGHT - 120);
 
     canvas.toBlob(async (blob) => {
       if (!blob) return;
@@ -616,16 +594,43 @@ export default function BindruneDesigner() {
           ))}
         </div>
 
-        <BindruneCanvas
-          names={layers}
-          form={form}
-          offsets={offsets}
-          size={CANVAS_SIZE}
-          centerXFrac={FRAME_SQUARE.centerXFrac}
-          centerYFrac={FRAME_SQUARE.centerYFrac}
-          radiusFrac={FRAME_SQUARE.radiusFrac}
-          glyphScale={GLYPH_SCALE}
-        />
+        <div className="mb-5 grid grid-cols-3 gap-2" role="radiogroup" aria-label="Madalyon">
+          {MEDALLION_IDS.map((id) => (
+            <button
+              key={id}
+              type="button"
+              role="radio"
+              aria-checked={material === id}
+              onClick={() => setMaterial(id)}
+              className={`flex items-center justify-center gap-2 rounded-card border px-2 py-2 text-[13px] transition active:scale-[0.98] ${
+                material === id
+                  ? "border-hairline-strong bg-surface-gold text-gold-light"
+                  : "border-hairline bg-surface text-parchment-dim hover:border-hairline-strong"
+              }`}
+            >
+              <img src={MEDALLIONS[id].src} alt="" className="h-7 w-7" />
+              {MEDALLIONS[id].name}
+            </button>
+          ))}
+        </div>
+
+        <Talisman3D names={layers} form={form} offsets={offsets} material={material} />
+
+        {/* Untilted, default-lit copy with the photo inlined: this exact SVG
+            becomes the medallion in the saved image. */}
+        <div hidden>
+          {exportReady && (
+            <TalismanMedallion
+              ref={exportSvgRef}
+              names={layers}
+              form={form}
+              offsets={offsets}
+              material={material}
+              imageHref={medallionData.url}
+              size={EXPORT_MEDALLION}
+            />
+          )}
+        </div>
 
         <div className="mt-5 text-center">
           <p className="font-serif text-2xl leading-tight text-parchment">
@@ -669,14 +674,14 @@ export default function BindruneDesigner() {
 
         <GoldButton
           onClick={handleSaveTalisman}
-          disabled={layers.length === 0}
+          disabled={layers.length === 0 || !exportReady}
           className="mt-7 min-h-14 w-full"
         >
           Tılsımı Kaydet
         </GoldButton>
         <p className="mt-3 text-center text-[13px] leading-5 text-parchment-dim">
-          Ekranda kare, kaydedilen görsel duvar kağıdı için 9:16 oranında
-          hazırlanır.
+          Madalyonu parmağınla eğebilirsin. Kaydedilen görsel telefon duvar
+          kağıdı oranında hazırlanır.
         </p>
       </section>
 

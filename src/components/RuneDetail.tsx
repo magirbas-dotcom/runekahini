@@ -2,7 +2,8 @@ import { AETT_NAMES, type DrawnRune } from "../data/runes";
 import ReadingTabs from "./ReadingTabs";
 import MysticCard from "./ui/MysticCard";
 import SectionHeader from "./ui/SectionHeader";
-import RuneGlyph from "./ui/RuneGlyph";
+import CarvedRune from "./ui/CarvedRune";
+import { REALMS } from "../theme/realms";
 
 interface RuneDetailProps {
   drawn: DrawnRune;
@@ -27,9 +28,13 @@ export default function RuneDetail({
 
   const header = (
     <div className="flex items-center gap-4">
-      <span className="shrink-0 text-gold-light">
-        <RuneGlyph name={rune.name} size={44} reversed={reversed} />
-      </span>
+      <CarvedRune
+        stone={REALMS.fire.stone}
+        runes={[rune.name]}
+        reversed={reversed}
+        size={64}
+        className="shrink-0 drop-shadow-[0_4px_8px_rgba(0,0,0,0.55)]"
+      />
       <div className="flex-1 text-left">
         <h3 className="font-serif text-2xl leading-tight text-parchment">
           {rune.name}

@@ -18,6 +18,12 @@ export default defineConfig({
       // ReloadPrompt, so the plugin must not also inject its own script.
       injectRegister: null,
       includeAssets: ['icons/favicon-32.png', 'icons/apple-touch-icon.png'],
+      workbox: {
+        // The default precache list is js/css/html only, which left the realm
+        // photos and stone images to the network — a reading opened offline
+        // showed bare cards. WebP covers all of them (~2 MB in total).
+        globPatterns: ['**/*.{js,css,html,svg,png,webp,woff2}'],
+      },
       manifest: {
         name: 'Rune Kahini',
         short_name: 'Rune Kahini',
@@ -40,7 +46,9 @@ export default defineConfig({
             type: 'image/png',
           },
           {
-            src: '/icons/icon-512.png',
+            // Separate maskable art: the medallion sits inside the 80% safe
+            // circle, so Android's circle/squircle crop never cuts into it.
+            src: '/icons/icon-maskable-512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'maskable',

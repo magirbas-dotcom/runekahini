@@ -5,7 +5,7 @@ type Variant = "primary" | "ghost" | "quiet";
 const VARIANTS: Record<Variant, string> = {
   /* The single strongest call to action on a screen. */
   primary:
-    "border-transparent bg-gradient-to-b from-gold-light to-gold text-ink font-medium shadow-[0_4px_16px_rgba(199,163,74,0.25)] hover:from-gold-light hover:to-gold-light disabled:cursor-wait disabled:opacity-80",
+    "btn-glint border-transparent bg-gradient-to-b from-gold-light to-gold text-ink font-medium shadow-[0_4px_16px_rgba(199,163,74,0.25)] hover:from-gold-light hover:to-gold-light disabled:cursor-wait disabled:opacity-80",
   /* Secondary action — engraved outline, no fill. */
   ghost:
     "border-hairline-strong bg-transparent text-gold-light hover:border-gold hover:bg-surface-gold/40",

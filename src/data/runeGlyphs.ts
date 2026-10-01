@@ -203,6 +203,40 @@ export const RUNE_GLYPHS: Record<string, RuneGlyph> = {
 };
 
 /**
+ * Bounding-box size of each glyph outline, in the same reference space as
+ * RUNE_GLYPHS (its centre is the glyph's cx/cy). Computed from the paths with
+ * svg-path-bbox; the computed centres matched the stored cx/cy to within 0.005,
+ * which is the check that the two tables agree. Used to centre and fit a bind
+ * rune's combined outline inside the medallion.
+ */
+export const GLYPH_SIZE: Record<string, { w: number; h: number }> = {
+  Fehu: { w: 42.70, h: 91.21 },
+  Uruz: { w: 47.57, h: 92.68 },
+  Thurisaz: { w: 40.36, h: 90.12 },
+  Ansuz: { w: 41.28, h: 92.35 },
+  Raidho: { w: 44.46, h: 93.24 },
+  Kenaz: { w: 46.75, h: 91.47 },
+  Gebo: { w: 55.82, h: 91.30 },
+  Wunjo: { w: 45.05, h: 93.06 },
+  Hagalaz: { w: 47.43, h: 90.12 },
+  Nauthiz: { w: 54.71, h: 90.05 },
+  Isa: { w: 9.11, h: 90.19 },
+  Jera: { w: 66.38, h: 93.85 },
+  Eihwaz: { w: 58.52, h: 95.78 },
+  Perthro: { w: 53.38, h: 95.71 },
+  Algiz: { w: 65.53, h: 90.03 },
+  Sowilo: { w: 55.16, h: 92.70 },
+  Tiwaz: { w: 57.94, h: 91.92 },
+  Berkano: { w: 45.11, h: 96.18 },
+  Ehwaz: { w: 57.99, h: 93.33 },
+  Mannaz: { w: 57.79, h: 92.70 },
+  Laguz: { w: 35.54, h: 92.80 },
+  Ingwaz: { w: 53.22, h: 93.33 },
+  Dagaz: { w: 61.94, h: 96.64 },
+  Othala: { w: 61.68, h: 92.93 },
+};
+
+/**
  * Nominal height a glyph occupies inside the 100x100 box at placement scale 1,
  * given GLYPH_FIT_SCALE and the reference set's ~96-unit glyph heights.
  */

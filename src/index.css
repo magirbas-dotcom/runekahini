@@ -46,6 +46,142 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Realms — one photographic world per tab, shared with the mobile app.
+ * Each class re-points the @theme colour variables, and Tailwind v4 utilities
+ * read those variables, so everything under the class takes the realm's
+ * accent without a component knowing. Surfaces turn translucent so the
+ * scene shows through cards. Gilded rune carvings stay gold everywhere. */
+.realm-fire {
+  --color-gold: #e5b45c;
+  --color-gold-light: #f0c46a;
+  --color-surface: rgba(17, 14, 10, 0.82);
+  --color-surface-raised: rgba(26, 21, 15, 0.86);
+  --color-surface-gold: rgba(40, 28, 12, 0.78);
+  --color-hairline: rgba(229, 180, 92, 0.26);
+  --color-hairline-strong: rgba(229, 180, 92, 0.55);
+}
+.realm-aurora {
+  --color-gold: #7ee8d2;
+  --color-gold-light: #c9fbef;
+  --color-gold-dark: #2f8f7d;
+  --color-surface: rgba(10, 16, 34, 0.82);
+  --color-surface-raised: rgba(16, 24, 46, 0.86);
+  --color-surface-gold: rgba(14, 38, 52, 0.78);
+  --color-hairline: rgba(126, 232, 210, 0.24);
+  --color-hairline-strong: rgba(126, 232, 210, 0.55);
+}
+.realm-forest {
+  --color-gold: #e2cf7a;
+  --color-gold-light: #f3e39a;
+  --color-gold-dark: #8a7a35;
+  --color-surface: rgba(12, 18, 11, 0.82);
+  --color-surface-raised: rgba(20, 28, 17, 0.86);
+  --color-surface-gold: rgba(34, 36, 16, 0.78);
+  --color-hairline: rgba(226, 207, 122, 0.26);
+  --color-hairline-strong: rgba(226, 207, 122, 0.55);
+}
+
+/* The realm scene (RealmScene.tsx): three stacked photos that crossfade on
+ * tab change, each drifting very slowly, plus a realm-specific light motion.
+ * A vertical scrim keeps text legible whatever the photo does. */
+.realm-scene {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.realm-layer {
+  position: absolute;
+  inset: -4%;
+  background-size: cover;
+  background-position: center top;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+  will-change: transform, opacity;
+  animation: realm-drift 70s ease-in-out infinite alternate;
+}
+.realm-layer.is-active {
+  opacity: 1;
+}
+@keyframes realm-drift {
+  from {
+    transform: scale(1.04) translate3d(0, 0, 0);
+  }
+  to {
+    transform: scale(1.14) translate3d(-2.2%, -1.6%, 0);
+  }
+}
+/* Realm light motion. Done with opacity on coloured overlays rather than an
+ * animated filter: opacity runs on the compositor, while a filter on a
+ * full-screen photo is re-rasterised every frame and stutters on low-end
+ * phones. */
+.realm-layer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  mix-blend-mode: screen;
+}
+/* Firelight: an uneven warm glow from the hearth side. */
+.realm-layer-fire::after {
+  background: radial-gradient(ellipse at 85% 75%, rgba(255, 140, 50, 0.32), transparent 60%);
+  animation: fire-flicker 6.5s ease-in-out infinite;
+}
+@keyframes fire-flicker {
+  0%, 100% { opacity: 0.35; }
+  17% { opacity: 0.8; }
+  29% { opacity: 0.45; }
+  48% { opacity: 1; }
+  63% { opacity: 0.55; }
+  81% { opacity: 0.85; }
+}
+/* Aurora: a green and a violet curtain glow in turn. */
+.realm-layer-aurora::after {
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(80, 255, 190, 0.28), transparent 55%),
+    radial-gradient(ellipse at 80% 25%, rgba(170, 110, 255, 0.24), transparent 55%);
+  animation: aurora-shimmer 14s ease-in-out infinite alternate;
+}
+@keyframes aurora-shimmer {
+  from { opacity: 0.15; transform: translateX(-3%); }
+  to { opacity: 0.9; transform: translateX(3%); }
+}
+/* Forest: sunlight through the canopy slowly swells and ebbs. */
+.realm-layer-forest::after {
+  background: linear-gradient(200deg, rgba(255, 236, 160, 0.3) 0%, transparent 45%);
+  animation: forest-light 11s ease-in-out infinite alternate;
+}
+@keyframes forest-light {
+  from { opacity: 0.2; }
+  to { opacity: 0.9; }
+}
+.realm-layer-aurora {
+  animation-duration: 80s;
+  animation-direction: alternate-reverse;
+}
+.realm-layer-forest {
+  animation-duration: 90s;
+}
+.realm-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(7, 7, 6, 0.3) 0%,
+    rgba(7, 7, 6, 0.66) 40%,
+    rgba(7, 7, 6, 0.86) 100%
+  );
+}
+.realm-forest .realm-scrim {
+  /* The forest photo is already dark — a lighter scrim keeps it visible. */
+  background: linear-gradient(
+    to bottom,
+    rgba(6, 10, 6, 0.1) 0%,
+    rgba(6, 10, 6, 0.5) 40%,
+    rgba(6, 10, 6, 0.8) 100%
+  );
+}
+
 /* Body copy baseline: 16/26 rather than the 14/20 the app used before —
  * long readings were the hardest thing to read in the old design. */
 .prose-reading {
@@ -226,7 +362,175 @@ input[type="number"]::-webkit-inner-spin-button {
   animation: bindrune-settle 240ms ease-out;
 }
 
+/* ── Hero, intro and transitions ───────────────────────────────────── */
+
+/* Gilded lettering: gold-leaf gradient clipped to the text, with a slow
+ * glint travelling across it. */
+.gilded-text {
+  background-image: linear-gradient(
+    100deg,
+    #8a6420 0%,
+    #d9ab45 22%,
+    #fff1bd 32%,
+    #d9ab45 42%,
+    #a77a24 60%,
+    #e9c96a 80%,
+    #8a6420 100%
+  );
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.6));
+  animation: gilded-glint 9s ease-in-out infinite;
+}
+@keyframes gilded-glint {
+  0%, 100% { background-position: 100% 0; }
+  50% { background-position: 0% 0; }
+}
+
+/* The Futhark band turns once every two minutes. */
+.ring-spin {
+  animation: ring-spin 120s linear infinite;
+}
+@keyframes ring-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Warm light pooled behind the medallion, breathing. */
+.hero-aura {
+  background: radial-gradient(circle, rgba(255, 200, 110, 0.38) 0%, rgba(255, 170, 70, 0.1) 45%, transparent 70%);
+  filter: blur(6px);
+  animation: aura-breathe 5s ease-in-out infinite;
+}
+@keyframes aura-breathe {
+  0%, 100% { opacity: 0.55; transform: scale(0.94); }
+  50% { opacity: 1; transform: scale(1.06); }
+}
+
+/* Intro: each rune of the band lights up in turn… */
+.ring-rune-reveal {
+  opacity: 0;
+  animation: ring-rune-in 0.5s ease-out forwards;
+}
+@keyframes ring-rune-in {
+  from { opacity: 0; }
+  60% { opacity: 1; filter: drop-shadow(0 0 3px rgba(255, 220, 140, 0.9)); }
+  to { opacity: 1; }
+}
+/* …the medallion rises into the ring… */
+.medallion-rise {
+  opacity: 0;
+  animation: medallion-rise 1s cubic-bezier(0.2, 0.8, 0.2, 1) 0.65s forwards;
+}
+@keyframes medallion-rise {
+  from { opacity: 0; transform: translateY(18px) scale(0.86); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+/* …and the lettering fades up beneath. */
+.intro-line {
+  opacity: 0;
+  animation: intro-line 0.9s ease-out forwards;
+}
+/* No letter-spacing in this animation: widening the tracking pushed the
+ * title past a phone's width, so it wrapped onto two left-aligned lines and
+ * only snapped to the centre as the spacing closed. A blur-to-sharp reveal
+ * keeps the line's width fixed from the first frame. */
+@keyframes intro-line {
+  from { opacity: 0; transform: translateY(8px); filter: blur(6px); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+.intro-glow {
+  background: radial-gradient(circle at 50% 42%, rgba(199, 140, 60, 0.22), transparent 55%);
+}
+
+/* Tab content rises in when its tab is chosen. */
+.view-enter {
+  animation: view-enter 0.55s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@keyframes view-enter {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Nav: the chosen tab's stone/medallion glows and lifts slightly. */
+.nav-mark {
+  display: block;
+  transition: transform 0.3s ease, filter 0.3s ease;
+  filter: grayscale(0.35) brightness(0.8);
+}
+.nav-card:hover .nav-mark {
+  filter: none;
+}
+.nav-card.is-active .nav-mark {
+  filter: drop-shadow(0 0 10px color-mix(in oklab, var(--color-gold) 60%, transparent));
+  transform: translateY(-2px) scale(1.06);
+}
+
+/* A burst of light when a stone is turned face up. */
+.reveal-flare {
+  animation: reveal-flare 0.9s ease-out;
+}
+@keyframes reveal-flare {
+  0% { filter: drop-shadow(0 0 0 rgba(255, 200, 110, 0)); }
+  30% { filter: drop-shadow(0 0 22px rgba(255, 200, 110, 0.85)); }
+  100% { filter: drop-shadow(0 0 6px rgba(255, 200, 110, 0.15)); }
+}
+
+/* A band of light sweeping across the medallion when its engraving changes. */
+.medallion-sweep {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 35%, rgba(255, 245, 215, 0.38) 50%, transparent 65%);
+  background-size: 250% 100%;
+  mix-blend-mode: screen;
+  animation: medallion-sweep 1.1s ease-out forwards;
+}
+@keyframes medallion-sweep {
+  from { background-position: 120% 0; opacity: 1; }
+  to { background-position: -40% 0; opacity: 0; }
+}
+
+/* Primary buttons catch a passing glint every few seconds. */
+.btn-glint {
+  position: relative;
+  overflow: hidden;
+}
+.btn-glint::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 40%, rgba(255, 255, 255, 0.45) 50%, transparent 60%);
+  background-size: 250% 100%;
+  background-position: 130% 0;
+  animation: btn-glint 6s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes btn-glint {
+  0%, 70% { background-position: 130% 0; }
+  100% { background-position: -30% 0; }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .realm-layer,
+  .realm-layer::after,
+  .gilded-text,
+  .ring-spin,
+  .hero-aura,
+  .view-enter,
+  .reveal-flare,
+  .medallion-sweep,
+  .btn-glint::after {
+    animation: none;
+  }
+  .ring-rune-reveal,
+  .medallion-rise,
+  .intro-line {
+    animation: none;
+    opacity: 1;
+  }
   .stone-flip {
     animation: fade-in 0.3s ease-out both;
   }
