@@ -30,7 +30,7 @@ export default function RunePicker({ selected, onToggle, max }: RunePickerProps)
             onClick={() => onToggle(r.name)}
             disabled={disabled}
             aria-pressed={active}
-            className={`altar-option relative flex min-h-[74px] flex-col items-center justify-center gap-1 p-2 active:scale-[0.98] ${
+            className={`altar-option relative flex min-h-[84px] flex-col items-center justify-center gap-1 p-1.5 active:scale-[0.98] ${
               active ? "is-selected" : ""
             }`}
           >
@@ -41,9 +41,12 @@ export default function RunePicker({ selected, onToggle, max }: RunePickerProps)
               />
             )}
             <span className="altar-stone block">
-              <CarvedRune stone={REALMS.forest.stone} runes={[r.name]} size={34} lite />
+              {/* Clean dark basalt, not the realm's mossy stone: at this size
+                  the lichen and speckle tangled with the gilded rune. A larger
+                  face makes the rune itself bigger on the stone. */}
+              <CarvedRune stone={REALMS.fire.stone} runes={[r.name]} size={48} face={0.72} weight={3.4} lite />
             </span>
-            <span className="altar-label text-[10px] leading-none">{r.name}</span>
+            <span className="altar-label text-[11px] leading-none">{r.name}</span>
           </button>
         );
       })}

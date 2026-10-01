@@ -43,7 +43,8 @@ export default function IntentPresetCard({
       )}
 
       <span className="altar-stone mb-0.5 block">
-        <CarvedRune stone={REALMS.forest.stone} runes={[markRune]} size={40} lite />
+        {/* Basalt, as in RunePicker: the mossy realm stone muddied the rune. */}
+        <CarvedRune stone={REALMS.fire.stone} runes={[markRune]} size={46} face={0.72} weight={3.4} lite />
       </span>
 
       {/* Category is a quiet eyebrow: small, spaced, dim. The name is the

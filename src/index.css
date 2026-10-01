@@ -79,10 +79,11 @@ body {
   --color-hairline-strong: rgba(126, 232, 210, 0.55);
 }
 .realm-forest {
-  /* Altar recess light: sun through leaves, olive. */
-  --altar-hi: 120, 125, 60;
-  --altar-mid: 44, 52, 24;
-  --altar-lit: 240, 225, 130;
+  /* Altar recess light: sun through leaves, olive. Kept muted — a bright
+   * yellow-green made the selected recess look raw (user feedback). */
+  --altar-hi: 105, 108, 58;
+  --altar-mid: 40, 46, 24;
+  --altar-lit: 196, 182, 112;
   --color-gold: #e2cf7a;
   --color-gold-light: #f3e39a;
   --color-gold-dark: #8a7a35;
@@ -436,18 +437,19 @@ input[type="number"]::-webkit-inner-spin-button {
 .altar-option.is-selected {
   color: var(--color-gold-light);
   background:
-    radial-gradient(85% 75% at 50% 40%, rgba(var(--altar-lit, 255, 196, 110), 0.5), rgba(var(--altar-hi, 150, 105, 55), 0.42) 50%, rgba(var(--altar-mid, 40, 26, 12), 0.6) 100%);
+    radial-gradient(85% 75% at 50% 40%, rgba(var(--altar-lit, 255, 196, 110), 0.22), rgba(var(--altar-hi, 150, 105, 55), 0.36) 55%, rgba(var(--altar-mid, 40, 26, 12), 0.62) 100%);
+  /* Light held inside the recess; only a soft halo outside. The first
+   * version's wide outer glow made selections look garish. */
   box-shadow:
-    inset 0 0 0 1px color-mix(in oklab, var(--color-gold) 90%, transparent),
+    inset 0 0 0 1px color-mix(in oklab, var(--color-gold) 80%, transparent),
     inset 0 0 0 4px rgba(0, 0, 0, 0.3),
-    inset 0 0 0 5px color-mix(in oklab, var(--color-gold) 45%, transparent),
-    inset 0 0 26px rgba(var(--altar-lit, 255, 190, 100), 0.32),
-    0 0 26px color-mix(in oklab, var(--color-gold) 40%, transparent),
-    0 0 60px color-mix(in oklab, var(--color-gold) 15%, transparent);
-  animation: altar-breathe 3.2s ease-in-out infinite;
+    inset 0 0 0 5px color-mix(in oklab, var(--color-gold) 35%, transparent),
+    inset 0 0 18px rgba(var(--altar-lit, 255, 190, 100), 0.12),
+    0 0 14px color-mix(in oklab, var(--color-gold) 22%, transparent);
+  animation: altar-breathe 4s ease-in-out infinite;
 }
 .altar-option.is-selected .altar-stone {
-  filter: drop-shadow(0 0 6px rgba(var(--altar-lit, 255, 205, 120), 0.85)) drop-shadow(0 2px 2px rgba(0, 0, 0, 0.6));
+  filter: drop-shadow(0 0 5px rgba(var(--altar-lit, 255, 205, 120), 0.6)) drop-shadow(0 2px 2px rgba(0, 0, 0, 0.6));
   transform: translateY(-1px) scale(1.06);
 }
 .altar-option.is-selected .altar-stone-lead {
@@ -465,7 +467,7 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 @keyframes altar-breathe {
   0%, 100% { filter: brightness(1); }
-  50% { filter: brightness(1.12); }
+  50% { filter: brightness(1.03); }
 }
 .altar-option:disabled {
   /* Dimmed but still legible: these are runes you could pick after removing one. */

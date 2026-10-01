@@ -170,7 +170,11 @@ Stiller `index.css` içinde "Relic UI" bölümünde.
   `--altar-hi/-mid/-lit` değişkenlerinden gelir: ateşte kahve, kutupta buz mavisi, ormanda zeytin. Seçilince
   bütün yuva ışır: yaldızlı çift çerçeve, nefes alan ışık, `.altar-stone` parlaması, tek seferlik
   `.altar-sweep`. Seçili etiket **aynı yazı tipi ve boyutta, düz altın + hafif ışıma** kalır. Cinzel'e geçip
-  degradeyle boyamak yazıyı kenarlara dayadı ve küçük boyutta okunmaz yaptı.
+  degradeyle boyamak yazıyı kenarlara dayadı ve küçük boyutta okunmaz yaptı. Seçim ışığı **ölçülü**: geniş dış hale ve
+  güçlü nabız, Tılsım'da (orman) "çiğ" duruyordu. Işık yuvanın içinde tutuluyor, dış hale 14 px, orman
+  `--altar-lit` mat zeytin-altın.
+  - Tılsım'daki küçük rune taşları (niyet kartları, rune seçici) **temiz bazalt** (`REALMS.fire.stone`),
+    `face 0.72`. Orman taşının liken ve benekleri küçük boyutta yaldızlı rune'la karışıyordu.
 - **`OrnateHeader`**: elmas uçlu çizgiler arasında yaldızlı Cinzel başlık. `lg` (19 px) panel içi ana başlıklar,
   `md` (16 px) `SectionHeader`'ın ortalı varyantı. Kullanıcı ilk 15 px'i küçük buldu.
 - **`.inscription`** (soru alanı, `MysticInput`): içe gömülü yazı tableti, ince altın çerçeve, odakta altın
