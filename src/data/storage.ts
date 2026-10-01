@@ -47,6 +47,8 @@ export interface StoredTalisman {
   offsets: Record<string, number>;
   /** Madalyon malzemesi (gold/silver/bronze). Eski kayıtlarda yok. */
   material?: string;
+  /** "İsmim" modunda yazılan isim. Eski kayıtlarda yok. */
+  nameText?: string;
 }
 
 /**

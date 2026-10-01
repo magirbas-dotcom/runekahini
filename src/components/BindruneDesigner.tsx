@@ -22,6 +22,10 @@ import { REALMS } from "../theme/realms";
 import { DEFAULT_LIGHT } from "../theme/light";
 import { engraveMedallion } from "./ui/engraveCanvas";
 import { fitFontSize, loadImage, runeName, shareCanvas, spaced } from "./share/cardCanvas";
+import { distinctRunes, MAX_NAME_LENGTH, transliterate } from "../data/transliterate";
+import NameRunes from "./ui/NameRunes";
+import ShareCardButton from "./share/ShareCardButton";
+import { drawNameCard } from "./share/resultCards";
 
 const MAX_LAYERS = 4;
 /** Starting vertical spread for a bind rune, so a new stack is not fully
@@ -81,7 +85,9 @@ export default function BindruneDesigner() {
     const names = v.layers.filter((n) => n in RUNE_GLYPHS).slice(0, MAX_LAYERS);
     if (names.length === 0) return null;
     return {
-      mode: v.mode === "custom" ? ("custom" as const) : ("preset" as const),
+      mode:
+        v.mode === "custom" || v.mode === "name" ? (v.mode as "custom" | "name") : ("preset" as const),
+      nameText: typeof v.nameText === "string" ? v.nameText.slice(0, MAX_NAME_LENGTH) : "",
       form: v.form === "medallion" ? ("medallion" as const) : ("bindrune" as const),
       preset: INTENT_PRESETS.find((p) => p.id === v.presetId) ?? INTENT_PRESETS[0],
       layers: names,
@@ -93,7 +99,10 @@ export default function BindruneDesigner() {
   })[0];
   const first = restored?.preset ?? INTENT_PRESETS[0];
 
-  const [mode, setMode] = useState<"preset" | "custom">(restored?.mode ?? "preset");
+  const [mode, setMode] = useState<"preset" | "custom" | "name">(restored?.mode ?? "preset");
+  const [nameText, setNameText] = useState(restored?.nameText ?? "");
+  const nameRunes = transliterate(nameText);
+  const nameDistinct = distinctRunes(nameRunes);
   const [presetId, setPresetId] = useState(first.id);
   // One intent group open at a time — 33 presets in a flat grid ran far past
   // the fold on a phone.
@@ -120,8 +129,8 @@ export default function BindruneDesigner() {
   // Her değişiklikte yaz. Kayıt küçük ve nadir değişiyor; ayrı bir
   // "kaydet" adımı istemeye değmez.
   useEffect(() => {
-    saveTalisman({ form, mode, presetId, layers, offsets, material });
-  }, [form, mode, presetId, layers, offsets, material]);
+    saveTalisman({ form, mode, presetId, layers, offsets, material, nameText });
+  }, [form, mode, presetId, layers, offsets, material, nameText]);
 
   const preset = INTENT_PRESETS.find((p) => p.id === presetId);
 
@@ -169,6 +178,15 @@ export default function BindruneDesigner() {
       setOffsets((o) => ({ ...o, [name]: DEFAULT_OFFSETS[prev.length] ?? 0 }));
       return [...prev, name];
     });
+  }
+
+  /** "Rune ile Yaz": the talisman is made of the written text's distinct runes, at most four. */
+  function updateName(text: string) {
+    setMode("name");
+    setNameText(text);
+    const next = distinctRunes(transliterate(text)).slice(0, MAX_LAYERS);
+    setLayers(next);
+    setOffsets(Object.fromEntries(next.map((n, i) => [n, DEFAULT_OFFSETS[i] ?? 0])));
   }
 
   function updateOffset(name: string, value: number) {
@@ -295,8 +313,15 @@ export default function BindruneDesigner() {
 
     // Lettering below the medallion: purpose, name in gilded capitals, a
     // divider, the runes themselves, and the brand at the foot.
-    const name = mode === "preset" && preset ? preset.name : layers.map(runeName).join(" + ");
-    const purpose = mode === "preset" && preset ? preset.category : "Özel Kombinasyon";
+    const typedName = nameText.trim().toLocaleUpperCase("tr-TR");
+    const name =
+      mode === "preset" && preset
+        ? preset.name
+        : mode === "name" && typedName
+          ? typedName
+          : layers.map(runeName).join(" + ");
+    const purpose =
+      mode === "preset" && preset ? preset.category : mode === "name" ? "Kişisel Tılsım" : "Özel Kombinasyon";
     const textTop = my + EXPORT_MEDALLION / 2 + T(40);
     const textMax = W - 160;
     ctx.textAlign = "center";
@@ -343,9 +368,13 @@ export default function BindruneDesigner() {
       : buildCustomSynergy(layers);
 
   const talismanName =
-    mode === "preset" && preset ? preset.name : "Özel Kombinasyon";
+    mode === "preset" && preset
+      ? preset.name
+      : mode === "name"
+        ? nameText.trim().toLocaleUpperCase("tr-TR") || "Kişisel Tılsım"
+        : "Özel Kombinasyon";
   const talismanIntent =
-    mode === "preset" && preset ? preset.category : "Kendi niyetin";
+    mode === "preset" && preset ? preset.category : mode === "name" ? "Kişisel Tılsım" : "Kendi niyetin";
 
   const FORMS = [
     // Written in caps already: the page is lang="tr", so both Cinzel's small
@@ -364,7 +393,8 @@ export default function BindruneDesigner() {
 
   const MODES = [
     { key: "preset" as const, label: "Hazır Niyetler" },
-    { key: "custom" as const, label: "Kendi Seçimim" },
+    { key: "custom" as const, label: "Rune Seç" },
+    { key: "name" as const, label: "Rune ile Yaz" },
   ];
 
   return (
@@ -394,9 +424,13 @@ export default function BindruneDesigner() {
             role="tab"
             aria-selected={mode === m.key}
             onClick={() =>
-              m.key === "preset" ? selectPreset(presetId) : setMode("custom")
+              m.key === "preset"
+                ? selectPreset(presetId)
+                : m.key === "name"
+                  ? updateName(nameText)
+                  : setMode("custom")
             }
-            className={`-mb-px flex-1 border-b-2 px-3 pb-3 font-serif text-[15px] tracking-[0.08em] transition duration-200 ${
+            className={`-mb-px flex-auto whitespace-nowrap border-b-2 px-1 pb-3 font-serif text-[clamp(12px,3.6vw,14px)] tracking-[0.03em] transition duration-200 ${
               mode === m.key
                 ? "border-gold text-gold-light [text-shadow:0_0_10px_color-mix(in_oklab,var(--color-gold)_55%,transparent)]"
                 : "border-transparent text-parchment-dim hover:text-parchment"
@@ -471,6 +505,60 @@ export default function BindruneDesigner() {
               </div>
             );
           })}
+        </section>
+      ) : mode === "name" ? (
+        <section className="mb-9">
+          <p className="mb-4 text-center text-[13px] leading-5 text-parchment-dim">
+            Bir isim, kelime ya da kısa bir söz yaz; Rune harfleriyle nasıl yazıldığını gör.
+          </p>
+          <input
+            type="text"
+            value={nameText}
+            onChange={(e) => updateName(e.target.value)}
+            maxLength={MAX_NAME_LENGTH}
+            placeholder="Örn. Ayşe, Umut, Cesur ol"
+            aria-label="Rune ile yazılacak metin"
+            autoComplete="off"
+            spellCheck={false}
+            className="inscription h-14 text-center font-serif text-[20px] tracking-[0.06em]"
+          />
+
+          {nameRunes.words.length > 0 && (
+            <>
+              <NameRunes words={nameRunes.words} className="mt-6" />
+
+              {nameRunes.notes.length > 0 && (
+                <ul className="mt-5 space-y-1.5 text-[13px] leading-5 text-parchment-dim">
+                  {nameRunes.notes.map((n) => (
+                    <li key={n} className="flex gap-2">
+                      <span className="mt-[7px] block h-1.5 w-1.5 shrink-0 rotate-45 bg-gold" aria-hidden="true" />
+                      {n}
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              <ShareCardButton
+                stone={REALMS.forest.stone}
+                filename="rune-ile-yazilisi.png"
+                title="Rune ile Yazılışı"
+                
+                className="mt-6 min-h-12 w-full"
+                draw={(assets) => drawNameCard({ name: nameText.trim(), result: nameRunes }, assets)}
+              />
+
+              <p className="mt-5 text-center text-[13px] leading-5 text-parchment-dim">
+                {nameDistinct.length > MAX_LAYERS
+                  ? `Yazdığında ${nameDistinct.length} farklı Rune var. Tılsım ilk ${MAX_LAYERS} tanesiyle hazırlandı: ${layers.join(", ")}.`
+                  : `Aşağıdaki tılsım yazdığının ${nameDistinct.length} farklı Rune'sinden oluştu.`}
+              </p>
+            </>
+          )}
+
+          <p className="mt-4 text-center text-[12px] leading-5 text-parchment-dim">
+            Bu bir çeviri değil, harf çevirisidir: Rune'lar bir dil değil, bir alfabedir. Her harf
+            sesine en yakın Rune ile yazılır. Modern bir uygulamadır.
+          </p>
         </section>
       ) : (
         <section className="mb-9">

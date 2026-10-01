@@ -191,6 +191,33 @@ Stiller `index.css` içinde "Relic UI" bölümünde.
   ağırlaştırır. Büyük tekil taşlar tam `CarvedRune`. `RuneGlyph` ve `RuneEmblem` artık kullanılmadığı için
   silindi.
 
+### Rune ile Yaz: isim ya da kelimeyi Rune ile yazma (2026-10-01)
+
+Fikir NotebookLM'den geldi ("Runik Çevirici"). Tılsım bölümüne üçüncü sekme olarak eklendi. İlk adı "İsmim"di. Kullanıcı kelime de yazılabileceğini sorunca
+yazılar genişletildi (isim, kelime ya da kısa söz) ve sekme önce "Sen Yaz", sonra "Rune ile Yaz" oldu.
+  Sekmeler: Hazır Niyetler · Rune Seç · Rune ile Yaz (aynı kalıpta bir çift, kart başlığı "Rune ile Yazılışı" ile uyumlu). "Kendi Seçimim", Rune Seç oldu. "Tılsım Oluştur" düşünüldü ama
+  üç sekme de tılsım oluşturduğu için yanıltıcıydı. "Sen Seç" de iki "Sen" olduğu için reddedildi.
+
+- `src/data/transliterate.ts`: **çeviri değil, harf çevirisi.** Rune'lar bir alfabe, dil değil. Arayüz de
+  bunu söyler. Türkçe yazıldığı gibi okunduğu için eşleme sese göre yapılır.
+  - **Alfabede olmayan sesler** en yakın rune'a gider: c → Dagaz + Jera, ç → Tiwaz + Sowilo, ş → Sowilo,
+    ı → Isa, ö → Othala, ü → Uruz, v → Wunjo, y → Jera.
+  - **ğ yazılmaz,** çünkü ayrı bir ses değil, önündeki ünlüyü uzatır.
+  - **Şeffaflık:** Kullanılan her yaklaşık eşleme ekranda bir not satırıyla gösterilir.
+  - **"ng" ve "th" birleştirilmez:** Türkçede iki ayrı sestir.
+  - **NotebookLM tablosundan farklar:** Tablo c ve ç'yi Kenaz'a ("Can" → "Kan"), ğ'yi Gebo'ya eşliyordu.
+    Bu eşlemeler alınmadı.
+- **İki rune'lu harfler (c, ç, x) tek harf gibi gösterilir (kullanıcı isteği):** İki taş yakın durur, altında
+  bir köşeli bağ olur, harf bir kez yazılır. `RuneWord.letters` harf bazında gruplar. Kartta bir harfin
+  taşları satırlar arasında bölünmez.
+- `NameRunes`: Her rune için bir oyma taş, altında harfi. İsim tek satıra sığarsa kelimeler arasında
+  yazıtlardaki iki nokta ayıracı durur. Sığmazsa her kelime kendi satırına geçer, böylece ayıraç satır
+  başına düşmez.
+- **Tılsım:** İsmin farklı rune'larından ilk dördü kullanılır (`MAX_LAYERS`). Dörtten fazlaysa ekran bunu
+  söyler. Duvar kâğıdında yazılan metin başlık, "Kişisel Tılsım" amaç olur. İsim `talisman.nameText` olarak saklanır.
+- `drawNameCard` (parşömen, 1080×1920): İsim başlıkta, taşlar satırlarda, altında her farklı rune'un iki
+  anahtar kelimesi yer alır. Taş boyutu, hiçbir kelime bölünmeyecek en büyük boyut olarak seçilir.
+
 ### Sonuç kartları: okuma ve doğum rune'si paylaşımı (2026-10-01)
 
 Kullanıcı önerisi: tılsımdaki gibi, Rune Okuması ve Doğum Rune'si sonuçları da özetlenip görsel olarak

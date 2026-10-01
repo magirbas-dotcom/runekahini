@@ -1,4 +1,5 @@
-import type { DrawnRune, Rune } from "../../data/runes";
+import { runes, type DrawnRune, type Rune } from "../../data/runes";
+import type { RuneWord, Transliteration } from "../../data/transliterate";
 import parchment from "../../assets/cards/parchment.webp";
 import { ZODIAC_STROKES } from "../../data/zodiac";
 import {
@@ -440,5 +441,156 @@ export async function drawBirthCard(input: BirthCardInput, assets: CardAssets) {
   });
 
   footer(ctx, "Modern bir yorumdur.");
+  return canvas;
+}
+
+export interface NameCardInput {
+  name: string;
+  result: Transliteration;
+}
+
+type Slot = { kind: "letter"; runes: string[]; from: string } | { kind: "sep" };
+
+/** A two-rune letter (c, ç, x) sits its stones a little closer, as one unit. */
+const PAIR_STEP = 0.9;
+const letterWidth = (n: number, size: number) => size + (n - 1) * size * PAIR_STEP + 18;
+const slotWidth = (s: Slot, size: number) => (s.kind === "sep" ? 46 : letterWidth(s.runes.length, size));
+
+/**
+ * Lays the name's stones out in centred rows. When the whole name fits on one
+ * row the words share it, divided by the inscriptions' two dots; otherwise each
+ * word starts its own row (a divider would end up opening a row), and only a
+ * word too long for a row is broken.
+ */
+function nameRows(words: RuneWord[], size: number, maxWidth: number): Slot[][] {
+  const letterSlots = (w: RuneWord): Slot[] =>
+    w.letters.map((l) => ({ kind: "letter", runes: l.runes, from: l.from }));
+  const all = words.flatMap((w, i) => (i > 0 ? [{ kind: "sep" } as Slot, ...letterSlots(w)] : letterSlots(w)));
+  if (all.reduce((n, sl) => n + slotWidth(sl, size), 0) <= maxWidth) return [all];
+  // A two-rune letter is never split across rows.
+  const rows: Slot[][] = [];
+  for (const w of words) {
+    let row: Slot[] = [];
+    let used = 0;
+    for (const sl of letterSlots(w)) {
+      const sw = slotWidth(sl, size);
+      if (row.length > 0 && used + sw > maxWidth) {
+        rows.push(row);
+        row = [];
+        used = 0;
+      }
+      row.push(sl);
+      used += sw;
+    }
+    if (row.length > 0) rows.push(row);
+  }
+  return rows;
+}
+
+export async function drawNameCard(input: NameCardInput, assets: CardAssets) {
+  await loadFonts(FONTS);
+  const { canvas, ctx } = newCard(assets);
+  const title = input.name.toLocaleUpperCase("tr-TR");
+  const top = header(ctx, "Rune ile Yazılışı", title, "Elder Futhark harfleriyle") + 50;
+  const stoneAt = stoneMaker(assets);
+  const words = input.result.words;
+
+  // Largest stone size at which no word has to be broken across rows (one row
+  // for the whole name, or one per word), within three rows; failing that, the
+  // largest that fits three rows at all.
+  const SIZES = [190, 160, 136, 116, 100, 86, 74];
+  const W = TEXT_MAX + 20;
+  const unbroken = (sz: number) => {
+    const n = nameRows(words, sz, W).length;
+    return n <= 3 && (n === 1 || n === words.length);
+  };
+  const size =
+    SIZES.find(unbroken) ??
+    SIZES.find((sz) => nameRows(words, sz, W).length <= 3) ??
+    SIZES[SIZES.length - 1];
+  const rows = nameRows(words, size, TEXT_MAX + 20);
+
+  const distinct: string[] = [];
+  for (const w of words) for (const r of w.runes) if (!distinct.includes(r.rune)) distinct.push(r.rune);
+
+  centred(ctx, top, (c, t) => {
+    let y = t;
+    const letterSize = Math.round(Math.max(26, size * 0.2));
+    for (const row of rows) {
+      const width = row.reduce((n, sl) => n + slotWidth(sl, size), 0);
+      let x = CX - width / 2;
+      for (const s of row) {
+        if (s.kind === "sep") {
+          c.save();
+          c.fillStyle = RED;
+          for (const dy of [-12, 12]) {
+            c.beginPath();
+            c.arc(x + 23, y + size / 2 + dy, 6, 0, Math.PI * 2);
+            c.fill();
+          }
+          c.restore();
+          x += 46;
+          continue;
+        }
+        const w = slotWidth(s, size);
+        const first = x + 9 + size / 2;
+        const last = first + (s.runes.length - 1) * size * PAIR_STEP;
+        s.runes.forEach((rune, i) => stoneAt(c, rune, false, first + i * size * PAIR_STEP, y + size / 2, size));
+        if (s.runes.length > 1) {
+          // Bracket under the pair: one letter, two runes.
+          const by = y + size + 10;
+          const x0 = first - size * 0.28;
+          const x1 = last + size * 0.28;
+          c.save();
+          c.strokeStyle = RED;
+          c.lineWidth = 3;
+          c.lineJoin = "round";
+          c.beginPath();
+          c.moveTo(x0, by - 8);
+          c.lineTo(x0, by);
+          c.lineTo(x1, by);
+          c.lineTo(x1, by - 8);
+          c.stroke();
+          c.restore();
+        }
+        text(c, s.from, x + w / 2, y + size + letterSize + 22, `600 ${letterSize}px ${SANS}`, RED);
+        x += w;
+      }
+      y += size + letterSize + 50;
+    }
+
+    // Key: each distinct rune with its first two keywords.
+    y += 30;
+    ornament(c, y, 140);
+    y += 30;
+    const lines = distinct.map((name) => {
+      const rune = runes.find((r) => r.name === name);
+      return { name, kw: rune ? rune.upright.keywords.slice(0, 2).join(", ") : "" };
+    });
+    const twoCols = lines.length > 6;
+    const colW = twoCols ? TEXT_MAX / 2 : TEXT_MAX;
+    const rowsN = twoCols ? Math.ceil(lines.length / 2) : lines.length;
+    const fs = twoCols ? 27 : 32;
+    lines.forEach((l, i) => {
+      const col = twoCols ? Math.floor(i / rowsN) : 0;
+      const row = twoCols ? i % rowsN : i;
+      const cx = twoCols ? CX - TEXT_MAX / 4 + col * (TEXT_MAX / 2) : CX;
+      const ly = y + 20 + row * (fs + 22) + fs;
+      const head = `${l.name}  `;
+      c.font = `600 ${fs}px ${SERIF}`;
+      const w1 = c.measureText(runeName(head)).width;
+      const kwSize = fitFontSize(c, l.kw, colW - w1 - 30, "500", SANS, fs, 20);
+      c.font = `500 ${kwSize}px ${SANS}`;
+      const w2 = c.measureText(l.kw).width;
+      const x0 = cx - (w1 + w2) / 2;
+      c.textAlign = "left";
+      text(c, runeName(head), x0, ly, `600 ${fs}px ${SERIF}`, INK);
+      text(c, l.kw, x0 + w1, ly, `500 ${kwSize}px ${SANS}`, INK_SOFT);
+      c.textAlign = "center";
+    });
+    return y + 20 + rowsN * (fs + 22);
+  });
+
+  footer(ctx, "Harf çevirisidir, modern bir uygulamadır.");
   return canvas;
 }
