@@ -256,6 +256,15 @@ Stiller `index.css` içinde "Relic UI" bölümünde.
   dashboard erişimi yok).
 - **`read_network_requests`, `<a download>` blob indirmelerini yakalamaz.** PNG export'u doğrulamak için
   `HTMLCanvasElement.prototype.toBlob`'u sarmalayıp canvas'ı sayfaya basmak en pratik yöntem.
+- **Yakınlaştırma kilitli** (kullanıcı isteği): telefonda iki parmakla büyütünce sabit diyar arka planı ve
+  parçacık tuvali bozuluyordu. Üç katman var: viewport `maximum-scale=1, user-scalable=no` (Android),
+  `html, body { touch-action: pan-x pan-y }` (iOS dahil pinch ve çift dokunma) ve `main.tsx`'te iOS
+  `gesturestart/gesturechange` engeli. Bu yüzden **giriş alanları en az 16 px** kalmalı, yoksa iOS odakta
+  otomatik yakınlaştırır. Gövde metni de 16 px tabanında.
+- **Yalnızca dikey** (kullanıcı isteği). Manifest `orientation: 'portrait'` (kurulu Android PWA uyar),
+  `main.tsx`'te `screen.orientation.lock('portrait')` (desteklenen yerde). iOS web uygulamalarına yönelim
+  kilidi vermiyor. Bu yüzden `RotateNotice` yatay + 500 px'ten kısa ekranda uygulamanın üstünü "telefonunu
+  dik tut" ekranıyla kaplar, alttaki sayfa kaymaz. Tablet ve masaüstü etkilenmez.
 - Proje client-side-only; backend/API/veritabanı yok ve planlanmıyor.
 
 ## Tarihsel dürüstlük çizgisi

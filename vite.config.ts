@@ -32,6 +32,9 @@ export default defineConfig({
         theme_color: '#0c0a09',
         background_color: '#0c0a09',
         display: 'standalone',
+        // Portrait only. Android honours this for the installed app; iOS ignores
+        // it, so RotateNotice covers landscape there.
+        orientation: 'portrait',
         start_url: '/',
         lang: 'tr',
         icons: [

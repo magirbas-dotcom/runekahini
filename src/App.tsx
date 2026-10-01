@@ -4,6 +4,7 @@ import BirthRunePage from "./components/BirthRunePage";
 import BindruneDesigner from "./components/BindruneDesigner";
 import ReloadPrompt from "./components/ReloadPrompt";
 import IntroSplash from "./components/IntroSplash";
+import RotateNotice from "./components/RotateNotice";
 import CarvedRune from "./components/ui/CarvedRune";
 import HeroEmblem from "./components/ui/HeroEmblem";
 import RealmScene from "./components/ui/RealmScene";
@@ -63,6 +64,7 @@ function App() {
       {/* Each tab lives in its own living photographic realm (RealmScene). */}
       <RealmScene realm={VIEW_REALM[view]} />
       <IntroSplash />
+      <RotateNotice />
 
       <div className="relative mx-auto flex min-h-screen max-w-3xl flex-col items-center px-4 py-6 sm:py-14">
         {/* Header trimmed down from its original size: on a phone it used to

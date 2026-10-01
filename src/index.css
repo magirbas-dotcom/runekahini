@@ -38,6 +38,12 @@
   --radius-stone: 0.75rem;
 }
 
+/* Pan only: no pinch-zoom and no double-tap zoom (see index.html). */
+html,
+body {
+  touch-action: pan-x pan-y;
+}
+
 body {
   margin: 0;
   font-family: var(--font-sans);
@@ -625,6 +631,38 @@ input[type="number"]::-webkit-inner-spin-button {
     0 3px 10px rgba(0, 0, 0, 0.45);
 }
 
+/* Portrait-only fallback (RotateNotice). Landscape on a short screen means a
+ * phone held sideways; tablets and desktops are taller than 500px and never
+ * see it. */
+.rotate-notice {
+  display: none;
+}
+@media (orientation: landscape) and (max-height: 500px) {
+  body {
+    overflow: hidden;
+  }
+  .rotate-notice {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    background: radial-gradient(circle at 50% 45%, rgba(199, 140, 60, 0.18), transparent 60%), var(--color-ink);
+    color: var(--color-gold);
+    text-align: center;
+  }
+  .rotate-notice-icon {
+    animation: rotate-hint 2.4s ease-in-out infinite;
+  }
+}
+@keyframes rotate-hint {
+  0%, 30% { transform: rotate(-90deg); }
+  60%, 100% { transform: rotate(0deg); }
+}
+
 /* ── Hero, intro and transitions ───────────────────────────────────── */
 
 /* Gilded lettering: gold-leaf gradient clipped to the text, with a slow
@@ -794,7 +832,8 @@ input[type="number"]::-webkit-inner-spin-button {
   }
   .ring-spin,
   .shuffle-spinner,
-  .bindrune-settle {
+  .bindrune-settle,
+  .rotate-notice-icon {
     animation: none;
   }
   .realm-layer-aurora::after {
