@@ -5,28 +5,28 @@ export type SpreadDiagram = "single" | "three" | "four" | "five";
 
 /* Each spread shown as real miniature stones laid out the way the draw will
  * be: a row for one/three, a diamond for four, a cross for five. Positions are
- * in a 76×64 box, spaced so the stones never touch; `lit` marks where the
+ * in a 100×84 box, spaced so the stones never touch; `lit` marks where the
  * reading starts. Each stone carries a gilded rune — bare dark stones on a
  * dark ground read as blots. */
 const LAYOUTS: Record<SpreadDiagram, { x: number; y: number; rune: string; lit?: boolean }[]> = {
-  single: [{ x: 38, y: 32, rune: "Ansuz", lit: true }],
+  single: [{ x: 50, y: 42, rune: "Ansuz", lit: true }],
   three: [
-    { x: 14, y: 32, rune: "Fehu" },
-    { x: 38, y: 32, rune: "Raidho", lit: true },
-    { x: 62, y: 32, rune: "Kenaz" },
+    { x: 17, y: 42, rune: "Fehu" },
+    { x: 50, y: 42, rune: "Raidho", lit: true },
+    { x: 83, y: 42, rune: "Kenaz" },
   ],
   four: [
-    { x: 38, y: 10, rune: "Gebo" },
-    { x: 16, y: 32, rune: "Wunjo", lit: true },
-    { x: 60, y: 32, rune: "Ehwaz" },
-    { x: 38, y: 54, rune: "Mannaz" },
+    { x: 50, y: 12, rune: "Gebo" },
+    { x: 22, y: 42, rune: "Wunjo", lit: true },
+    { x: 78, y: 42, rune: "Ehwaz" },
+    { x: 50, y: 72, rune: "Mannaz" },
   ],
   five: [
-    { x: 38, y: 10, rune: "Sowilo" },
-    { x: 14, y: 32, rune: "Uruz" },
-    { x: 38, y: 32, rune: "Dagaz", lit: true },
-    { x: 62, y: 32, rune: "Jera" },
-    { x: 38, y: 54, rune: "Othala" },
+    { x: 50, y: 12, rune: "Sowilo" },
+    { x: 17, y: 42, rune: "Uruz" },
+    { x: 50, y: 42, rune: "Dagaz", lit: true },
+    { x: 83, y: 42, rune: "Jera" },
+    { x: 50, y: 72, rune: "Othala" },
   ],
 };
 
@@ -45,7 +45,7 @@ interface SpreadOptionCardProps {
  */
 export default function SpreadOptionCard({ label, diagram, selected, onClick }: SpreadOptionCardProps) {
   const stones = LAYOUTS[diagram];
-  const size = diagram === "single" ? 34 : 22;
+  const size = diagram === "single" ? 50 : diagram === "three" ? 30 : 28;
   return (
     <button
       type="button"
@@ -56,7 +56,7 @@ export default function SpreadOptionCard({ label, diagram, selected, onClick }: 
       }`}
     >
       {selected && <span key={diagram} className="altar-sweep" aria-hidden="true" />}
-      <span className="relative block h-16 w-[76px]" aria-hidden="true">
+      <span className="relative block h-[84px] w-[100px]" aria-hidden="true">
         {stones.map((st) => (
           <span
             key={st.rune}

@@ -151,10 +151,13 @@ gerektiriyor (Higgsfield Seedance, 6 sn döngü ~42 kredi, kullanıcı onayı ge
   sahnesi yalnızca solup belirerek oynuyor. Parmakla tılsım eğme doğrudan kullanıcı eylemi olduğu için açık.
   Yeni animasyon eklerken bu ayrıma göre karar verilmeli.
 - **PWA ikonu**: eski ikondaki Vegvísir 19. yy İzlanda kaynaklı, Elder Futhark değil. Tarihsel dürüstlük
-  çizgisine uymadığı için kaldırıldı. Yeni ikon: koyu sıcak zemin + ışık haresi + oyma Perthro'lu altın
-  madalyon. Madalyon SVG'si uygulamadan serileştirilip sharp/librsvg ile çizildi, rune ikon için %35
-  büyütüldü. Ayrı `icon-maskable-512.png` var (içerik %80 güvenli alanda). Önizleme ve ara render'lar
-  `../rune-kahini-mobile/design/icons/` altında.
+  çizgisine uymadığı için kaldırıldı. İlk yeni ikon (koyu zeminde oyma Perthro'lu altın madalyon) telefonda
+  silik ve küçük göründü. Kullanıcı yerine kendi getirdiği görseli seçti: yeşil kozmik sis + ince hale
+  üzerinde büyük, parlak bakır Perthro (`../rune-kahini-mobile/design/icons/final-green.png`). Glif
+  `runeGlyphs.ts`'teki Perthro ile üst üste konup doğrulandı. Kaynakta pişmiş yuvarlak köşeler vardı,
+  kenarlardan 76px kırpılarak atıldı (köşeleri iOS/Android kendisi yuvarlar). `icon-maskable-512.png`
+  ayrı: görsel %74'e küçültülüp yumuşak dairesel kenarla koyu yeşil radyal zemine oturtuldu, böylece
+  rune %80 güvenli alanda kalıyor (bulanık kopya zemin denenmişti, rune kenarlarda lekeleniyordu).
 
 ### Eser arayüzü: kontroller objelerle aynı dünyadan (2026-10-01)
 
