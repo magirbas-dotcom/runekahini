@@ -32,7 +32,7 @@ const CX = CARD_WIDTH / 2;
 /** Inside the knotwork border, with a margin. */
 const TEXT_MAX = 800;
 /** Below this the pebbles in the bottom-right corner begin. */
-const CONTENT_BOTTOM = 1580;
+const CONTENT_BOTTOM = 1550;
 
 const FONTS = [`600 40px Cinzel`, `500 40px Inter`, `400 40px Inter`, `italic 400 40px Inter`];
 
@@ -122,14 +122,29 @@ function header(ctx: Ctx, kicker: string, title: string, sub: string) {
 }
 
 /**
- * Brand as low as it goes, just above the knotwork's bottom band. That low the
- * pebbles and leaves reach in from the right (from x≈620), so it is centred in
- * the clear stretch between the left border and them rather than on the page.
+ * Brand centred on the page, as low as it can sit while staying centred: below
+ * this the pebbles and leaves in the bottom-right corner reach in past the
+ * middle (x≈620 near the bottom band) and would run into the lettering.
  */
-const FOOT_X = 445;
+const FOOT_Y = 1716;
 function footer(ctx: Ctx, note?: string) {
-  if (note) text(ctx, note, FOOT_X, 1762, `italic 500 28px ${SANS}`, INK_SOFT);
-  text(ctx, spaced("Rune Kahini"), FOOT_X, 1822, `600 34px ${SERIF}`, RED);
+  if (note) text(ctx, note, CX, FOOT_Y - 64, `italic 500 28px ${SANS}`, INK_SOFT);
+  const brand = spaced("Rune Kahini");
+  text(ctx, brand, CX, FOOT_Y, `600 32px ${SERIF}`, RED);
+  // A small diamond either side, as in the header's rule.
+  const half = ctx.measureText(brand).width / 2 + 30;
+  ctx.save();
+  ctx.fillStyle = "rgba(122,42,23,0.85)";
+  for (const x of [CX - half, CX + half]) {
+    ctx.beginPath();
+    ctx.moveTo(x, FOOT_Y - 21);
+    ctx.lineTo(x + 7, FOOT_Y - 12);
+    ctx.lineTo(x, FOOT_Y - 3);
+    ctx.lineTo(x - 7, FOOT_Y - 12);
+    ctx.closePath();
+    ctx.fill();
+  }
+  ctx.restore();
 }
 
 /**
@@ -345,8 +360,8 @@ export interface BirthCardInput {
 function birthHeader(ctx: Ctx, input: BirthCardInput) {
   text(ctx, spaced("Doğum Rune'si"), CX, 170, `600 32px ${SANS}`, RED);
 
-  const cy = 320;
-  const r = 108;
+  const cy = 306;
+  const r = 98;
   ctx.save();
   ctx.fillStyle = "rgba(255,244,214,0.45)";
   ctx.strokeStyle = RED;
@@ -364,7 +379,7 @@ function birthHeader(ctx: Ctx, input: BirthCardInput) {
   const d = ZODIAC_STROKES[input.zodiacId];
   if (d) {
     // The sign drawn like the runes: gold leaf with a dark ink edge.
-    const k = 1.5;
+    const k = 1.36;
     const path = new Path2D(d);
     ctx.translate(CX - 50 * k, cy - 50 * k);
     ctx.scale(k, k);
@@ -385,7 +400,7 @@ function birthHeader(ctx: Ctx, input: BirthCardInput) {
   }
   ctx.restore();
 
-  const nameY = cy + r + 84;
+  const nameY = cy + r + 80;
   const size = fitFontSize(ctx, input.zodiacName, TEXT_MAX, "600", SERIF, 80, 50);
   text(ctx, input.zodiacName, CX, nameY, `600 ${size}px ${SERIF}`, INK);
   const dateY = nameY + 62;
@@ -406,16 +421,16 @@ export async function drawBirthCard(input: BirthCardInput, assets: CardAssets) {
   centred(ctx, top, (c, t) => {
     // Label above the main stone, so it reads as the map's title rune.
     text(c, spaced("Kader Yolu"), CX, t + 10, `600 30px ${SANS}`, RED);
-    const size = 260;
-    stoneAt(c, input.lifePath.name, false, CX, t + 40 + size / 2, size);
-    let y = caption(c, CX, t + 40 + size + 16, up(input.lifePath), {
+    const size = 236;
+    stoneAt(c, input.lifePath.name, false, CX, t + 34 + size / 2, size);
+    let y = caption(c, CX, t + 34 + size + 14, up(input.lifePath), {
       nameSize: 72,
       kwSize: 36,
       keywords: "line",
       width: TEXT_MAX,
     });
-    const small = 190;
-    const row = y + 60;
+    const small = 170;
+    const row = y + 44;
     let bottom = 0;
     (
       [

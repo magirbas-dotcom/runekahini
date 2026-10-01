@@ -219,9 +219,10 @@ kaydedilebilsin. Zemini kullanıcı getirdi (yaldızlı örgü çerçeveli eski 
     ve Doğum Saati rune'leri. Kader Yolu'nun yorum cümlesi yer açmak için çıkarıldı.
   - **Okunurluk (kullanıcı isteği: küçük yazılar zor okunuyordu):** ikincil metin `#3e2812` ve 500
     kalınlıkta. Anahtar kelimeler 36 px, etiketler 28 px/600, hiçbir metin 23 px'in altına inmez.
-  - **Altlık:** web adresi yok (kullanıcı isteği). "Rune Kahini" alt örgü bandının hemen üstünde (y 1822).
-    O yükseklikte çakıl ve yapraklar sağdan x≈620'ye kadar giriyor. Bu yüzden yazı sayfaya değil, sol
-    çerçeve ile çakıllar arasındaki boşluğa ortalanır (`FOOT_X` 445).
+  - **Altlık:** web adresi yok (kullanıcı isteği). "Rune Kahini" sayfaya ortalı, iki yanında küçük
+    elmaslar (`FOOT_Y` 1716). Önce alt örgü bandının hemen üstüne indirilip çakıllardan kaçmak için sola
+    kaydırılmıştı, kullanıcı "çok altta ve ortalı değil" dedi, ardından "biraz daha aşağı". Daha aşağıda sağ alttaki çakıl ve yapraklar
+    ortaya kadar uzandığı için ortalı kalabileceği en alt nokta burası. İçerik `CONTENT_BOTTOM` 1550'de biter.
   - Rune adları Cinzel'de `ı` ile yazılır (`runeName`). Sayfa `lang="tr"` olduğu için Cinzel'in küçük
     büyük harfli `i`'si noktalı İ çıkıyordu ("SOWİLO"). Türkçe başlıklarda (Şimdi, Haritan) noktalı İ doğru
     olduğu için yalnızca rune adlarına uygulanır.
