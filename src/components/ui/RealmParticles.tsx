@@ -108,14 +108,16 @@ function makeSprite(rgb: string): HTMLCanvasElement {
 
 /**
  * Slow ambient particles over the realm photo. A single fixed canvas, ~30fps,
- * paused while the tab is hidden, and not rendered at all under
- * prefers-reduced-motion.
+ * paused while the tab is hidden. Under prefers-reduced-motion they hold
+ * their positions and only twinkle.
  */
 export default function RealmParticles({ realm }: { realm: RealmName }) {
   const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    // Reduced motion: motes stay where they are and only glow and fade in
+    // place — no drifting embers or wandering fireflies.
+    const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const canvas = ref.current;
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
@@ -146,7 +148,7 @@ export default function RealmParticles({ realm }: { realm: RealmName }) {
       ctx.globalCompositeOperation = "lighter";
       for (let i = 0; i < parts.length; i++) {
         const p = parts[i];
-        if (!kind.step(p, t, w, h)) parts[i] = kind.spawn(w, h, false);
+        if (!still && !kind.step(p, t, w, h)) parts[i] = kind.spawn(w, h, false);
         const a = kind.alpha(p, t, h);
         if (a <= 0.01) continue;
         const d = p.size * 9;

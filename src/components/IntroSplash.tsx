@@ -7,7 +7,6 @@ const FADE_MS = 700;
 
 function shouldShow(): boolean {
   if (typeof window === "undefined") return false;
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
   try {
     return sessionStorage.getItem(SEEN_KEY) !== "1";
   } catch {
@@ -18,8 +17,8 @@ function shouldShow(): boolean {
 /**
  * Opening scene, once per session: the Futhark band appears rune by rune, the
  * engraved medallion rises into it, the gilded name fades up beneath. It
- * dissolves into the app after three seconds; a tap ends it at once. Skipped
- * entirely under prefers-reduced-motion.
+ * dissolves into the app after three seconds; a tap ends it at once. Under
+ * prefers-reduced-motion it still plays, as fades only (see index.css).
  */
 export default function IntroSplash() {
   const [phase, setPhase] = useState<"show" | "leaving" | "gone">(() =>

@@ -457,7 +457,9 @@ input[type="number"]::-webkit-inner-spin-button {
 .nav-mark {
   display: block;
   transition: transform 0.3s ease, filter 0.3s ease;
-  filter: grayscale(0.35) brightness(0.8);
+  /* Inactive marks only slightly muted: the first, stronger dimming left the
+   * small gold medallion almost invisible on the dark card. */
+  filter: grayscale(0.1) brightness(0.92);
 }
 .nav-card:hover .nav-mark {
   filter: none;
@@ -513,32 +515,53 @@ input[type="number"]::-webkit-inner-spin-button {
   100% { background-position: -30% 0; }
 }
 
+/* Reduced motion. The point of the setting is to stop vestibular motion —
+ * zooming, panning, rotating, things travelling across the screen — not to
+ * make the app lifeless. It is also switched on silently by many Android
+ * phones' battery saver, which is how the first version (that turned every
+ * animation off) left phones with a completely static app. So here: anything
+ * that moves or scales stops; light that only brightens and dims in place
+ * (flicker, shimmer, glints, glows, fades) keeps going. */
 @media (prefers-reduced-motion: reduce) {
-  .realm-layer,
-  .realm-layer::after,
-  .gilded-text,
+  /* Stop: drift/zoom of the photos, the turning ring, rising/sliding
+   * entrances, the stone bounce. */
+  .realm-layer {
+    animation: none;
+    transform: scale(1.04);
+  }
   .ring-spin,
-  .hero-aura,
-  .view-enter,
-  .reveal-flare,
-  .medallion-sweep,
-  .btn-glint::after {
+  .shuffle-spinner,
+  .bindrune-settle {
     animation: none;
   }
-  .ring-rune-reveal,
-  .medallion-rise,
+  .realm-layer-aurora::after {
+    animation-name: aurora-shimmer-still;
+  }
+  .hero-aura {
+    animation-name: aura-breathe-still;
+  }
+  .view-enter {
+    animation-name: fade-only;
+  }
+  .medallion-rise {
+    animation-name: fade-only;
+  }
   .intro-line {
-    animation: none;
-    opacity: 1;
+    animation-name: fade-only;
   }
   .stone-flip {
     animation: fade-in 0.3s ease-out both;
   }
-  .stone-breathe,
-  .shuffle-spinner,
-  .emblem-pulse,
-  .stone-hint-pulse,
-  .bindrune-settle {
-    animation: none;
-  }
+}
+@keyframes aurora-shimmer-still {
+  from { opacity: 0.15; }
+  to { opacity: 0.9; }
+}
+@keyframes aura-breathe-still {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+@keyframes fade-only {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }

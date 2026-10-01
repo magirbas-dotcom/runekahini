@@ -20,7 +20,8 @@ const IDLE_MS = 1800;
  * perspective rotation, the carving's light direction (the light is fixed in
  * the room, so it slides across the gold the other way), and the contact
  * shadow beneath. Tilt follows the finger or mouse over the medallion; left
- * alone it sways slowly. With prefers-reduced-motion it holds still.
+ * alone it sways slowly. With prefers-reduced-motion it does not sway on its
+ * own, but still follows the finger.
  */
 export default function Talisman3D({ names, form, offsets, material }: Talisman3DProps) {
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
@@ -32,7 +33,6 @@ export default function Talisman3D({ names, form, offsets, material }: Talisman3
   );
 
   useEffect(() => {
-    if (reduced) return;
     let frame = 0;
     let last = 0;
     const tick = (t: number) => {
@@ -40,7 +40,10 @@ export default function Talisman3D({ names, form, offsets, material }: Talisman3
       // ~30fps is plenty for a slow tilt and halves the SVG filter work.
       if (t - last < 33) return;
       last = t;
-      if (t - lastPointer.current > IDLE_MS) {
+      // The idle sway is motion the user did not ask for, so it is skipped
+      // under reduced motion; tilting with a finger is direct manipulation
+      // and stays.
+      if (!reduced && t - lastPointer.current > IDLE_MS) {
         target.current = { x: Math.sin(t / 2200) * 0.5, y: Math.sin(t / 2900) * 0.32 };
       }
       setTilt((cur) => {

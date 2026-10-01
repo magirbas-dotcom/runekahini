@@ -36,7 +36,8 @@ function TalismanMark() {
       form="bindrune"
       offsets={{}}
       material="gold"
-      size={46}
+      size={50}
+      emphasis={1.45}
       className="drop-shadow-[0_3px_6px_rgba(0,0,0,0.6)]"
     />
   );

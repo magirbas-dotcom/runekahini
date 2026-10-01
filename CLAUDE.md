@@ -85,9 +85,16 @@ veriyor.
     mühür formu aşağıda kalıyordu.
   - `Talisman3D`: parmak/fare ile perspektif eğim + ışık yönü + temas gölgesi. Boşta yavaş salınım,
     `prefers-reduced-motion`'da sabit. ~30 fps, çünkü SVG filtreleri her karede yeniden çiziliyor.
-  - **Export, önizlemenin kendisi:** gizli, eğilmemiş bir `TalismanMedallion` kopyası (fotoğraf data: URL
-    olarak gömülü, `<img>` içindeki SVG dışarıdan kaynak çekemez) `XMLSerializer` ile görsele çevrilip canvas'a
-    çizilir. Etrafına orman sahnesi, ışık haresi, gravür tarzı yazı (amaç, yaldız degradeli isim, süs çizgisi,
+  - **Export:** yerleşim önizlemeyle aynı kaynaktan gelir. Gizli bir `TalismanMedallion maskOnly` kopyası
+    (yalnızca oyuk şekilleri, filtre ve fotoğraf yok) görsele çevrilir. Oymanın kendisi
+    `ui/engraveCanvas.ts` ile **piksel piksel JS'te** hesaplanır: taban rengi, kutu bulanıklığıyla yükseklik
+    haritası, diffuse ışık. Sebebi: SVG ışık filtrelerini `<img>` üzerinden canvas'a aktarmak, filtre
+    çözünürlüğünü tarayıcıya bırakıyor ve kullanıcının telefonunda gölge yayılıp dağılıyordu. Ekran yine SVG
+    filtresini kullanır. Canvas sürümünde yüzey derinliği -6 (SVG'de -2,6), çünkü tam çözünürlükte aynı değer
+    düz görünüyor. İki sürümün sabitleri birlikte güncellenmeli. Keski pürüzü export'ta yok, bilinçli.
+  - **Export yerleşimi:** kilit ekranı saati telefonun üst ~%28'ini kaplıyor (kullanıcı geri bildirimi). Madalyon
+    ve yazılar `EXPORT_SCALE` 0,8 ile küçültüldü, madalyon merkezi yüksekliğin %46'sında, üst kenarı ~%29'da.
+    Ölçüler `T()` ile ölçekleniyor. Etrafına orman sahnesi, ışık haresi, gravür tarzı yazı (amaç, yaldız degradeli isim, süs çizgisi,
     rune'lar, marka) eklenir. Eski `BindruneCanvas` / `drawLayers` ve çerçeve PNG'leri silindi (−3,6 MB
     precache). Madalyon data URL'i ve sahne önceden yüklenir, "Kaydet" butonu hazır olana dek pasif.
   - Taslakta `material` alanı var (`StoredTalisman.material`, eski kayıtlarda yok → altın).
@@ -117,13 +124,15 @@ CSS ve canvas hareketi seçildi. Gerçek hareket istenirse sırada animasyonlu W
 gerektiriyor (Higgsfield Seedance, 6 sn döngü ~42 kredi, kullanıcı onayı gerekir).
 
 - **`IntroSplash`**: oturumda bir kez açılan sahne. 24 rune'luk halka tek tek yanar, oyma Perthro'lu altın
-  madalyon yükselir, yaldızlı ad belirir. 3 sn sonra ya da dokununca kaybolur. Reduced-motion'da hiç
-  gösterilmez. Kayıt `sessionStorage["runekahini.introSeen"]` içinde.
+  madalyon yükselir, yaldızlı ad belirir. 3 sn sonra ya da dokununca kaybolur. Reduced-motion'da
+  sadece solup belirerek oynar. Kayıt `sessionStorage["runekahini.introSeen"]` içinde.
 - **`HeroEmblem`** (`RuneRing` + `TalismanMedallion`): başlıkta yavaş dönen Futhark halkası içinde madalyon.
   **Perthro** seçildi (kura kupası, kader, "kahin"in rune'u). Başlık `.gilded-text`: altın gradyan, üzerinde
   gezinen parıltı.
 - **Sekme kartları**: çizgi ikonlar yerine bölümün kendi nesnesi. Okuma: bazalt taşta Ansuz. Doğum: granit
-  taşta Jera. Tılsım: altın madalyonda Algiz. Aktif olan ışır.
+  taşta Jera. Tılsım: altın madalyonda Algiz. Aktif olan ışır. Küçük madalyonda rune okunmuyordu (kullanıcı geri
+  bildirimi): `TalismanMedallion emphasis` oymayı alan merkezi etrafında büyütüp kalınlaştırıyor (nav 1,45).
+  Pasif sekme nesneleri yalnızca hafif soluk (`grayscale(0.1) brightness(0.92)`).
 - **`RealmScene`**: üç diyar fotoğrafı üst üste, sekme değişince 1,2 sn'de birbirine geçer. Her fotoğraf
   70–90 sn'de bir yavaş yakınlaşıp kayar. Işık hareketi **opaklık animasyonlu renkli katmanlarla** yapılır:
   ocak titremesi, aurora perdeleri, kanopiden süzülen ışık. Animasyonlu `filter` kullanılmaz, tam ekran
@@ -132,8 +141,15 @@ gerektiriyor (Higgsfield Seedance, 6 sn döngü ~42 kredi, kullanıcı onayı ge
   pırıltısı, ormanda ateş böcekleri. Parlama, her parçacıkta `shadowBlur` yerine bir kez çizilen sprite ile.
 - **Animasyonlar** (`index.css` "Hero, intro and transitions"): sekme içeriği girişi (`.view-enter`), taş
   açılınca ışık patlaması (`.reveal-flare`), madalyonda kazıma değişince madalyon silüetiyle maskeli ışık
-  süpürmesi (`.medallion-sweep`), birincil butonda periyodik parıltı (`.btn-glint`). Hepsi
-  `prefers-reduced-motion` bloğunda kapatılıyor. Yeni animasyon eklenirse oraya da eklenmeli.
+  süpürmesi (`.medallion-sweep`), birincil butonda periyodik parıltı (`.btn-glint`).
+- **Reduced motion politikası** (kullanıcı geri bildirimi: "telefonda animasyonlar çalışmıyor"): ilk sürüm
+  `prefers-reduced-motion`'da her şeyi kapatıyordu. Bu tercih birçok Android'de pil tasarrufuyla sessizce
+  açılıyor, sonuç tamamen durağan bir uygulama oluyordu. Artık yalnızca **yer değiştiren / ölçeklenen /
+  dönen** hareket duruyor: fotoğraf kayması, halka dönüşü, yükselen girişler, taş zıplaması, tılsımın
+  kendiliğinden salınımı. **Yerinde ışık değişimi sürüyor**: ateş titremesi, aurora (yalnızca opaklık), orman
+  ışığı, yaldız parıltısı, hare, buton parıltısı, ışık süpürmesi. Parçacıklar yerinde pırıldıyor, açılış
+  sahnesi yalnızca solup belirerek oynuyor. Parmakla tılsım eğme doğrudan kullanıcı eylemi olduğu için açık.
+  Yeni animasyon eklerken bu ayrıma göre karar verilmeli.
 - **PWA ikonu**: eski ikondaki Vegvísir 19. yy İzlanda kaynaklı, Elder Futhark değil. Tarihsel dürüstlük
   çizgisine uymadığı için kaldırıldı. Yeni ikon: koyu sıcak zemin + ışık haresi + oyma Perthro'lu altın
   madalyon. Madalyon SVG'si uygulamadan serileştirilip sharp/librsvg ile çizildi, rune ikon için %35

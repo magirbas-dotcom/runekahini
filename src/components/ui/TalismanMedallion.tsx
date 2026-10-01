@@ -109,6 +109,16 @@ interface TalismanMedallionProps {
   /** Overrides the medallion photo URL — the exporter passes a data: URL so the
    *  serialised SVG is self-contained when drawn into a canvas. */
   imageHref?: string;
+  /** Draw only the cut's shapes, opaque black, with no photo and no filter —
+   *  the exporter's input to engraveMedallion. Plain shapes rasterise the
+   *  same in every browser; the SVG lighting filters do not. */
+  maskOnly?: boolean;
+  /**
+   * Enlarges the engraving about the field centre — strokes included, so the
+   * cut also gets bolder. For thumbnail sizes (nav mark, app icon), where the
+   * normal proportions leave the rune too small and thin to read.
+   */
+  emphasis?: number;
   size?: number;
   className?: string;
 }
@@ -121,7 +131,18 @@ interface TalismanMedallionProps {
  */
 const TalismanMedallion = forwardRef<SVGSVGElement, TalismanMedallionProps>(
   function TalismanMedallion(
-    { names, form, offsets, material, light = DEFAULT_LIGHT, imageHref, size = 100, className = "" },
+    {
+      names,
+      form,
+      offsets,
+      material,
+      light = DEFAULT_LIGHT,
+      imageHref,
+      maskOnly = false,
+      emphasis = 1,
+      size = 100,
+      className = "",
+    },
     ref,
   ) {
     const m = MEDALLIONS[material];
@@ -184,7 +205,11 @@ const TalismanMedallion = forwardRef<SVGSVGElement, TalismanMedallionProps>(
         );
       });
 
-    const shapes = (paint: CutPaint) => (fit ? bindShapes(paint, fit) : sealShapes(paint));
+    const shapes = (paint: CutPaint) => (
+      <g transform={`translate(${cx} ${cy}) scale(${emphasis}) translate(${-cx} ${-cy})`}>
+        {fit ? bindShapes(paint, fit) : sealShapes(paint)}
+      </g>
+    );
 
     return (
       <svg
@@ -199,8 +224,12 @@ const TalismanMedallion = forwardRef<SVGSVGElement, TalismanMedallionProps>(
           names.length ? `Tılsım: ${names.join(", ")}` : "Tılsım — henüz Rune seçilmedi"
         }
       >
-        <image href={imageHref ?? m.src} x="0" y="0" width="100" height="100" />
-        {names.length > 0 && (
+        {maskOnly ? (
+          shapes({ color: "#000", extra: 0 })
+        ) : (
+          <image href={imageHref ?? m.src} x="0" y="0" width="100" height="100" />
+        )}
+        {!maskOnly && names.length > 0 && (
           <EngravedCut photo={imageHref ?? m.src} light={light} tint={m.recess} fieldLum={m.fieldLum} fieldColor={m.fieldColor}>
             {shapes({ color: "#000", extra: 0 })}
           </EngravedCut>

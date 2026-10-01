@@ -19,6 +19,8 @@ import TalismanFormCard from "./ui/TalismanFormCard";
 import { loadTalisman, saveTalisman } from "../data/storage";
 import { MEDALLIONS, MEDALLION_IDS, type MedallionId } from "../theme/medallions";
 import { REALMS } from "../theme/realms";
+import { DEFAULT_LIGHT } from "../theme/light";
+import { engraveMedallion } from "./ui/engraveCanvas";
 
 const MAX_LAYERS = 4;
 /** Starting vertical spread for a bind rune, so a new stack is not fully
@@ -40,20 +42,15 @@ const PARCHMENT_DIM = "#cfc6b8";
 const EXPORT_WIDTH = 1080;
 const EXPORT_HEIGHT = 2340;
 /** Medallion edge in the export, and where its centre sits (fraction of height). */
-const EXPORT_MEDALLION = 980;
-const EXPORT_MEDALLION_Y = 0.39;
+// The lock screen's clock and date cover roughly the top 28% of a phone, so the
+// medallion's top edge sits below that (~29% down) and the whole composition —
+// medallion and lettering — is 20% smaller than it first was (980px medallion).
+const EXPORT_SCALE = 0.8;
+const EXPORT_MEDALLION = Math.round(980 * EXPORT_SCALE);
+const EXPORT_MEDALLION_Y = 0.46;
+/** Lettering sizes and gaps, at EXPORT_SCALE. */
+const T = (px: number) => Math.round(px * EXPORT_SCALE);
 
-/** Reads an image URL into a data: URL. An SVG drawn into a canvas via <img>
- *  may not fetch anything external, so the medallion photo is inlined. */
-async function toDataUrl(src: string): Promise<string> {
-  const blob = await (await fetch(src)).blob();
-  return new Promise((resolve, reject) => {
-    const r = new FileReader();
-    r.onload = () => resolve(r.result as string);
-    r.onerror = reject;
-    r.readAsDataURL(blob);
-  });
-}
 
 /** Spaced capitals for canvas lettering; Turkish casing keeps the dotted İ. */
 function spaced(t: string): string {
@@ -135,16 +132,14 @@ export default function BindruneDesigner() {
   // Everything the export draws is fetched ahead of time — fetching only when
   // the user taps "Kaydet" adds enough async delay that some browsers stop
   // treating the resulting <a download> click as user-initiated and drop it.
-  const [medallionData, setMedallionData] = useState<{ id: MedallionId; url: string } | null>(
-    null,
-  );
+  const [photo, setPhoto] = useState<{ id: MedallionId; img: HTMLImageElement } | null>(null);
   useEffect(() => {
     let live = true;
-    toDataUrl(MEDALLIONS[material].src)
-      .then((url) => {
-        if (live) setMedallionData({ id: material, url });
-      })
-      .catch(() => {});
+    const img = new Image();
+    img.onload = () => {
+      if (live) setPhoto({ id: material, img });
+    };
+    img.src = MEDALLIONS[material].src;
     return () => {
       live = false;
     };
@@ -155,9 +150,9 @@ export default function BindruneDesigner() {
     img.src = REALMS.forest.background;
     sceneRef.current = img;
   }, []);
-  /** Off-screen, untilted copy of the medallion — serialised for the export. */
+  /** Off-screen copy of the cut's shapes only — the export's engraving mask. */
   const exportSvgRef = useRef<SVGSVGElement>(null);
-  const exportReady = medallionData?.id === material;
+  const exportReady = photo?.id === material;
 
   function selectPreset(id: string) {
     const p = INTENT_PRESETS.find((x) => x.id === id);
@@ -280,25 +275,37 @@ export default function BindruneDesigner() {
     await document.fonts?.ready?.catch(() => {});
 
     const svgEl = exportSvgRef.current;
-    if (!svgEl || !exportReady) return;
+    if (!svgEl || !photo || photo.id !== material) return;
     const cached = sceneRef.current;
     const scene =
       cached && cached.complete && cached.naturalWidth > 0
         ? cached
         : await loadImage(REALMS.forest.background);
 
-    // The medallion is the very same SVG as the preview, serialised and
-    // rasterised — preview and export cannot drift apart.
+    // The cut's shapes come from the same TalismanMedallion as the preview
+    // (mask-only: plain shapes, no filters), so layout cannot drift. The
+    // engraving itself is computed in pixels by engraveMedallion — rasterising
+    // the preview's SVG lighting filters smeared the shading on some devices.
     const svgBlob = new Blob([new XMLSerializer().serializeToString(svgEl)], {
       type: "image/svg+xml",
     });
     const svgUrl = URL.createObjectURL(svgBlob);
-    let medallion: HTMLImageElement;
+    let mask: HTMLImageElement;
     try {
-      medallion = await loadImage(svgUrl);
+      mask = await loadImage(svgUrl);
     } finally {
       URL.revokeObjectURL(svgUrl);
     }
+    const m = MEDALLIONS[material];
+    const medallion = engraveMedallion({
+      photo: photo.img,
+      mask,
+      size: EXPORT_MEDALLION,
+      light: DEFAULT_LIGHT,
+      tint: m.recess,
+      fieldLum: m.fieldLum,
+      fieldColor: m.fieldColor,
+    });
 
     const canvas = document.createElement("canvas");
     canvas.width = EXPORT_WIDTH;
@@ -321,8 +328,8 @@ export default function BindruneDesigner() {
 
     ctx.save();
     ctx.shadowColor = "rgba(0,0,0,0.85)";
-    ctx.shadowBlur = 70;
-    ctx.shadowOffsetY = 34;
+    ctx.shadowBlur = T(70);
+    ctx.shadowOffsetY = T(34);
     ctx.drawImage(
       medallion,
       cx - EXPORT_MEDALLION / 2,
@@ -336,18 +343,18 @@ export default function BindruneDesigner() {
     // divider, the runes themselves, and the brand at the foot.
     const name = mode === "preset" && preset ? preset.name : layers.join(" + ");
     const purpose = mode === "preset" && preset ? preset.category : "Özel Kombinasyon";
-    const textTop = my + EXPORT_MEDALLION / 2 + 40;
+    const textTop = my + EXPORT_MEDALLION / 2 + T(40);
     const textMax = W - 160;
     ctx.textAlign = "center";
     ctx.textBaseline = "alphabetic";
 
-    ctx.font = "500 32px Inter, sans-serif";
+    ctx.font = `500 ${T(32)}px Inter, sans-serif`;
     ctx.fillStyle = "rgba(243,227,154,0.85)";
-    ctx.fillText(spaced(purpose), cx, textTop + 40);
+    ctx.fillText(spaced(purpose), cx, textTop + T(40));
 
-    const nameSize = fitFontSize(ctx, name, textMax, "700", "Cinzel, Georgia, serif", 92, 44);
+    const nameSize = fitFontSize(ctx, name, textMax, "700", "Cinzel, Georgia, serif", T(92), T(44));
     ctx.font = `700 ${nameSize}px Cinzel, Georgia, serif`;
-    const nameY = textTop + 74 + nameSize;
+    const nameY = textTop + T(74) + nameSize;
     const half = Math.min(ctx.measureText(name).width / 2, textMax / 2);
     const leaf = ctx.createLinearGradient(cx - half, nameY - nameSize, cx + half, nameY);
     leaf.addColorStop(0, GOLD_DEEP);
@@ -357,19 +364,19 @@ export default function BindruneDesigner() {
     leaf.addColorStop(1, GOLD_DEEP);
     ctx.save();
     ctx.shadowColor = "rgba(0,0,0,0.9)";
-    ctx.shadowBlur = 18;
-    ctx.shadowOffsetY = 4;
+    ctx.shadowBlur = T(18);
+    ctx.shadowOffsetY = T(4);
     ctx.fillStyle = leaf;
     ctx.fillText(name, cx, nameY);
     ctx.restore();
 
-    drawOrnament(ctx, cx, nameY + 56, 190);
+    drawOrnament(ctx, cx, nameY + T(56), T(190));
 
-    ctx.font = "400 34px Inter, sans-serif";
+    ctx.font = `400 ${T(34)}px Inter, sans-serif`;
     ctx.fillStyle = PARCHMENT_DIM;
-    ctx.fillText(layers.join("  ·  "), cx, nameY + 126);
+    ctx.fillText(layers.join("  ·  "), cx, nameY + T(126));
 
-    ctx.font = "600 26px Cinzel, Georgia, serif";
+    ctx.font = `600 ${T(26)}px Cinzel, Georgia, serif`;
     ctx.fillStyle = "rgba(226,207,122,0.6)";
     ctx.fillText(spaced("Rune Kahini"), cx, EXPORT_HEIGHT - 120);
 
@@ -622,11 +629,11 @@ export default function BindruneDesigner() {
           {exportReady && (
             <TalismanMedallion
               ref={exportSvgRef}
+              maskOnly
               names={layers}
               form={form}
               offsets={offsets}
               material={material}
-              imageHref={medallionData.url}
               size={EXPORT_MEDALLION}
             />
           )}
