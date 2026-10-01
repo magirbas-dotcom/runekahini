@@ -27,6 +27,15 @@ export function spaced(t: string): string {
   return t.toLocaleUpperCase("tr-TR").split("").join(" ");
 }
 
+/**
+ * Rune names in Cinzel. Cinzel sets lower case as small capitals, and with the
+ * page in Turkish its `i` becomes a dotted İ ("SOWİLO"). Rune names are not
+ * Turkish words, so they get the dotless ı, which Cinzel draws as a plain I.
+ */
+export function runeName(name: string) {
+  return name.replace(/i/g, "ı");
+}
+
 /** Shrinks the font until `text` fits `maxWidth`. Sets ctx.font and returns the size. */
 export function fitFontSize(
   ctx: CanvasRenderingContext2D,

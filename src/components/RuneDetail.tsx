@@ -37,7 +37,7 @@ export default function RuneDetail({
       />
       <div className="flex-1 text-left">
         <h3 className="font-serif text-2xl leading-tight text-parchment">
-          {rune.name}
+          <span lang="en">{rune.name}</span>
           {reversed && (
             <span className="ml-2 font-sans text-sm text-gold">(Ters)</span>
           )}

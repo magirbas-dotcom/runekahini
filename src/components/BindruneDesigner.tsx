@@ -21,7 +21,7 @@ import { MEDALLIONS, MEDALLION_IDS, type MedallionId } from "../theme/medallions
 import { REALMS } from "../theme/realms";
 import { DEFAULT_LIGHT } from "../theme/light";
 import { engraveMedallion } from "./ui/engraveCanvas";
-import { fitFontSize, loadImage, shareCanvas, spaced } from "./share/cardCanvas";
+import { fitFontSize, loadImage, runeName, shareCanvas, spaced } from "./share/cardCanvas";
 
 const MAX_LAYERS = 4;
 /** Starting vertical spread for a bind rune, so a new stack is not fully
@@ -295,7 +295,7 @@ export default function BindruneDesigner() {
 
     // Lettering below the medallion: purpose, name in gilded capitals, a
     // divider, the runes themselves, and the brand at the foot.
-    const name = mode === "preset" && preset ? preset.name : layers.join(" + ");
+    const name = mode === "preset" && preset ? preset.name : layers.map(runeName).join(" + ");
     const purpose = mode === "preset" && preset ? preset.category : "Özel Kombinasyon";
     const textTop = my + EXPORT_MEDALLION / 2 + T(40);
     const textMax = W - 160;

@@ -53,7 +53,7 @@ export default function ZodiacCard({ sign, activeRuneName }: ZodiacCardProps) {
               <span className="altar-stone mx-auto my-2 block w-fit">
                 <CarvedRune stone={REALMS.aurora.stone} runes={[name]} size={46} lite />
               </span>
-              <p className="font-serif text-lg leading-tight text-parchment">
+              <p lang="en" className="font-serif text-lg leading-tight text-parchment">
                 {name}
               </p>
               <p className="mt-1 text-[12px] leading-4 text-parchment-dim">

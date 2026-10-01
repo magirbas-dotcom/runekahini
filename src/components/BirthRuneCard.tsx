@@ -41,7 +41,7 @@ export default function BirthRuneCard({
           className="reveal-flare mx-auto drop-shadow-[0_10px_18px_rgba(0,0,0,0.6)]"
         />
 
-        <h3 className="mt-4 font-serif text-[32px] leading-tight text-parchment">
+        <h3 lang="en" className="mt-4 font-serif text-[32px] leading-tight text-parchment">
           {rune.name}
         </h3>
         <p className="mt-2 text-sm text-gold">{keywords}</p>
@@ -95,7 +95,7 @@ export default function BirthRuneCard({
           <span className="block text-[11px] uppercase tracking-[0.16em] text-gold">
             {title}
           </span>
-          <span className="mt-0.5 block font-serif text-xl leading-tight text-parchment">
+          <span lang="en" className="mt-0.5 block font-serif text-xl leading-tight text-parchment">
             {rune.name}
           </span>
           <span className="mt-0.5 block text-[13px] leading-5 text-parchment-dim">

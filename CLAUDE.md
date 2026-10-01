@@ -283,7 +283,12 @@ kaydedilebilsin. Zemini kullanıcı getirdi (yaldızlı örgü çerçeveli eski 
 - **Türkçe iyelik ekleri elle eşlenir** (`RUNE_POSSESSIVE`); Latin harf çevirisinden türetilemez.
 - **`lang="tr"` tuzağı:** CSS `text-transform: uppercase`, "bindrune"u "BİNDRUNE" yapar (noktalı İ). Norse
   kökenli kelimeler arayüzde baştan büyük harfle yazılır. Cinzel de küçük harfleri küçük-kapital basar ama
-  "i"nin noktasını korur — aynı sorun.
+  "i"nin noktasını korur — aynı sorun ("SOWİLO", Isa → "İSA").
+  - **Çözüm:** Cinzel'de (`font-serif`) gösterilen rune adı `lang="en"` taşıyan bir öğeye konur: `RuneDetail`,
+    `BirthRuneCard`, `ZodiacCard`. Canvas belgenin dilini kullandığı ve `lang` alamadığı için orada
+    `runeName()` (`share/cardCanvas.ts`) "i"yi noktasız "ı" yapar, Cinzel bunu düz I çizer.
+  - Yalnızca rune adlarına uygulanır. Türkçe kelimelerde (Kahini, Şimdi) noktalı İ doğrudur.
+  - Yeni bir yerde rune adı Cinzel ya da büyük harfle gösterilirse aynısı yapılmalı.
 - **Glif değişikliği tek yerden:** tüm ekranlar `RUNE_GLYPHS`'ten besleniyor. Referans görsel geldiğinde
   path'ler oradan çıkarılır; isim eşleşmesi **ızgara sırasına güvenilerek değil, Unicode ile tek tek
   karşılaştırılarak** doğrulanır. (Bir kaynak seti Othala/Dagaz'ı ters sırada veriyordu — bracteate

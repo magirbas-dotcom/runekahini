@@ -7,6 +7,7 @@ import {
   firstSentence,
   fitFontSize,
   loadFonts,
+  runeName,
   spaced,
   wrapLines,
 } from "./cardCanvas";
@@ -45,15 +46,6 @@ type Ctx = CanvasRenderingContext2D;
 
 function reading(d: DrawnRune) {
   return d.reversed && d.rune.reversed ? d.rune.reversed : d.rune.upright;
-}
-
-/**
- * Rune names in Cinzel. Cinzel sets lower case as small capitals, and with the
- * page in Turkish its `i` becomes a dotted İ ("SOWİLO"). Rune names are not
- * Turkish words, so they get the dotless ı, which Cinzel draws as a plain I.
- */
-function runeName(name: string) {
-  return name.replace(/i/g, "ı");
 }
 
 function text(ctx: Ctx, t: string, x: number, y: number, font: string, color: string) {
