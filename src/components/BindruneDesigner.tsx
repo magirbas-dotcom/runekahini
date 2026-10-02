@@ -511,17 +511,37 @@ export default function BindruneDesigner() {
           <p className="mb-4 text-center text-[13px] leading-5 text-parchment-dim">
             Bir isim, kelime ya da kısa bir söz yaz; Rune harfleriyle nasıl yazıldığını gör.
           </p>
-          <input
-            type="text"
-            value={nameText}
-            onChange={(e) => updateName(e.target.value)}
-            maxLength={MAX_NAME_LENGTH}
-            placeholder="Örn. Ayşe, Umut, Cesur ol"
-            aria-label="Rune ile yazılacak metin"
-            autoComplete="off"
-            spellCheck={false}
-            className="inscription h-14 text-center font-serif text-[20px] tracking-[0.06em]"
-          />
+          {/* The empty field used to show its example in large Cinzel, which
+              read as a carved title plaque rather than a place to type. The
+              placeholder is now plain body text with a quill, an obvious
+              prompt; only what the user writes is set in Cinzel. */}
+          <label className="relative block">
+            <svg
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gold"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.6"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M20 4c-6 1-11 6-13 12l-1 4 4-1c6-2 11-7 12-13l-2-2z" />
+              <path d="M7 16l3 3" />
+              <path d="M14 7l3 3" />
+            </svg>
+            <input
+              type="text"
+              value={nameText}
+              onChange={(e) => updateName(e.target.value)}
+              maxLength={MAX_NAME_LENGTH}
+              placeholder="Buraya yaz… (örn. Ayşe, Umut)"
+              aria-label="Rune ile yazılacak metin"
+              autoComplete="off"
+              spellCheck={false}
+              className="inscription h-14 pl-12 pr-12 text-center font-serif text-[20px] tracking-[0.06em] placeholder:font-sans placeholder:text-[16px] placeholder:tracking-normal"
+            />
+          </label>
 
           {nameRunes.words.length > 0 && (
             <>
