@@ -579,6 +579,12 @@ input[type="number"]::-webkit-inner-spin-button {
 .inscription::placeholder {
   color: var(--color-parchment-dim);
   font-style: italic;
+  transition: color 0.2s ease;
+}
+/* The hint clears as soon as the field is touched (user feedback): left in
+ * place, it looked like text already written that had to be deleted. */
+.inscription:focus::placeholder {
+  color: transparent;
 }
 .inscription:focus {
   outline: none;
