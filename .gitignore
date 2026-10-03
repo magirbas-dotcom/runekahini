@@ -24,3 +24,6 @@ dist-ssr
 *.sw?
 
 .vercel
+
+# Önizleme ayarı bilgisayara özel (bkz. CLAUDE.md, İki bilgisayarda çalışma)
+.claude/launch.json

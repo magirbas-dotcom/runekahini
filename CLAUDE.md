@@ -261,6 +261,35 @@ kaydedilebilsin. Zemini kullanıcı getirdi (yaldızlı örgü çerçeveli eski 
   paylaşımın "kullanıcı eylemi" sayılmasını bozabiliyor (tılsımdaki dersle aynı). Okumada tüm taşlar
   açılınca, doğum haritasında sonuçların altında görünür.
 
+## İki bilgisayarda çalışma (Mac + Windows, 2026-10-03)
+
+Proje iki bilgisayarda çalışılıyor: Windows (`E:\Claude\…`) ve Mac (`~/Projects/…`). Senkron GitHub üzerinden.
+Kod hiçbir işletim sistemine bağlı olmamalı.
+
+**Oturum düzeni (Claude hatırlatır):**
+- **Başlarken:** `git pull`. Önce `git status` temiz olmalı, değilse kullanıcıya sorulur.
+- **Kalkarken:** commit, ardından kullanıcı onayıyla `git push`. Push edilmemiş iş diğer bilgisayarda görünmez.
+- Aynı anda iki bilgisayarda aynı repoya dokunulmaz. Çakışma çıkarsa elle çözülür, `--force` kullanılmaz.
+
+**İşletim sisteminden bağımsızlık:**
+- **Satır sonu LF.** `.gitattributes` (`* text=auto eol=lf`) bunu Windows'un `core.autocrlf` ayarından
+  bağımsız zorlar, `.editorconfig` de editörlere söyler. Bu iki dosya silinmez.
+- **Node.js 24** (`.nvmrc`). İki bilgisayarda aynı ana sürüm olmalı. Yoksa `package-lock.json` her
+  kurulumda gereksiz yere değişir. Paket eklerken lockfile da commit edilir, kurulum `npm ci` ile yapılır.
+- **Dosya adı büyük/küçük harfi:** Mac ve Windows harf büyüklüğüne duyarsız, derleme sunucuları (Linux)
+  duyarlı. Import yolu dosya adıyla harfi harfine aynı olmalı. Yalnız harf büyüklüğü değişen yeniden
+  adlandırma `git mv` ile yapılır.
+- **Yollar:** kodda ve betiklerde `/` kullanılır, mutlak yol (`E:\…`, `/Users/…`) yazılmaz.
+  `package.json` betiklerinde yalnızca iki sistemde de çalışan komutlar kullanılır (`rm`, `cp`, `&&` ile
+  kabuk zinciri yok; gerekiyorsa Node betiği).
+- **Dosya adları:** ASCII, boşluksuz. Türkçe karakter ve `: * ? " < > |` kullanılmaz, Windows bunları kabul etmez.
+
+**GitHub'a gitmeyen, her bilgisayarda ayrı tutulanlar:**
+- `.claude/launch.json`: önizleme ayarı, bilgisayara özel yol içerebilir. Commit edilmez.
+- `node_modules/`, `dist/`: `npm ci` ve `npm run build` ile yeniden üretilir.
+- Claude'un hafıza notları (ör. `firstgate-lovable-workflow.md`) bilgisayara özel. Kalıcı proje kararları
+  bu dosyaya yazılır ki iki tarafta da görünsün.
+
 ## Mimari / önemli dosyalar
 
 ### Veri

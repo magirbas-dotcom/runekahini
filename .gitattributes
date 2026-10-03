@@ -1,0 +1,22 @@
+# Proje Mac ve Windows'ta çalışılıyor. Metin dosyaları depoda ve diskte her
+# işletim sisteminde LF satır sonuyla tutulur; Windows'un core.autocrlf
+# ayarı ne olursa olsun CRLF'e çevrilmez.
+* text=auto eol=lf
+
+# Windows'a özgü betikler CRLF ister.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# İkili dosyalar: satır sonu dönüşümü ve metin farkı yok.
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.webp binary
+*.gif  binary
+*.ico  binary
+*.mp4  binary
+*.woff binary
+*.woff2 binary
+*.ttf  binary
+*.otf  binary
+*.pdf  binary
