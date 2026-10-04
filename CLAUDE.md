@@ -415,6 +415,11 @@ Yeni içerik eklerken bu çizgi korunur: eşleşme/sistem alınır, iddialı tar
     PWA'ya gidiyordu. Bu sayfalar artık mobil uygulamanın mağaza sayfaları; PWA bu adresten kaldırılıp yerine
     tanıtım sitesi gelecek. Altbilgide yalnızca diğer yasal sayfa var, başlıktaki marka da bağlantısız
     (`span.brand`). Tanıtım sitesi kökte yayına girince marka yeniden `/` bağlantısı yapılabilir.
+  - **Marka (2026-10-04, kullanıcı: "Türkçede ikisini de kullanalım"):** Türkçe sayfalarda başlık ve marka
+    satırı "AskRune · Rune Kahini", ilk geçişte "AskRune (Rune Kahini)", sonra AskRune; abonelik iptal
+    adımlarında mağazada Türkçe görünen ad önde: "Rune Kahini (AskRune)". İngilizce sayfalar yalnız AskRune.
+  - Okuma sayısı yazılmaz ("okuma geçmişin"): PWA 30, mobil 500 saklıyor. Hitap adı da saklananlar
+    listesinde. Yürürlük tarihi 4 Ekim 2026.
   - Metinlerdeki iddialar koda bağlı.
     Yeni bir dış servis ya da analiz aracı eklenirse iki dildeki gizlilik metni de güncellenmeli.
 - **Vercel:** Geçiş süresince paralel çalışır. Tarayıcı verisi (geçmiş, doğum bilgisi, tılsım) adrese bağlı,
