@@ -411,6 +411,10 @@ Yeni içerik eklerken bu çizgi korunur: eşleşme/sistem alınır, iddialı tar
     `@fontsource/inter`, yalnızca Latin ve Latin genişletilmiş setler, `main.tsx` içinde import ediliyor. Böylece web sürümü
     hiçbir dış sunucuya bağlanmıyor ve gizlilik metni de bunu söylüyor. Yeni ağırlık gerekirse oraya iki set
     (latin ve latin-ext) birlikte eklenir.
+  - **Uygulamaya geri bağlantı yok (2026-10-04, kullanıcı):** altbilgideki "Uygulamaya dön / Back to the app"
+    PWA'ya gidiyordu. Bu sayfalar artık mobil uygulamanın mağaza sayfaları; PWA bu adresten kaldırılıp yerine
+    tanıtım sitesi gelecek. Altbilgide yalnızca diğer yasal sayfa var, başlıktaki marka da bağlantısız
+    (`span.brand`). Tanıtım sitesi kökte yayına girince marka yeniden `/` bağlantısı yapılabilir.
   - Metinlerdeki iddialar koda bağlı.
     Yeni bir dış servis ya da analiz aracı eklenirse iki dildeki gizlilik metni de güncellenmeli.
 - **Vercel:** Geçiş süresince paralel çalışır. Tarayıcı verisi (geçmiş, doğum bilgisi, tılsım) adrese bağlı,
