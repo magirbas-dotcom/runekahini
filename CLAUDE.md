@@ -2,6 +2,54 @@
 
 Bu dosya, Claude Code'un (claude.ai/code) bu depoda çalışırken projeyi hızlıca hatırlaması için yazıldı.
 
+## DEVAM EDEN İŞ: PWA → AskRune tanıtım sitesi (`landing` dalı, 2026-10-05)
+
+Kullanıcı kararı: PWA kaldırılıyor, askrune.app mobil uygulamanın (repo `askrune-app`) tanıtım sitesi oluyor.
+İş `landing` dalında; `main`'e birleşmeden canlı site (Cloudflare + Vercel) değişmez. Aşağıdaki "Proje nedir"
+ve sonrası PWA dönemini anlatır, site yayına girince güncellenecek.
+
+**Kararlar (kullanıcı):** site şimdi yayına girer, mağaza düğmeleri "Yakında" (uygulama mağazaya çıkınca gerçek
+bağlantı); PWA kendini kaldırır + eski kullanıcıya kısa duyuru; dil tarayıcıya göre (TR tarayıcı → `/tr/`,
+diğerleri `/` İngilizce, elle seçim hatırlanır).
+
+**Yapılanlar (commit edildi):**
+- PWA kodu silindi (`src/` React, `vite.config.ts`, `index.html`, PWA ikonları). Astro 7 kuruldu (`package.json`
+  sıfırdan; `npm run build` = `astro check && astro build`, çıktı `dist`).
+- `public/sw.js`: PWA'yı emekli eden service worker (önbellekleri siler, kendini kaldırır, sayfayı yeniler).
+  Yolu `/sw.js` kalmalı. `_headers` yeni siteye göre.
+- Yasal sayfalar (`public/gizlilik|privacy|kosullar|terms|destek|support`) aynen duruyor; uygulama bu adreslere
+  bağlı, adresler değişmemeli.
+- İkonlar uygulamanın Ingwaz ikonundan (`public/icons/`).
+- `wrangler.jsonc`: `not_found_handling: "404-page"` (sitede `src/pages/404.astro` olmalı).
+- Ekran görüntüleri: `src/assets/screens/{tr,en}/` (home, reading-drawn, birth, talisman-medallion, compat;
+  780 px WebP). Üretimi: mobil repoda Expo web önizlemesi açıkken (`npx expo start`, port 8081)
+  `node scripts/shots/run.mjs tr|en` (headless Chrome, 390×844 @3x PNG, `scripts/shots/out/`), sonra
+  `npm run images -- scripts/shots/out`.
+- Arka planlar `src/assets/bg/` (altar-wide, aurora-wide, forest-wide, ritual-tall), mobil repodaki
+  görsellerden.
+
+**Sıradaki adımlar:**
+1. `astro.config.mjs` (`site: "https://askrune.app"`), `src/styles/site.css` (uygulama tokenları: ink #090908,
+   surface #11110F, parchment #F3EBDD / dim #AEA596 / mute #857D72, gold #C8A46A / light #E1C48B; Cormorant
+   Garamond başlık + Inter gövde, `@fontsource` latin + latin-ext, dış font yok), `src/layouts/Base.astro`
+   (hreflang, OG, `/` sayfasında TR tarayıcıyı `/tr/`'ye yönlendiren küçük betik), `src/i18n.ts` (metinler),
+   `src/pages/index.astro` (EN), `src/pages/tr/index.astro`, `src/pages/404.astro`.
+2. Bölümler: logo (mobil repodaki `Wordmark.tsx` SVG path'i, altın gradyan) + TR/EN; hero (başlık "Kadim
+   işaretler, yeni bakışlar" / "Ancient signs, new perspectives", alt metin, "Yakında App Store / Google Play",
+   telefon çerçevesinde ana sayfa görüntüsü); özellikler (Günün Rune'si + hatırlatma, Rune Okuması, Doğum
+   Rune'si, Tılsım, Rune Uyumu; ayrıca Rehber, geçmiş ve notlar, paylaşım kartları, iki dil); "gerçek glifler,
+   kazınmış taş"; gizlilik (hesap yok, veri telefonda, reklam/takip yok, satın alma mağazadan); ücretsiz ve
+   Premium (ücretsiz: günün rune'si, tek rune, doğum rune'si, rehber; premium: 3-4-5 rune açılımlar, Rune Uyumu,
+   tılsım kaydetme, sınırsız geçmiş; aylık / yıllık / ömür boyu; fiyat yazılmaz); SSS (geleceği söylemez,
+   öz-yansıma; veriler; internetsiz çalışma; abonelik iptali → /destek); altbilgi (yasal sayfalar,
+   destek@askrune.app, "© 2026 Murat Ağırbaş"). Uygulamada "fal" denmez, sitede de.
+3. PWA duyurusu: tarayıcıda `runekahini.v1.*` localStorage anahtarı varsa ya da `display-mode: standalone`
+   ise kapatılabilir not ("web sürümü kapandı, yakında mobil uygulamada; eski okumalar taşınmaz").
+4. Yasal sayfalardaki marka yeniden `/` bağlantısı olabilir (aşağıda not var).
+5. Vercel: `vercel.json` ile runekahini.vercel.app → askrune.app yönlendirmesi.
+6. `npm run build` + `npx astro preview` ile kontrol (telefon ve masaüstü genişliği), sonra kullanıcı onayıyla
+   `main`'e birleştir ve push. Mobil uygulamanın App Store "pazarlama" ve "destek" adresleri bu site.
+
 ## Proje nedir
 
 **Rune Kahini** — Elder Futhark Rune okuması, doğum rünü / burç haritası ve tılsım tasarımı yapılan,
