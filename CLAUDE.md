@@ -8,6 +8,13 @@ Kullanıcı kararı: PWA kaldırılıyor, askrune.app mobil uygulamanın (repo `
 İş `landing` dalında; `main`'e birleşmeden canlı site (Cloudflare + Vercel) değişmez. Aşağıdaki "Proje nedir"
 ve sonrası PWA dönemini anlatır, site yayına girince güncellenecek.
 
+**Diğer bilgisayarda devam (ör. Windows):** bu iş `landing` dalında, `main`'de değil. Önce
+`git fetch`, `git checkout landing`, `git pull`; sonra `npm ci` (paketler PWA'dan tamamen farklı, yeni
+`package-lock.json` dalda; `npm ci` eski `node_modules`'ü silip yeniden kurar). Ekran görüntüsü betiği
+(`scripts/shots/cdp.mjs`) Chrome yolunu Mac'e göre yazıyor (`/Applications/Google Chrome.app/...`); Windows'ta
+görüntü yeniden alınacaksa Chrome yolu değiştirilmeli. Görüntüler zaten `src/assets/screens/`'te, gerekmedikçe
+yeniden alınmaz.
+
 **Kararlar (kullanıcı):** site şimdi yayına girer, mağaza düğmeleri "Yakında" (uygulama mağazaya çıkınca gerçek
 bağlantı); PWA kendini kaldırır + eski kullanıcıya kısa duyuru; dil tarayıcıya göre (TR tarayıcı → `/tr/`,
 diğerleri `/` İngilizce, elle seçim hatırlanır).
