@@ -418,6 +418,10 @@ Yeni içerik eklerken bu çizgi korunur: eşleşme/sistem alınır, iddialı tar
   - **Marka (2026-10-04, kullanıcı: "Türkçede ikisini de kullanalım"):** Türkçe sayfalarda başlık ve marka
     satırı "AskRune · Rune Kahini", ilk geçişte "AskRune (Rune Kahini)", sonra AskRune; abonelik iptal
     adımlarında mağazada Türkçe görünen ad önde: "Rune Kahini (AskRune)". İngilizce sayfalar yalnız AskRune.
+  - **Kullanım Koşulları (2026-10-04):** `public/kosullar`, `public/terms`. Mobil uygulama Apple'ın standart
+    EULA'sı yerine bunlara bağlanıyor; "ömür boyu" erişimin kapsamını tanımlıyor (uygulama yayında ve
+    destekte olduğu sürece) ve Apple'ın özel EULA için istediği asgari maddeleri içeriyor (9. madde).
+    Service worker bu yolları da uygulamaya yönlendirmez. Dört yasal sayfanın altbilgisi birbirine bağlı.
   - Okuma sayısı yazılmaz ("okuma geçmişin"): PWA 30, mobil 500 saklıyor. Hitap adı da saklananlar
     listesinde. Yürürlük tarihi 4 Ekim 2026.
   - Metinlerdeki iddialar koda bağlı.

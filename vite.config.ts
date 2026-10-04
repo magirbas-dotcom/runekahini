@@ -26,7 +26,7 @@ export default defineConfig({
         // The service worker answers every navigation with the app shell; the
         // static legal/support pages are real pages and must be let through,
         // or opening askrune.app/gizlilik from the installed app shows the app.
-        navigateFallbackDenylist: [/^\/(gizlilik|privacy|destek|support)(\/|$)/],
+        navigateFallbackDenylist: [/^\/(gizlilik|privacy|destek|support|kosullar|terms)(\/|$)/],
       },
       manifest: {
         name: 'Rune Kahini',
