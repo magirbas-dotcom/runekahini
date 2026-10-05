@@ -2,15 +2,22 @@
 import { getImage, Image } from "astro:assets";
 
 import altarWide from "../assets/bg/altar-wide.webp";
+import chronicle from "../assets/bg/chronicle.webp";
 import goldenVale from "../assets/bg/golden-vale.webp";
 import hall from "../assets/bg/hall.webp";
+import onbShare from "../assets/bg/onb-share.webp";
 import realmBirth from "../assets/bg/realm-birth.webp";
 import realmCompat from "../assets/bg/realm-compat.webp";
 import realmHome from "../assets/bg/realm-home.webp";
 import realmReading from "../assets/bg/realm-reading.webp";
 import realmTalisman from "../assets/bg/realm-talisman.webp";
 import scrolls from "../assets/bg/scrolls.webp";
-import { glyphTransform, RUNE_GLYPHS } from "../data/runeGlyphs";
+import emblem from "../assets/craft/emblem.webp";
+import stoneAlgiz from "../assets/craft/stone-algiz.webp";
+import stoneAnsuz from "../assets/craft/stone-ansuz.webp";
+import stoneDagaz from "../assets/craft/stone-dagaz.webp";
+import stoneFehu from "../assets/craft/stone-fehu.webp";
+import stoneIngwaz from "../assets/craft/stone-ingwaz.webp";
 import { copy, type Feature, type Lang } from "../i18n";
 import Ornament from "./Ornament.astro";
 import RuneRibbon from "./RuneRibbon.astro";
@@ -43,9 +50,15 @@ const realmFocus: Record<Feature["key"], string> = {
   compat: "50% 10%",
 };
 
-// A rune for each "more" card, drawn from the app's glyphs: Ansuz (wisdom) for the guide, Raidho (the
-// journey) for history, Gebo (the gift) for sharing, Mannaz (people) for the two languages.
-const moreRunes = ["Ansuz", "Raidho", "Gebo", "Mannaz"];
+// A photograph for each "more" card: the scrolls (the guide), the chronicle (history and notes), a shared
+// card (the onboarding's), the candle-lit room (the app in two languages).
+const morePhotos = [scrolls, chronicle, onbShare, realmHome];
+// The carved stones (scripts/carve.mjs: the app's own glyphs cut into the app's own stones).
+const craftStones = [
+  { src: stoneFehu, alt: "Fehu" },
+  { src: stoneAnsuz, alt: "Ansuz" },
+  { src: stoneAlgiz, alt: "Algiz" },
+];
 
 // Hero: the candle-lit hall (portrait) on phones, the altar (wide) on large screens.
 const heroWide = await getImage({ src: altarWide, width: 2000, format: "webp" });
@@ -87,14 +100,12 @@ const heroWide = await getImage({ src: altarWide, width: 2000, format: "webp" })
           </div>
         </div>
       </div>
-      {/* Two phones fanned: the talisman in front, the birth map behind (the home screen has its own card below). */}
+      {/* The home screen, and beside it the day's stone carved as it is in the app (Dagaz, as on the screen). */}
       <div class="hero-phone">
-        <div class="phone back">
-          <Image src={screen("birth")} alt={t.features[2].alt} widths={[390, 600]} sizes="230px" loading="eager" />
-        </div>
         <div class="phone front">
-          <Image src={screen("talisman-medallion")} alt={t.features[3].alt} widths={[390, 600, 780]} sizes="270px" loading="eager" />
+          <Image src={screen("home")} alt={t.features[0].alt} widths={[390, 600, 780]} sizes="270px" loading="eager" />
         </div>
+        <Image class="hero-stone" src={stoneDagaz} alt="Dagaz" widths={[240, 400]} sizes="200px" loading="eager" />
       </div>
     </div>
   </section>
@@ -122,9 +133,16 @@ const heroWide = await getImage({ src: altarWide, width: 2000, format: "webp" })
                 <div class="line" />
                 <p>{f.text}</p>
               </div>
-              <div class="phone">
-                <Image src={screen(f.key)} alt={f.alt} widths={[390, 600, 780]} sizes="270px" />
-              </div>
+              {f.key === "home" ? (
+                // The home screen leads the page; here the day's stone itself, carved.
+                <div class="realm-stone">
+                  <Image src={stoneIngwaz} alt="Ingwaz" widths={[300, 520]} sizes="300px" />
+                </div>
+              ) : (
+                <div class="phone">
+                  <Image src={screen(f.key)} alt={f.alt} widths={[390, 600, 780]} sizes="270px" />
+                </div>
+              )}
             </article>
           ))
         }
@@ -132,8 +150,7 @@ const heroWide = await getImage({ src: altarWide, width: 2000, format: "webp" })
     </div>
   </section>
 
-  <section class="section more" aria-labelledby="more-title">
-    <div class="more-bg" aria-hidden="true"><Image src={scrolls} alt="" widths={[800, 1300]} sizes="100vw" /></div>
+  <section class="section tight" aria-labelledby="more-title">
     <div class="wrap">
       <div class="head">
         <span class="kicker">{t.head.more}</span>
@@ -142,36 +159,41 @@ const heroWide = await getImage({ src: altarWide, width: 2000, format: "webp" })
       </div>
       <div class="grid4">
         {
-          t.more.items.map((m, i) => {
-            const g = RUNE_GLYPHS[moreRunes[i]];
-            return (
-              <div class="card">
-                <svg viewBox="0 0 100 100" aria-hidden="true">
-                  <path d={g.d} transform={glyphTransform(g, 0.78)} />
-                </svg>
+          t.more.items.map((m, i) => (
+            <div class="tile">
+              <div class="tile-photo">
+                <Image src={morePhotos[i]} alt="" widths={[400, 700]} sizes="(min-width: 960px) 280px, (min-width: 720px) 50vw, 100vw" />
+              </div>
+              <div class="tile-copy">
                 <h3>{m.title}</h3>
                 <p>{m.text}</p>
               </div>
-            );
-          })
+            </div>
+          ))
         }
       </div>
     </div>
   </section>
 
-  <section class="band" aria-labelledby="craft-title">
+  <section class="craft" aria-labelledby="craft-title">
     <div class="band-bg" aria-hidden="true">
       <Image src={goldenVale} alt="" widths={[800, 1400]} sizes="100vw" />
     </div>
-    <div class="wrap">
-      <h2 id="craft-title">{t.craft.title}</h2>
-      <Ornament />
-      <p>{t.craft.text}</p>
-      <p class="note">{t.craft.note}</p>
+    <div class="wrap craft-grid">
+      <div class="craft-copy">
+        <span class="kicker">{t.craft.kicker}</span>
+        <h2 id="craft-title">{t.craft.title}</h2>
+        <div class="line"></div>
+        <p>{t.craft.text}</p>
+        <p class="note">{t.craft.note}</p>
+      </div>
+      <div class="craft-stones">
+        {craftStones.map((s) => <Image src={s.src} alt={s.alt} widths={[240, 420]} sizes="(min-width: 960px) 200px, 30vw" />)}
+      </div>
     </div>
   </section>
 
-  <section class="section" aria-labelledby="privacy-title">
+  <section class="section tight" aria-labelledby="privacy-title">
     <div class="wrap">
       <div class="head">
         <span class="kicker">{t.head.privacy}</span>
@@ -179,13 +201,21 @@ const heroWide = await getImage({ src: altarWide, width: 2000, format: "webp" })
         <Ornament />
       </div>
       <ul class="vows">
-        {t.privacy.items.map((i) => <li>{i}</li>)}
+        {
+          t.privacy.items.map((i) => (
+            <li>
+              <i aria-hidden="true" />
+              <b>{i.title}</b>
+              <span>{i.text}</span>
+            </li>
+          ))
+        }
       </ul>
-      <p class="head" style="margin:0"><a href={t.legal.privacy}>{t.privacy.link}</a></p>
+      <p class="center-link"><a href={t.legal.privacy}>{t.privacy.link}</a></p>
     </div>
   </section>
 
-  <section class="section plans-sec" aria-labelledby="plans-title">
+  <section class="section tight plans-sec" aria-labelledby="plans-title">
     <div class="plans-bg" aria-hidden="true"><Image src={hall} alt="" widths={[800, 1000]} sizes="100vw" /></div>
     <div class="wrap">
       <div class="head">
@@ -200,6 +230,7 @@ const heroWide = await getImage({ src: altarWide, width: 2000, format: "webp" })
           <ul>{t.plans.freeItems.map((i) => <li>{i}</li>)}</ul>
         </div>
         <div class="plan gold">
+          <Image class="plan-emblem" src={emblem} alt="" widths={[160, 240]} sizes="96px" />
           <span class="kicker">PREMIUM</span>
           <h3>{t.plans.premium}</h3>
           <ul>{t.plans.premiumItems.map((i) => <li>{i}</li>)}</ul>
@@ -209,7 +240,7 @@ const heroWide = await getImage({ src: altarWide, width: 2000, format: "webp" })
     </div>
   </section>
 
-  <section class="section" aria-labelledby="faq-title">
+  <section class="section tight" aria-labelledby="faq-title">
     <div class="wrap">
       <div class="head">
         <span class="kicker">{t.head.faq}</span>

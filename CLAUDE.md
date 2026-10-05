@@ -63,6 +63,19 @@ Astro geliştirme araç çubuğu kapalı. **Mağaza rozetleri:** kullanıcı ori
 rozetleri yalnızca yayındaki uygulamaya bağlantılı kullanılabildiği için yayına kadar "Yakında" düğmeleri;
 yayın günü resmi rozet dosyaları (Apple Marketing Tools, Google Play badge) indirilip bağlantıyla konur.
 
+**Üçüncü tur (kullanıcı: "üstte ana sayfa olmalı, başka yerde kullanmışsın"; "Ve dahası'ndan aşağısı
+sıkılaşsın, kalite artsın"; "Gerçek işaretler'i görselle destekle"; "onboarding görsellerini de kullan"):**
+- Üstte ana sayfa telefonu + yanında oyma Dagaz taşı (ekrandaki günün rune'u). "Her sabah bir taş" kartında
+  telefon yerine oyma Ingwaz taşı; hiçbir ekran görüntüsü iki kez kullanılmıyor.
+- **Oyma taşlar** `scripts/carve.mjs` ile üretilir: uygulamanın boş taşları (`talisman-1..4`, `stone-daily`,
+  yüz ölçüleri `STONE_ROW`'dan) + `src/data/runeGlyphs.ts` glifleri, uygulamanın yaldızlı kesim reçetesiyle
+  (alt-sağda ışık dudağı, koyu kontur, altın gradyan, ışığa bakan duvarda gölge). Çıktı `src/assets/craft/`.
+  "Gerçek işaretler" bölümünde Fehu, Ansuz, Algiz yan yana; bölüm iki sütun.
+- **Tanıtım görselleri:** rune'ları yapay zekâ çizimi ve bazıları hatalı (01, 02, 05 "LENA"); "yapay zekâ
+  çizmez" diyen sitede kullanılmaz. Yalnızca `06-share` (Berkano kartı) "Ve dahası"nda.
+- "Ve dahası" fotoğraflı kartlar (tomarlar, kronik, paylaşım kartı, ritüel oda); gizlilik dört hücreli panel,
+  her söz bir açıklama satırıyla; Premium kartında anahtar amblemi; alt bölümler `section.tight` (64 px).
+
 **Sıradaki:** kullanıcı onayıyla `landing` → `main` birleştirme ve push (Cloudflare yeni siteyi yayınlar,
 eski PWA kullanıcılarında `sw.js` kendini kaldırır). Mağazalar çıkınca "Yakında" düğmeleri gerçek
 bağlantılarla değişir. Mobil uygulamanın App Store "pazarlama" ve "destek" adresleri bu site.

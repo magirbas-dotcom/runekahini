@@ -18,8 +18,8 @@ export interface Copy {
   head: { features: { kicker: string; title: string; text: string }; more: string; privacy: string; plans: string; faq: string };
   features: Feature[];
   more: { title: string; items: { title: string; text: string }[] };
-  craft: { title: string; text: string; note: string };
-  privacy: { title: string; items: string[]; link: string };
+  craft: { kicker: string; title: string; text: string; note: string };
+  privacy: { title: string; items: { title: string; text: string }[]; link: string };
   plans: { title: string; free: string; freeItems: string[]; premium: string; premiumItems: string[]; note: string };
   faq: { title: string; items: { q: string; a: string }[] };
   footer: { privacy: string; terms: string; support: string; contact: string; rights: string };
@@ -53,7 +53,7 @@ export const copy: Record<Lang, Copy> = {
       more: "ALSO IN THE APP",
       privacy: "PRIVACY",
       plans: "PLANS",
-      faq: "QUESTIONS",
+      faq: "GOOD TO KNOW",
     },
     features: [
       {
@@ -102,13 +102,19 @@ export const copy: Record<Lang, Copy> = {
       ],
     },
     craft: {
+      kicker: "THE CRAFT",
       title: "Real signs, carved in stone",
       text: "No rune is drawn by AI. Every sign comes from the Elder Futhark's own shapes and is cut into stone, gold or bronze, lit as the stone was lit.",
       note: "The birth rune, the zodiac pairing and talisman design are modern interpretations, and the app says so.",
     },
     privacy: {
       title: "Yours, and only yours",
-      items: ["No account", "Everything stays on your phone", "No ads, no tracking", "Purchases only through the store"],
+      items: [
+        { title: "No account", text: "No sign-up, no email, no password." },
+        { title: "On your phone", text: "Your readings, birth date and notes never leave it." },
+        { title: "No ads, no tracking", text: "No analytics, no ad networks, no cookies." },
+        { title: "Store purchases", text: "Payments go through Apple or Google; we never see them." },
+      ],
       link: "Privacy Policy",
     },
     plans: {
@@ -181,7 +187,7 @@ export const copy: Record<Lang, Copy> = {
       more: "UYGULAMADA AYRICA",
       privacy: "GİZLİLİK",
       plans: "PLANLAR",
-      faq: "SORULAR",
+      faq: "MERAK EDİLENLER",
     },
     features: [
       {
@@ -230,13 +236,19 @@ export const copy: Record<Lang, Copy> = {
       ],
     },
     craft: {
+      kicker: "ZANAAT",
       title: "Gerçek işaretler, kazınmış taş",
       text: "Hiçbir rune yapay zekâya çizdirilmez. Her işaret Elder Futhark'ın kendi biçiminden çizilir ve taşa, altına, bronza oyulur; taşın aldığı ışıkla aydınlanır.",
       note: "Doğum rune'si, burç eşleşmesi ve tılsım tasarımı modern yorumlardır; uygulama bunu açıkça söyler.",
     },
     privacy: {
       title: "Senin, yalnızca senin",
-      items: ["Hesap yok", "Her şey telefonunda kalır", "Reklam ve takip yok", "Satın alma yalnızca mağazadan"],
+      items: [
+        { title: "Hesap yok", text: "Kayıt yok, e-posta yok, şifre yok." },
+        { title: "Telefonunda kalır", text: "Okumaların, doğum tarihin ve notların cihazdan çıkmaz." },
+        { title: "Reklam ve takip yok", text: "Analiz aracı yok, reklam ağı yok, çerez yok." },
+        { title: "Mağazadan satın alma", text: "Ödeme Apple ya da Google üzerinden; biz görmeyiz." },
+      ],
       link: "Gizlilik Politikası",
     },
     plans: {
