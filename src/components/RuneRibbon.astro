@@ -1,0 +1,38 @@
+---
+// The Elder Futhark's 24 runes in one faint gold line, in their three aettir: an inscription band between
+// sections. The shapes are the app's own (src/data/runeGlyphs.ts), never drawn by AI.
+import { glyphTransform, RUNE_GLYPHS } from "../data/runeGlyphs";
+
+interface Props {
+  class?: string;
+}
+const { class: cls } = Astro.props;
+const runes = Object.values(RUNE_GLYPHS);
+// 100 units a rune, a wider gap between the aettir.
+const GAP = 60;
+const x = (i: number) => i * 100 + Math.floor(i / 8) * GAP;
+const width = x(23) + 100;
+---
+
+<svg class:list={["ribbon", cls]} viewBox={`0 0 ${width} 100`} aria-hidden="true" preserveAspectRatio="xMidYMid meet">
+  {
+    runes.map((g, i) => (
+      <g transform={`translate(${x(i)} 0)`}>
+        <path d={g.d} transform={glyphTransform(g, 0.62)} />
+      </g>
+    ))
+  }
+  <circle cx={x(8) - GAP / 2} cy="50" r="4"></circle>
+  <circle cx={x(16) - GAP / 2} cy="50" r="4"></circle>
+</svg>
+
+<style>
+  .ribbon {
+    display: block;
+    width: min(100%, 760px);
+    height: auto;
+    margin: 0 auto;
+    fill: var(--gold);
+    opacity: 0.38;
+  }
+</style>

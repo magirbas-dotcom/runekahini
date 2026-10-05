@@ -1,25 +1,26 @@
 /* The AskRune site, in the app's own tokens (askrune-app src/theme/tokens.ts): ink, parchment text, gold
    used only as an accent. Cormorant Garamond for display, Inter for text; both self-hosted (no third-party
-   requests, as the privacy policy says). One dark theme, as the app. */
+   requests, as the privacy policy says). One dark theme, as the app.
+   2026-10-05 (user: "a little large and coarse; refine it, make it richer, premium"): a finer type scale,
+   more air, hairlines, each feature in its own realm's photograph. */
 
 :root {
   --ink: #090908;
   --surface: #11110f;
-  --surface-2: #171612;
   --parchment: #f3ebdd;
-  --parchment-dim: #aea596;
+  --parchment-dim: #b3aa9a;
   --parchment-mute: #857d72;
   --gold: #c8a46a;
   --gold-light: #e1c48b;
-  --hairline: rgba(200, 164, 106, 0.22);
-  --hairline-soft: rgba(243, 235, 221, 0.1);
+  --hairline: rgba(200, 164, 106, 0.24);
+  --hairline-soft: rgba(243, 235, 221, 0.09);
+  --glass: rgba(14, 13, 11, 0.62);
 
   --display: "Cormorant Garamond", Georgia, "Times New Roman", serif;
   --body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
 
-  --wrap: 1120px;
+  --wrap: 1160px;
   --gutter: 20px;
-  --radius: 18px;
 
   color-scheme: dark;
 }
@@ -27,45 +28,46 @@
 * {
   box-sizing: border-box;
 }
-
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
 }
-
 body {
   margin: 0;
   background: var(--ink);
   color: var(--parchment);
   font-family: var(--body);
-  font-size: 17px;
-  line-height: 1.65;
+  font-size: 16px;
+  line-height: 1.7;
   -webkit-font-smoothing: antialiased;
 }
-
 img {
   display: block;
   max-width: 100%;
   height: auto;
 }
-
 a {
   color: var(--gold-light);
-  text-underline-offset: 3px;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
 }
-
 h1,
 h2,
 h3 {
   font-family: var(--display);
   font-weight: 500;
-  line-height: 1.12;
+  line-height: 1.1;
+  letter-spacing: 0.005em;
   margin: 0;
   text-wrap: balance;
 }
-
 p {
   margin: 0;
+}
+:focus-visible {
+  outline: 1.5px solid var(--gold-light);
+  outline-offset: 3px;
+  border-radius: 6px;
 }
 
 .wrap {
@@ -74,26 +76,30 @@ p {
   margin: 0 auto;
   padding: 0 var(--gutter);
 }
-
 .kicker {
   font-family: var(--body);
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 500;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.28em;
   color: var(--gold);
 }
-
-.rule {
-  width: 56px;
-  height: 1px;
-  background: var(--gold);
-  opacity: 0.7;
+.head {
+  display: grid;
+  gap: 14px;
+  justify-items: center;
+  text-align: center;
+  margin-bottom: 44px;
 }
-
-:focus-visible {
-  outline: 2px solid var(--gold-light);
-  outline-offset: 3px;
-  border-radius: 6px;
+.head h2 {
+  font-size: clamp(30px, 3.8vw, 42px);
+  color: var(--parchment);
+}
+.head p {
+  max-width: 36em;
+  color: var(--parchment-dim);
+}
+.section {
+  padding: 88px 0;
 }
 
 /* ── Top bar ─────────────────────────────────────────── */
@@ -101,23 +107,25 @@ p {
 .top {
   position: absolute;
   inset: 0 0 auto;
-  z-index: 2;
+  z-index: 3;
 }
 .top .wrap {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 22px;
+  padding-top: 18px;
 }
 .lang {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
+  letter-spacing: 0.04em;
   color: var(--parchment-dim);
   text-decoration: none;
-  padding: 7px 14px;
+  padding: 6px 14px;
   border: 1px solid var(--hairline);
   border-radius: 999px;
-  background: rgba(9, 9, 8, 0.55);
+  background: rgba(9, 9, 8, 0.45);
+  backdrop-filter: blur(6px);
 }
 .lang:hover {
   color: var(--parchment);
@@ -129,8 +137,11 @@ p {
 .hero {
   position: relative;
   overflow: hidden;
-  padding: 120px 0 72px;
   isolation: isolate;
+  min-height: min(100svh, 920px);
+  display: grid;
+  align-items: center;
+  padding: 110px 0 64px;
 }
 .hero-bg {
   position: absolute;
@@ -141,30 +152,30 @@ p {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 70% 30%;
+  object-position: 50% 30%;
 }
 .hero-bg::after {
   content: "";
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(180deg, rgba(9, 9, 8, 0.55) 0%, rgba(9, 9, 8, 0.35) 40%, rgba(9, 9, 8, 0.92) 85%, var(--ink) 100%),
-    linear-gradient(90deg, rgba(9, 9, 8, 0.85) 0%, rgba(9, 9, 8, 0.2) 70%);
+    radial-gradient(120% 80% at 20% 40%, rgba(9, 9, 8, 0.25), rgba(9, 9, 8, 0.75) 70%),
+    linear-gradient(180deg, rgba(9, 9, 8, 0.6) 0%, rgba(9, 9, 8, 0.2) 35%, rgba(9, 9, 8, 0.85) 82%, var(--ink) 100%);
 }
 .hero .wrap {
   display: grid;
-  gap: 48px;
+  gap: 52px;
   align-items: center;
 }
 .hero-copy {
   display: grid;
-  gap: 22px;
-  max-width: 560px;
+  gap: 20px;
+  max-width: 540px;
 }
 .hero h1 {
-  font-size: clamp(44px, 9vw, 76px);
+  font-size: clamp(40px, 5.6vw, 66px);
   color: var(--gold-light);
-  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.6);
+  text-shadow: 0 2px 30px rgba(0, 0, 0, 0.55);
 }
 .hero h1 span {
   display: block;
@@ -174,120 +185,199 @@ p {
   color: var(--parchment);
 }
 .hero-sub {
-  font-size: 18px;
+  font-size: 16.5px;
   color: var(--parchment-dim);
-  max-width: 34em;
+  max-width: 31em;
 }
 .stores {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 6px;
+  gap: 10px;
+  margin-top: 8px;
 }
 .store {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 18px 10px 14px;
-  border-radius: 14px;
+  gap: 10px;
+  padding: 8px 16px 8px 12px;
+  border-radius: 12px;
   border: 1px solid var(--hairline);
-  background: rgba(17, 17, 15, 0.82);
+  background: var(--glass);
+  backdrop-filter: blur(8px);
 }
 .store svg {
   flex: none;
+  opacity: 0.9;
 }
 .store small {
   display: block;
-  font-size: 11px;
-  letter-spacing: 0.12em;
+  font-size: 9.5px;
+  letter-spacing: 0.22em;
   color: var(--gold);
-  line-height: 1.2;
+  line-height: 1.3;
 }
 .store b {
   display: block;
   font-weight: 500;
-  font-size: 16px;
+  font-size: 14.5px;
   color: var(--parchment);
   line-height: 1.3;
 }
 .hero-phone {
   justify-self: center;
+  position: relative;
+  display: grid;
+  padding-right: 18%;
+}
+.hero-phone .phone {
+  grid-area: 1 / 1;
+}
+.hero-phone .back {
+  width: min(210px, 54vw);
+  justify-self: end;
+  align-self: start;
+  transform: translate(32%, 8%) rotate(7deg);
+  opacity: 0.88;
+}
+.hero-phone .front {
+  transform: rotate(-3deg);
+  z-index: 1;
+}
+.hero-phone::before {
+  content: "";
+  position: absolute;
+  inset: 12% -30% 0;
+  z-index: -1;
+  background: radial-gradient(closest-side, rgba(225, 196, 139, 0.18), transparent);
+}
+.ribbon-band {
+  padding: 8px 0 0;
 }
 
 /* ── Phone frame ─────────────────────────────────────── */
 
 .phone {
-  width: min(300px, 78vw);
-  padding: 9px;
-  border-radius: 46px;
-  background: #1b1a17;
-  border: 1px solid rgba(243, 235, 221, 0.14);
+  width: min(250px, 66vw);
+  padding: 7px;
+  border-radius: 40px;
+  background: linear-gradient(160deg, #2a2721, #12110f 60%);
+  border: 1px solid rgba(243, 235, 221, 0.16);
   box-shadow:
-    0 30px 80px rgba(0, 0, 0, 0.65),
-    0 0 0 1px rgba(0, 0, 0, 0.6) inset;
+    0 40px 90px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(0, 0, 0, 0.7) inset;
 }
 .phone img {
   width: 100%;
-  border-radius: 38px;
+  border-radius: 33px;
 }
 
-/* ── Features ────────────────────────────────────────── */
+/* ── Realm cards (features) ──────────────────────────── */
 
-.section {
-  padding: 72px 0;
-}
-.section-title {
-  font-size: clamp(32px, 6vw, 46px);
-  text-align: center;
-  color: var(--gold-light);
-}
-.features {
+.realms {
   display: grid;
-  gap: 88px;
-  padding: 48px 0 24px;
+  gap: 28px;
 }
-.feature {
+.realm {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: 28px;
+  border: 1px solid var(--hairline);
   display: grid;
   gap: 32px;
-  align-items: center;
+  padding: 36px 24px 0;
 }
-.feature-copy {
+.realm-bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+.realm-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.realm-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(9, 9, 8, 0.9) 0%, rgba(9, 9, 8, 0.72) 38%, rgba(9, 9, 8, 0.25) 100%);
+}
+.realm-copy {
   display: grid;
   gap: 14px;
-  max-width: 460px;
+  max-width: 420px;
 }
-.feature h2 {
-  font-size: clamp(32px, 6vw, 44px);
+.realm h3 {
+  font-size: clamp(30px, 3.4vw, 38px);
+  color: var(--parchment);
 }
-.feature p {
+.realm p {
   color: var(--parchment-dim);
-  font-size: 18px;
+  font-size: 16px;
 }
-.feature .phone {
+.realm .line {
+  width: 40px;
+  height: 1px;
+  background: var(--gold);
+  opacity: 0.8;
+}
+.realm .phone {
   justify-self: center;
+  margin-bottom: -90px;
 }
 
-/* ── More ────────────────────────────────────────────── */
+/* ── More (cards over the scrolls) ───────────────────── */
 
+.more {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.more-bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+.more-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.32;
+}
+.more-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, var(--ink), rgba(9, 9, 8, 0.55) 30%, rgba(9, 9, 8, 0.55) 70%, var(--ink));
+}
 .grid4 {
   display: grid;
-  gap: 16px;
-  margin-top: 36px;
+  gap: 14px;
 }
 .card {
-  padding: 24px;
-  border-radius: var(--radius);
+  padding: 26px 24px;
+  border-radius: 20px;
   border: 1px solid var(--hairline-soft);
-  background: var(--surface);
+  background: var(--glass);
+  backdrop-filter: blur(10px);
+}
+.card svg {
+  width: 26px;
+  height: 26px;
+  fill: var(--gold);
+  margin-bottom: 14px;
+  opacity: 0.85;
 }
 .card h3 {
-  font-size: 25px;
+  font-size: 22px;
   color: var(--parchment);
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 .card p {
   color: var(--parchment-dim);
-  font-size: 16px;
+  font-size: 14.5px;
+  line-height: 1.6;
 }
 
 /* ── Craft (photo band) ──────────────────────────────── */
@@ -296,7 +386,7 @@ p {
   position: relative;
   overflow: hidden;
   isolation: isolate;
-  padding: 110px 0;
+  padding: 120px 0;
 }
 .band-bg {
   position: absolute;
@@ -307,12 +397,13 @@ p {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: 50% 35%;
 }
 .band-bg::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, var(--ink) 0%, rgba(9, 9, 8, 0.72) 30%, rgba(9, 9, 8, 0.72) 70%, var(--ink) 100%);
+  background: linear-gradient(180deg, var(--ink) 0%, rgba(9, 9, 8, 0.66) 28%, rgba(9, 9, 8, 0.66) 72%, var(--ink) 100%);
 }
 .band .wrap {
   display: grid;
@@ -321,121 +412,150 @@ p {
   text-align: center;
 }
 .band h2 {
-  font-size: clamp(34px, 6vw, 52px);
+  font-size: clamp(32px, 4.4vw, 48px);
   color: var(--gold-light);
 }
 .band p {
-  max-width: 36em;
-  font-size: 19px;
+  max-width: 34em;
+  font-size: 17px;
   color: var(--parchment);
 }
 .band .note {
-  font-size: 15px;
+  font-size: 14px;
   color: var(--parchment-dim);
 }
 
 /* ── Privacy ─────────────────────────────────────────── */
 
-.pills {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 12px;
-  margin: 32px 0 20px;
+.vows {
+  display: grid;
+  margin: 0 auto 28px;
   padding: 0;
   list-style: none;
+  max-width: 920px;
+  border-top: 1px solid var(--hairline-soft);
 }
-.pills li {
-  display: inline-flex;
+.vows li {
+  display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 11px 18px;
-  border-radius: 999px;
-  border: 1px solid var(--hairline);
-  background: var(--surface);
-  font-size: 16px;
+  gap: 14px;
+  padding: 18px 6px;
+  border-bottom: 1px solid var(--hairline-soft);
+  font-family: var(--display);
+  font-size: 21px;
 }
-.pills li::before {
+.vows li::before {
   content: "";
+  flex: none;
   width: 7px;
   height: 7px;
   transform: rotate(45deg);
-  background: var(--gold);
-}
-.center {
-  text-align: center;
+  border: 1px solid var(--gold);
 }
 
 /* ── Plans ───────────────────────────────────────────── */
 
+.plans-sec {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.plans-bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+.plans-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 40%;
+  opacity: 0.4;
+}
+.plans-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, var(--ink), rgba(9, 9, 8, 0.6) 35%, rgba(9, 9, 8, 0.6) 65%, var(--ink));
+}
 .plans {
   display: grid;
   gap: 16px;
-  margin-top: 36px;
+  max-width: 900px;
+  margin: 0 auto;
 }
 .plan {
-  padding: 28px;
-  border-radius: var(--radius);
+  padding: 32px 30px;
+  border-radius: 24px;
   border: 1px solid var(--hairline-soft);
-  background: var(--surface);
+  background: var(--glass);
+  backdrop-filter: blur(10px);
 }
 .plan.gold {
-  border-color: var(--gold);
-  background: linear-gradient(180deg, rgba(200, 164, 106, 0.08), rgba(17, 17, 15, 1) 60%);
+  border-color: rgba(200, 164, 106, 0.6);
+  background: linear-gradient(180deg, rgba(200, 164, 106, 0.1), rgba(14, 13, 11, 0.72) 55%);
+}
+.plan .kicker {
+  display: block;
+  margin-bottom: 8px;
 }
 .plan h3 {
   font-size: 30px;
+  color: var(--parchment);
+  margin-bottom: 18px;
+}
+.plan.gold h3 {
   color: var(--gold-light);
-  margin-bottom: 14px;
 }
 .plan ul {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 10px;
+  gap: 11px;
 }
 .plan li {
   display: flex;
   gap: 12px;
   align-items: baseline;
+  font-size: 15px;
   color: var(--parchment);
 }
 .plan li::before {
   content: "";
   flex: none;
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   transform: translateY(-2px) rotate(45deg);
   background: var(--gold);
 }
 .plan-note {
-  margin-top: 18px;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--hairline-soft);
   color: var(--parchment-dim);
-  font-size: 15px;
+  font-size: 14px;
 }
 
 /* ── FAQ ─────────────────────────────────────────────── */
 
 .faq {
   max-width: 760px;
-  margin: 36px auto 0;
-  display: grid;
-  gap: 12px;
+  margin: 0 auto;
+  border-top: 1px solid var(--hairline-soft);
 }
 .faq details {
-  border-radius: 14px;
-  border: 1px solid var(--hairline-soft);
-  background: var(--surface);
+  border-bottom: 1px solid var(--hairline-soft);
 }
 .faq summary {
   cursor: pointer;
   list-style: none;
-  padding: 18px 52px 18px 20px;
+  padding: 20px 44px 20px 4px;
   position: relative;
   font-family: var(--display);
   font-weight: 500;
-  font-size: 22px;
+  font-size: 21px;
+  line-height: 1.3;
 }
 .faq summary::-webkit-details-marker {
   display: none;
@@ -443,12 +563,12 @@ p {
 .faq summary::after {
   content: "";
   position: absolute;
-  right: 22px;
+  right: 10px;
   top: 50%;
-  width: 9px;
-  height: 9px;
-  border-right: 1.5px solid var(--gold);
-  border-bottom: 1.5px solid var(--gold);
+  width: 8px;
+  height: 8px;
+  border-right: 1px solid var(--gold);
+  border-bottom: 1px solid var(--gold);
   transform: translateY(-70%) rotate(45deg);
   transition: transform 0.2s;
 }
@@ -456,20 +576,19 @@ p {
   transform: translateY(-30%) rotate(225deg);
 }
 .faq details p {
-  padding: 0 20px 20px;
+  padding: 0 4px 22px;
   color: var(--parchment-dim);
+  font-size: 15px;
 }
 
 /* ── Footer ──────────────────────────────────────────── */
 
 .foot {
-  border-top: 1px solid var(--hairline-soft);
-  padding: 40px 0 48px;
-  margin-top: 40px;
+  padding: 56px 0 44px;
 }
 .foot .wrap {
   display: grid;
-  gap: 18px;
+  gap: 22px;
   justify-items: center;
   text-align: center;
 }
@@ -477,19 +596,20 @@ p {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 8px 22px;
+  gap: 8px 24px;
 }
 .foot nav a {
   color: var(--parchment-dim);
   text-decoration: none;
-  font-size: 15px;
+  font-size: 13.5px;
 }
 .foot nav a:hover {
   color: var(--parchment);
 }
 .foot small {
   color: var(--parchment-mute);
-  font-size: 13px;
+  font-size: 12px;
+  letter-spacing: 0.04em;
 }
 
 /* ── Web app notice ──────────────────────────────────── */
@@ -500,17 +620,17 @@ p {
   bottom: 16px;
   z-index: 10;
   transform: translateX(-50%);
-  width: min(560px, calc(100% - 32px));
+  width: min(540px, calc(100% - 32px));
   display: flex;
   gap: 14px;
   align-items: flex-start;
   padding: 16px 16px 16px 18px;
   border-radius: 16px;
-  border: 1px solid var(--gold);
+  border: 1px solid var(--hairline);
   background: rgba(17, 17, 15, 0.97);
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
-  font-size: 15px;
-  line-height: 1.5;
+  font-size: 14px;
+  line-height: 1.55;
 }
 .notice[hidden] {
   display: none;
@@ -518,19 +638,19 @@ p {
 .notice button {
   flex: none;
   font: inherit;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--gold-light);
   background: none;
   border: 1px solid var(--hairline);
   border-radius: 999px;
-  padding: 5px 12px;
+  padding: 4px 12px;
   cursor: pointer;
 }
 
 /* ── Wider screens ───────────────────────────────────── */
 
-@media (min-width: 760px) {
+@media (min-width: 720px) {
   :root {
     --gutter: 32px;
   }
@@ -540,27 +660,59 @@ p {
   .plans {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+  .vows {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 40px;
+  }
 }
 
 @media (min-width: 960px) {
-  .hero {
-    padding: 140px 0 96px;
-  }
   .hero .wrap {
-    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
   }
-  .feature {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 64px;
+  .phone {
+    width: 270px;
   }
-  .feature:nth-child(even) .feature-copy {
+  .hero-phone .back {
+    width: 230px;
+  }
+  .realm {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+    align-items: center;
+    padding: 0 0 0 64px;
+    min-height: 520px;
+  }
+  .realm-bg::after {
+    background: linear-gradient(90deg, rgba(9, 9, 8, 0.93) 0%, rgba(9, 9, 8, 0.78) 38%, rgba(9, 9, 8, 0.2) 75%);
+  }
+  .realm .phone {
+    align-self: end;
+    margin: 56px 0 -120px;
+  }
+  .realm.flip {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1fr);
+    padding: 0 64px 0 0;
+  }
+  .realm.flip .realm-copy {
     order: 2;
   }
-  .feature .feature-copy {
-    justify-self: center;
+  .realm.flip .realm-bg::after {
+    background: linear-gradient(270deg, rgba(9, 9, 8, 0.93) 0%, rgba(9, 9, 8, 0.78) 38%, rgba(9, 9, 8, 0.2) 75%);
   }
   .grid4 {
     grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .vows {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: 28px;
+  }
+  .vows li {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+    font-size: 20px;
+    border-bottom: 0;
+    padding: 26px 6px;
   }
 }
 

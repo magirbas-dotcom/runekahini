@@ -50,6 +50,19 @@ diğerleri `/` İngilizce, elle seçim hatırlanır).
 - `npm run build` temiz; mobil (375) ve masaüstü (1280) görünüm kontrol edildi. Önizleme
   `.claude/launch.json` "rune-oracle-preview" (Astro preview, port 4173).
 
+**İkinci tur (aynı gün, kullanıcı: "iri ve kaba; kibarlaştır, zenginleştir, premium"; "logonun parlaması
+daha iyi olabilir"):** daha ince yazı ölçeği ve daha fazla boşluk; üst kısımda yelpaze gibi iki telefon
+(önde tılsım, arkada doğum haritası); her özellik kendi uygulama odasının fotoğrafında bir "diyar kartı"
+(`src/assets/bg/realm-*.webp`, mobil repodaki ortam görsellerinden; sunak, kuzey ışıkları, orman, lacivert
+yörüngeler, ritüel oda); bölüm üst yazıları + elmaslı ayırıcı (`Ornament`); uygulamanın kendi glifleriyle 24
+rune'luk şerit (`RuneRibbon`, `src/data/runeGlyphs.ts` mobil repodan kopya, yapay zekâ çizimi değil);
+"Ve dahası" kartlarında birer rune (Ansuz, Raidho, Gebo, Mannaz) tomarlar fotoğrafı üstünde; gizlilik dört
+"söz"; planlar kuzey ışıklı salon fotoğrafı üstünde. Logo: SVG ışık filtresi (yumuşatılmış harf alfası
+üstünde sol üstten `feSpecularLighting`, harflerin içine kırpılı) + ince koyu kenar + yumuşak gölge.
+Astro geliştirme araç çubuğu kapalı. **Mağaza rozetleri:** kullanıcı orijinallerini istedi; Apple ve Google
+rozetleri yalnızca yayındaki uygulamaya bağlantılı kullanılabildiği için yayına kadar "Yakında" düğmeleri;
+yayın günü resmi rozet dosyaları (Apple Marketing Tools, Google Play badge) indirilip bağlantıyla konur.
+
 **Sıradaki:** kullanıcı onayıyla `landing` → `main` birleştirme ve push (Cloudflare yeni siteyi yayınlar,
 eski PWA kullanıcılarında `sw.js` kendini kaldırır). Mağazalar çıkınca "Yakında" düğmeleri gerçek
 bağlantılarla değişir. Mobil uygulamanın App Store "pazarlama" ve "destek" adresleri bu site.

@@ -1,9 +1,19 @@
 ---
-import { Image } from "astro:assets";
+import { getImage, Image } from "astro:assets";
 
-import altar from "../assets/bg/altar-wide.webp";
-import forest from "../assets/bg/forest-wide.webp";
-import { copy, type Lang } from "../i18n";
+import altarWide from "../assets/bg/altar-wide.webp";
+import goldenVale from "../assets/bg/golden-vale.webp";
+import hall from "../assets/bg/hall.webp";
+import realmBirth from "../assets/bg/realm-birth.webp";
+import realmCompat from "../assets/bg/realm-compat.webp";
+import realmHome from "../assets/bg/realm-home.webp";
+import realmReading from "../assets/bg/realm-reading.webp";
+import realmTalisman from "../assets/bg/realm-talisman.webp";
+import scrolls from "../assets/bg/scrolls.webp";
+import { glyphTransform, RUNE_GLYPHS } from "../data/runeGlyphs";
+import { copy, type Feature, type Lang } from "../i18n";
+import Ornament from "./Ornament.astro";
+import RuneRibbon from "./RuneRibbon.astro";
 import Wordmark from "./Wordmark.astro";
 
 interface Props {
@@ -16,11 +26,34 @@ const t = copy[lang];
 const screens = import.meta.glob<{ default: ImageMetadata }>("../assets/screens/*/*.webp", { eager: true });
 const screen = (key: string) => screens[`../assets/screens/${lang}/${key}.webp`].default;
 const otherLang = lang === "tr" ? "en" : "tr";
+
+// Each feature in the photograph of its own room in the app (the realms).
+const realmPhoto: Record<Feature["key"], ImageMetadata> = {
+  home: realmHome,
+  "reading-drawn": realmReading,
+  birth: realmBirth,
+  "talisman-medallion": realmTalisman,
+  compat: realmCompat,
+};
+const realmFocus: Record<Feature["key"], string> = {
+  home: "50% 30%",
+  "reading-drawn": "50% 18%",
+  birth: "50% 25%",
+  "talisman-medallion": "50% 40%",
+  compat: "50% 10%",
+};
+
+// A rune for each "more" card, drawn from the app's glyphs: Ansuz (wisdom) for the guide, Raidho (the
+// journey) for history, Gebo (the gift) for sharing, Mannaz (people) for the two languages.
+const moreRunes = ["Ansuz", "Raidho", "Gebo", "Mannaz"];
+
+// Hero: the candle-lit hall (portrait) on phones, the altar (wide) on large screens.
+const heroWide = await getImage({ src: altarWide, width: 2000, format: "webp" });
 ---
 
 <header class="top">
   <div class="wrap">
-    <Wordmark width={128} />
+    <Wordmark width={124} />
     <a class="lang" href={t.nav.otherHref} hreflang={otherLang} lang={otherLang} data-lang={otherLang}>{t.nav.other}</a>
   </div>
 </header>
@@ -28,51 +61,69 @@ const otherLang = lang === "tr" ? "en" : "tr";
 <main>
   <section class="hero">
     <div class="hero-bg" aria-hidden="true">
-      <Image src={altar} alt="" widths={[800, 1400, 2000]} sizes="100vw" loading="eager" fetchpriority="high" />
+      <picture>
+        <source media="(min-width: 960px)" srcset={heroWide.src} />
+        <Image src={hall} alt="" widths={[600, 1000]} sizes="100vw" loading="eager" fetchpriority="high" />
+      </picture>
     </div>
     <div class="wrap">
       <div class="hero-copy">
+        <span class="kicker">{t.hero.kicker}</span>
         <h1><span>{t.hero.title[0]}</span><span>{t.hero.title[1]}</span></h1>
         <p class="hero-sub">{t.hero.sub}</p>
         <div class="stores">
           <div class="store">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <rect x="6" y="2.5" width="12" height="19" rx="2.6" stroke="#C8A46A" stroke-width="1.4"></rect>
-              <path d="M10.5 18.5h3" stroke="#C8A46A" stroke-width="1.4" stroke-linecap="round"></path>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <rect x="6" y="2.5" width="12" height="19" rx="2.6" stroke="#C8A46A" stroke-width="1.3"></rect>
+              <path d="M10.5 18.5h3" stroke="#C8A46A" stroke-width="1.3" stroke-linecap="round"></path>
             </svg>
-            <span><small>{t.hero.soon}</small><b>{t.hero.ios}</b></span>
+            <span><small>{t.hero.soon.toLocaleUpperCase(lang)}</small><b>{t.hero.ios}</b></span>
           </div>
           <div class="store">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M6 3.5v17l13-8.5z" stroke="#C8A46A" stroke-width="1.4" stroke-linejoin="round"></path>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M6 3.5v17l13-8.5z" stroke="#C8A46A" stroke-width="1.3" stroke-linejoin="round"></path>
             </svg>
-            <span><small>{t.hero.soon}</small><b>{t.hero.android}</b></span>
+            <span><small>{t.hero.soon.toLocaleUpperCase(lang)}</small><b>{t.hero.android}</b></span>
           </div>
         </div>
       </div>
+      {/* Two phones fanned: the talisman in front, the birth map behind (the home screen has its own card below). */}
       <div class="hero-phone">
-        <div class="phone">
-          <Image src={screen("home")} alt={t.features[0].alt} widths={[390, 600, 780]} sizes="300px" loading="eager" />
+        <div class="phone back">
+          <Image src={screen("birth")} alt={t.features[2].alt} widths={[390, 600]} sizes="230px" loading="eager" />
+        </div>
+        <div class="phone front">
+          <Image src={screen("talisman-medallion")} alt={t.features[3].alt} widths={[390, 600, 780]} sizes="270px" loading="eager" />
         </div>
       </div>
     </div>
   </section>
 
+  <div class="ribbon-band wrap"><RuneRibbon /></div>
+
   <section class="section" aria-labelledby="features-title">
     <div class="wrap">
-      <h2 class="sr-only" id="features-title">{t.meta.title}</h2>
-      <div class="features">
+      <div class="head">
+        <span class="kicker">{t.head.features.kicker}</span>
+        <h2 id="features-title">{t.head.features.title}</h2>
+        <Ornament />
+        <p>{t.head.features.text}</p>
+      </div>
+      <div class="realms">
         {
-          t.features.slice(1).map((f) => (
-            <article class="feature">
-              <div class="feature-copy">
+          t.features.map((f, i) => (
+            <article class:list={["realm", { flip: i % 2 === 1 }]}>
+              <div class="realm-bg" aria-hidden="true">
+                <Image src={realmPhoto[f.key]} alt="" widths={[700, 1200]} sizes="(min-width: 960px) 1160px, 100vw" style={`object-position:${realmFocus[f.key]}`} />
+              </div>
+              <div class="realm-copy">
                 <span class="kicker">{f.kicker.toLocaleUpperCase(lang)}</span>
-                <h2>{f.title}</h2>
-                <div class="rule" />
+                <h3>{f.title}</h3>
+                <div class="line" />
                 <p>{f.text}</p>
               </div>
               <div class="phone">
-                <Image src={screen(f.key)} alt={f.alt} widths={[390, 600, 780]} sizes="300px" />
+                <Image src={screen(f.key)} alt={f.alt} widths={[390, 600, 780]} sizes="270px" />
               </div>
             </article>
           ))
@@ -81,17 +132,28 @@ const otherLang = lang === "tr" ? "en" : "tr";
     </div>
   </section>
 
-  <section class="section" aria-labelledby="more-title">
+  <section class="section more" aria-labelledby="more-title">
+    <div class="more-bg" aria-hidden="true"><Image src={scrolls} alt="" widths={[800, 1300]} sizes="100vw" /></div>
     <div class="wrap">
-      <h2 class="section-title" id="more-title">{t.more.title}</h2>
+      <div class="head">
+        <span class="kicker">{t.head.more}</span>
+        <h2 id="more-title">{t.more.title}</h2>
+        <Ornament />
+      </div>
       <div class="grid4">
         {
-          t.more.items.map((m) => (
-            <div class="card">
-              <h3>{m.title}</h3>
-              <p>{m.text}</p>
-            </div>
-          ))
+          t.more.items.map((m, i) => {
+            const g = RUNE_GLYPHS[moreRunes[i]];
+            return (
+              <div class="card">
+                <svg viewBox="0 0 100 100" aria-hidden="true">
+                  <path d={g.d} transform={glyphTransform(g, 0.78)} />
+                </svg>
+                <h3>{m.title}</h3>
+                <p>{m.text}</p>
+              </div>
+            );
+          })
         }
       </div>
     </div>
@@ -99,35 +161,46 @@ const otherLang = lang === "tr" ? "en" : "tr";
 
   <section class="band" aria-labelledby="craft-title">
     <div class="band-bg" aria-hidden="true">
-      <Image src={forest} alt="" widths={[800, 1400, 2000]} sizes="100vw" />
+      <Image src={goldenVale} alt="" widths={[800, 1400]} sizes="100vw" />
     </div>
     <div class="wrap">
       <h2 id="craft-title">{t.craft.title}</h2>
-      <div class="rule"></div>
+      <Ornament />
       <p>{t.craft.text}</p>
       <p class="note">{t.craft.note}</p>
     </div>
   </section>
 
-  <section class="section center" aria-labelledby="privacy-title">
+  <section class="section" aria-labelledby="privacy-title">
     <div class="wrap">
-      <h2 class="section-title" id="privacy-title">{t.privacy.title}</h2>
-      <ul class="pills">
+      <div class="head">
+        <span class="kicker">{t.head.privacy}</span>
+        <h2 id="privacy-title">{t.privacy.title}</h2>
+        <Ornament />
+      </div>
+      <ul class="vows">
         {t.privacy.items.map((i) => <li>{i}</li>)}
       </ul>
-      <a href={t.legal.privacy}>{t.privacy.link}</a>
+      <p class="head" style="margin:0"><a href={t.legal.privacy}>{t.privacy.link}</a></p>
     </div>
   </section>
 
-  <section class="section" aria-labelledby="plans-title">
+  <section class="section plans-sec" aria-labelledby="plans-title">
+    <div class="plans-bg" aria-hidden="true"><Image src={hall} alt="" widths={[800, 1000]} sizes="100vw" /></div>
     <div class="wrap">
-      <h2 class="section-title" id="plans-title">{t.plans.title}</h2>
+      <div class="head">
+        <span class="kicker">{t.head.plans}</span>
+        <h2 id="plans-title">{t.plans.title}</h2>
+        <Ornament />
+      </div>
       <div class="plans">
         <div class="plan">
+          <span class="kicker">{t.plans.free.toLocaleUpperCase(lang)}</span>
           <h3>{t.plans.free}</h3>
           <ul>{t.plans.freeItems.map((i) => <li>{i}</li>)}</ul>
         </div>
         <div class="plan gold">
+          <span class="kicker">PREMIUM</span>
           <h3>{t.plans.premium}</h3>
           <ul>{t.plans.premiumItems.map((i) => <li>{i}</li>)}</ul>
           <p class="plan-note">{t.plans.note}</p>
@@ -138,7 +211,11 @@ const otherLang = lang === "tr" ? "en" : "tr";
 
   <section class="section" aria-labelledby="faq-title">
     <div class="wrap">
-      <h2 class="section-title" id="faq-title">{t.faq.title}</h2>
+      <div class="head">
+        <span class="kicker">{t.head.faq}</span>
+        <h2 id="faq-title">{t.faq.title}</h2>
+        <Ornament />
+      </div>
       <div class="faq">
         {
           t.faq.items.map((f) => (
@@ -155,7 +232,8 @@ const otherLang = lang === "tr" ? "en" : "tr";
 
 <footer class="foot">
   <div class="wrap">
-    <Wordmark width={112} />
+    <RuneRibbon />
+    <Wordmark width={110} />
     <nav aria-label={t.footer.contact}>
       <a href={t.legal.privacy}>{t.footer.privacy}</a>
       <a href={t.legal.terms}>{t.footer.terms}</a>
@@ -165,14 +243,3 @@ const otherLang = lang === "tr" ? "en" : "tr";
     <small>{t.footer.rights}</small>
   </div>
 </footer>
-
-<style>
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-</style>

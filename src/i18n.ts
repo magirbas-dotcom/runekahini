@@ -14,7 +14,8 @@ export interface Feature {
 export interface Copy {
   meta: { title: string; description: string };
   nav: { other: string; otherHref: string };
-  hero: { title: [string, string]; sub: string; ios: string; android: string; soon: string };
+  hero: { kicker: string; title: [string, string]; sub: string; ios: string; android: string; soon: string };
+  head: { features: { kicker: string; title: string; text: string }; more: string; privacy: string; plans: string; faq: string };
   features: Feature[];
   more: { title: string; items: { title: string; text: string }[] };
   craft: { title: string; text: string; note: string };
@@ -36,11 +37,23 @@ export const copy: Record<Lang, Copy> = {
     },
     nav: { other: "Türkçe", otherHref: "/tr/" },
     hero: {
+      kicker: "THE 24 RUNES OF THE ELDER FUTHARK",
       title: ["Ancient signs,", "new perspectives"],
       sub: "Daily readings with the 24 runes of the Elder Futhark, your birth rune, a talisman of your own and the harmony of two. No account, no ads: everything stays on your phone.",
       ios: "App Store",
       android: "Google Play",
       soon: "Coming soon",
+    },
+    head: {
+      features: {
+        kicker: "INSIDE THE APP",
+        title: "Five ways to read the runes",
+        text: "Each part of AskRune has a room of its own: a candle-lit altar, the northern lights, an old forest.",
+      },
+      more: "ALSO IN THE APP",
+      privacy: "PRIVACY",
+      plans: "PLANS",
+      faq: "QUESTIONS",
     },
     features: [
       {
@@ -152,11 +165,23 @@ export const copy: Record<Lang, Copy> = {
     },
     nav: { other: "English", otherHref: "/" },
     hero: {
+      kicker: "ELDER FUTHARK'IN 24 RUNE'U",
       title: ["Kadim işaretler,", "yeni bakışlar"],
       sub: "Elder Futhark'ın 24 rune'u ile günlük okumalar, doğum rune'in, kendi tılsımın ve iki kişinin uyumu. Hesap yok, reklam yok: her şey telefonunda kalır.",
       ios: "App Store",
       android: "Google Play",
       soon: "Yakında",
+    },
+    head: {
+      features: {
+        kicker: "UYGULAMANIN İÇİNDE",
+        title: "Rune'ları okumanın beş yolu",
+        text: "AskRune'un her bölümünün kendi odası var: mum ışıklı bir sunak, kuzey ışıkları, kadim bir orman.",
+      },
+      more: "UYGULAMADA AYRICA",
+      privacy: "GİZLİLİK",
+      plans: "PLANLAR",
+      faq: "SORULAR",
     },
     features: [
       {

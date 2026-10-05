@@ -1,0 +1,28 @@
+---
+// A fine gold rule with a diamond in the middle, as in the app's headers.
+---
+
+<div class="ornament" aria-hidden="true"><span></span><i></i><span></span></div>
+
+<style>
+  .ornament {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+  }
+  .ornament span {
+    width: 44px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold));
+  }
+  .ornament span:last-child {
+    background: linear-gradient(90deg, var(--gold), transparent);
+  }
+  .ornament i {
+    width: 6px;
+    height: 6px;
+    transform: rotate(45deg);
+    border: 1px solid var(--gold);
+  }
+</style>
