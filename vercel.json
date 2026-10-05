@@ -1,0 +1,4 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "redirects": [{ "source": "/(.*)", "destination": "https://askrune.app/$1", "permanent": true }]
+}

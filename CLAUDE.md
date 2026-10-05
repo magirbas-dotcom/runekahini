@@ -35,27 +35,24 @@ diğerleri `/` İngilizce, elle seçim hatırlanır).
 - Arka planlar `src/assets/bg/` (altar-wide, aurora-wide, forest-wide, ritual-tall), mobil repodaki
   görsellerden.
 
-**Sıradaki adımlar:**
-1. `astro.config.mjs` (`site: "https://askrune.app"`), `src/styles/site.css` (uygulama tokenları: ink #090908,
-   surface #11110F, parchment #F3EBDD / dim #AEA596 / mute #857D72, gold #C8A46A / light #E1C48B; Cormorant
-   Garamond başlık + Inter gövde, `@fontsource` latin + latin-ext, dış font yok), `src/layouts/Base.astro`
-   (hreflang, OG, `/` sayfasında TR tarayıcıyı `/tr/`'ye yönlendiren küçük betik), `src/i18n.ts` (metinler),
-   `src/pages/index.astro` (EN), `src/pages/tr/index.astro`, `src/pages/404.astro`.
-2. Bölümler: logo (mobil repodaki `Wordmark.tsx` SVG path'i, altın gradyan) + TR/EN; hero (başlık "Kadim
-   işaretler, yeni bakışlar" / "Ancient signs, new perspectives", alt metin, "Yakında App Store / Google Play",
-   telefon çerçevesinde ana sayfa görüntüsü); özellikler (Günün Rune'si + hatırlatma, Rune Okuması, Doğum
-   Rune'si, Tılsım, Rune Uyumu; ayrıca Rehber, geçmiş ve notlar, paylaşım kartları, iki dil); "gerçek glifler,
-   kazınmış taş"; gizlilik (hesap yok, veri telefonda, reklam/takip yok, satın alma mağazadan); ücretsiz ve
-   Premium (ücretsiz: günün rune'si, tek rune, doğum rune'si, rehber; premium: 3-4-5 rune açılımlar, Rune Uyumu,
-   tılsım kaydetme, sınırsız geçmiş; aylık / yıllık / ömür boyu; fiyat yazılmaz); SSS (geleceği söylemez,
-   öz-yansıma; veriler; internetsiz çalışma; abonelik iptali → /destek); altbilgi (yasal sayfalar,
-   destek@askrune.app, "© 2026 Murat Ağırbaş"). Uygulamada "fal" denmez, sitede de.
-3. PWA duyurusu: tarayıcıda `runekahini.v1.*` localStorage anahtarı varsa ya da `display-mode: standalone`
-   ise kapatılabilir not ("web sürümü kapandı, yakında mobil uygulamada; eski okumalar taşınmaz").
-4. Yasal sayfalardaki marka yeniden `/` bağlantısı olabilir (aşağıda not var).
-5. Vercel: `vercel.json` ile runekahini.vercel.app → askrune.app yönlendirmesi.
-6. `npm run build` + `npx astro preview` ile kontrol (telefon ve masaüstü genişliği), sonra kullanıcı onayıyla
-   `main`'e birleştir ve push. Mobil uygulamanın App Store "pazarlama" ve "destek" adresleri bu site.
+**Site yazıldı (2026-10-05, Windows):**
+- `astro.config.mjs` (`site`), `src/styles/site.css` (uygulama tokenları, Cormorant + Inter `@fontsource`
+  latin + latin-ext, dış font yok), `src/layouts/Base.astro` (hreflang, canonical, OG; `/`'de TR tarayıcıyı
+  `/tr/`'ye yönlendiren betik, elle seçim `localStorage["askrune.lang"]`; PWA duyurusu: `runekahini.v1*`
+  anahtarı ya da `display-mode: standalone` varsa kapatılabilir not, bir kez, `askrune.pwaNotice`),
+  `src/i18n.ts` (iki dilin tüm metinleri; ücretsiz/premium listesi uygulamanın 2026-10-04 ayrımıyla aynı:
+  tılsım tasarlama ücretsiz, kaydetme premium; son 10 okuma), `src/components/Landing.astro` (hero, beş
+  özellik telefon çerçevesinde ekran görüntüsüyle, "Ve dahası", fotoğraflı "gerçek işaretler" bandı,
+  gizlilik, planlar, SSS, altbilgi), `Wordmark.astro` (uygulamanın logo path'i, şampanya altın),
+  `src/pages/index.astro` (EN), `tr/index.astro`, `404.astro` (iki dilli).
+- Yasal sayfalardaki marka yeniden bağlantı (`a.brand`: TR → `/tr/`, EN → `/`).
+- `vercel.json`: runekahini.vercel.app'in her adresi askrune.app'e kalıcı yönlendirme.
+- `npm run build` temiz; mobil (375) ve masaüstü (1280) görünüm kontrol edildi. Önizleme
+  `.claude/launch.json` "rune-oracle-preview" (Astro preview, port 4173).
+
+**Sıradaki:** kullanıcı onayıyla `landing` → `main` birleştirme ve push (Cloudflare yeni siteyi yayınlar,
+eski PWA kullanıcılarında `sw.js` kendini kaldırır). Mağazalar çıkınca "Yakında" düğmeleri gerçek
+bağlantılarla değişir. Mobil uygulamanın App Store "pazarlama" ve "destek" adresleri bu site.
 
 ## Proje nedir
 

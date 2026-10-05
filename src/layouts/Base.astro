@@ -1,0 +1,102 @@
+---
+import "@fontsource/cormorant-garamond/latin-500.css";
+import "@fontsource/cormorant-garamond/latin-ext-500.css";
+import "@fontsource/cormorant-garamond/latin-500-italic.css";
+import "@fontsource/cormorant-garamond/latin-ext-500-italic.css";
+import "@fontsource/inter/latin-400.css";
+import "@fontsource/inter/latin-ext-400.css";
+import "@fontsource/inter/latin-500.css";
+import "@fontsource/inter/latin-ext-500.css";
+import "../styles/site.css";
+
+import { copy, type Lang } from "../i18n";
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description: string;
+  /** The page's path in its language ("/" or "/tr/"); 404 has none and gets no alternates. */
+  path?: string;
+  /** On the English root only: send a Turkish browser to /tr/ unless a language was chosen by hand. */
+  langRedirect?: boolean;
+}
+
+const { lang, title, description, path, langRedirect = false } = Astro.props;
+const site = Astro.site?.toString().replace(/\/$/, "") ?? "https://askrune.app";
+const t = copy[lang];
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#090908" />
+    <link rel="icon" type="image/png" href="/icons/favicon-32.png" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    {
+      path && (
+        <>
+          <link rel="canonical" href={site + path} />
+          <link rel="alternate" hreflang="en" href={site + "/"} />
+          <link rel="alternate" hreflang="tr" href={site + "/tr/"} />
+          <link rel="alternate" hreflang="x-default" href={site + "/"} />
+        </>
+      )
+    }
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="AskRune" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {path && <meta property="og:url" content={site + path} />}
+    <meta property="og:image" content={site + "/icons/icon-512.png"} />
+    <meta property="og:locale" content={lang === "tr" ? "tr_TR" : "en_US"} />
+    {
+      langRedirect && (
+        <script is:inline>
+          // A Turkish browser opening the English root goes to /tr/, unless a language was picked by hand.
+          try {
+            if (!localStorage.getItem("askrune.lang") && /^tr\b/i.test(navigator.language || "")) location.replace("/tr/");
+          } catch (e) {}
+        </script>
+      )
+    }
+  </head>
+  <body>
+    <slot />
+
+    <!-- For people who used the old Rune Kahini web app here: a closable note, shown once. -->
+    <div class="notice" id="pwa-notice" role="status" hidden>
+      <p>{t.pwa.text}</p>
+      <button type="button" id="pwa-close">{t.pwa.close}</button>
+    </div>
+    <script is:inline>
+      (function () {
+        try {
+          if (localStorage.getItem("askrune.pwaNotice")) return;
+          var used = matchMedia("(display-mode: standalone)").matches;
+          for (var i = 0; !used && i < localStorage.length; i++) {
+            if ((localStorage.key(i) || "").indexOf("runekahini.v1") === 0) used = true;
+          }
+          if (!used) return;
+          var box = document.getElementById("pwa-notice");
+          box.hidden = false;
+          document.getElementById("pwa-close").addEventListener("click", function () {
+            box.hidden = true;
+            localStorage.setItem("askrune.pwaNotice", "1");
+          });
+        } catch (e) {}
+      })();
+      // The language switch remembers the choice, so the root no longer redirects.
+      document.querySelectorAll("[data-lang]").forEach(function (a) {
+        a.addEventListener("click", function () {
+          try {
+            localStorage.setItem("askrune.lang", a.getAttribute("data-lang"));
+          } catch (e) {}
+        });
+      });
+    </script>
+  </body>
+</html>

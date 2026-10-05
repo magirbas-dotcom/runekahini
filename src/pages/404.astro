@@ -1,0 +1,36 @@
+---
+import Wordmark from "../components/Wordmark.astro";
+import { copy } from "../i18n";
+import Base from "../layouts/Base.astro";
+
+// One page for both languages: the static host serves it for every unknown path (wrangler.jsonc).
+const { en, tr } = copy;
+---
+
+<Base lang="en" title={`${en.notFound.title} · AskRune`} description={en.notFound.text}>
+  <main class="missing">
+    <Wordmark width={150} />
+    <h1>{en.notFound.title}</h1>
+    <p>{en.notFound.text} <a href="/">{en.notFound.home}</a></p>
+    <p lang="tr">{tr.notFound.text} <a href="/tr/">{tr.notFound.home}</a></p>
+  </main>
+</Base>
+
+<style>
+  .missing {
+    min-height: 100vh;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 18px;
+    padding: 40px 20px;
+    text-align: center;
+  }
+  h1 {
+    font-size: 40px;
+    color: var(--gold-light);
+  }
+  p {
+    color: var(--parchment-dim);
+  }
+</style>

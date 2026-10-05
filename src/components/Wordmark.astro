@@ -1,0 +1,26 @@
+---
+// The AskRune logo, the same traced path as the app (askrune-app src/components/ui/Wordmark.tsx), in the
+// app's champagne gold. The app draws its bevel and blur with Skia; on the web a clean gradient is enough.
+interface Props {
+  width: number;
+}
+const { width } = Astro.props;
+const W = 1445;
+const H = 311;
+const D =
+  "M481 0L450 30L450 294L486 294L486 205L525 243L572 294L624 294L515 184L606 92L576 91L559 97L486 164L486 5ZM151 5L110 80L0 294L35 295L44 293L89 203L190 202L207 204L248 294L292 294L157 11L154 5ZM632 5L630 7L655 35L655 294L692 294L692 42L755 42L795 81L713 164L712 187L714 190L816 295L868 294L751 175L845 81L767 5ZM1358 81L1306 117L1283 138L1276 148L1276 216L1277 250L1362 311L1439 268L1445 237L1361 270L1349 259L1318 238L1317 235L1439 159L1444 139L1369 84ZM150 82L191 168L106 168ZM1110 91L1081 118L1081 294L1117 294L1117 160L1152 133L1203 175L1203 294L1239 294L1239 159L1162 95L1146 94L1117 119L1116 98ZM372 92L359 93L287 157L287 162L291 166L369 226L339 254L311 275L332 295L345 293L420 228L419 222L336 159L366 132L396 111L380 95ZM908 102L876 130L876 238L891 259L922 287L945 296L975 294L993 284L1008 271L1026 251L1034 238L1034 103L1029 102L999 129L998 228L992 237L970 257L962 260L948 260L931 250L912 227L912 108L911 103ZM1360 119L1398 147L1312 200L1312 158L1324 146Z";
+---
+
+<svg width={width} height={(width * H) / W} viewBox={`0 0 ${W} ${H}`} role="img" aria-label="AskRune">
+  <defs>
+    <linearGradient id="wm-gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F3E4C3"></stop>
+      <stop offset="0.22" stop-color="#D9C08F"></stop>
+      <stop offset="0.48" stop-color="#B08F5C"></stop>
+      <stop offset="0.6" stop-color="#8A6A3E"></stop>
+      <stop offset="0.8" stop-color="#E3CC9C"></stop>
+      <stop offset="1" stop-color="#9C7C4C"></stop>
+    </linearGradient>
+  </defs>
+  <path d={D} fill="url(#wm-gold)" fill-rule="evenodd"></path>
+</svg>

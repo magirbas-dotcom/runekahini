@@ -6,3 +6,6 @@ scripts/shots/out
 .DS_Store
 *.log
 .claude/launch.json
+
+# Vercel's local project link (per computer)
+.vercel/
