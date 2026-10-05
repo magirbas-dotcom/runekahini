@@ -165,7 +165,7 @@ export const copy: Record<Lang, Copy> = {
 
   tr: {
     meta: {
-      title: "AskRune · Rune Kahini: rune okumaları, doğum rune'si ve tılsım",
+      title: "AskRune: rune okumaları, doğum rune'si ve tılsım",
       description:
         "Elder Futhark'ın 24 rune'u ile günlük okumalar, doğum rune'in, kendi tılsımın ve iki kişinin uyumu. Hesap yok, reklam yok. Yakında App Store ve Google Play'de.",
     },
