@@ -54,6 +54,9 @@ const realmFocus: Record<Feature["key"], string> = {
 // A photograph for each "more" card: the scrolls (the guide), the chronicle (history and notes), a shared
 // card (the onboarding's), the candle-lit room (the app in two languages).
 const morePhotos = [scrolls, chronicle, onbShare, realmHome];
+// Where each photograph's subject sits, so the card shows it above the words: the scroll, the book and
+// hourglass, the Berkano card, the candle and the window (the room's top left is only shadow).
+const moreFocus = ["50% 20%", "50% 25%", "50% 30%", "62% 55%"];
 // The carved stones (scripts/carve.mjs: the app's own glyphs cut into the app's own stones).
 const craftStones = [
   { src: stoneFehu, alt: "Fehu" },
@@ -158,9 +161,16 @@ const heroWide = await getImage({ src: altarWide, width: 2000, format: "webp" })
           t.more.items.map((m, i) => (
             <div class:list={["tile", { linked: i === 0 }]}>
               <div class="tile-photo">
-                <Image src={morePhotos[i]} alt="" widths={[400, 700]} sizes="(min-width: 960px) 280px, (min-width: 720px) 50vw, 100vw" />
+                <Image
+                  src={morePhotos[i]}
+                  alt=""
+                  widths={[400, 700, 1000]}
+                  sizes="(min-width: 960px) 280px, (min-width: 720px) 50vw, 100vw"
+                  style={`object-position:${moreFocus[i]}`}
+                />
               </div>
               <div class="tile-copy">
+                <span class="tile-line" aria-hidden="true" />
                 <h3>{i === 0 ? <a href={guidePath[lang].index}>{m.title}</a> : m.title}</h3>
                 <p>{m.text}</p>
               </div>
