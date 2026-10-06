@@ -349,10 +349,11 @@ p {
 }
 .realm-stone {
   justify-self: center;
-  padding: 8px 0 40px;
+  padding: 0 0 36px;
 }
+/* User, 2026-10-07: the stone looked too big; a palm-sized stone, a third smaller. */
 .realm-stone img {
-  width: min(260px, 64vw);
+  width: min(170px, 44vw);
   filter: drop-shadow(0 30px 40px rgba(0, 0, 0, 0.8));
 }
 
