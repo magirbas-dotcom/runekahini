@@ -50,6 +50,27 @@ const readings: { key: "up" | "rev"; label: string; reading: RuneReadingText }[]
   { key: "up", label: g.upright, reading: text.upright },
   ...(rune.reversible && text.reversed ? [{ key: "rev" as const, label: g.reversed, reading: text.reversed }] : []),
 ];
+const site = Astro.site?.toString().replace(/\/$/, "") ?? "https://askrune.app";
+const article = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: g.meta.rune(name, meaning).replace(/ · AskRune$/, ""),
+  description,
+  inLanguage: lang,
+  url: site + p.rune(name),
+  image: site + stone(name).src,
+  author: { "@type": "Organization", name: "AskRune", url: site + "/" },
+  publisher: { "@type": "Organization", name: "AskRune", url: site + "/" },
+  isPartOf: { "@type": "WebPage", url: site + p.index, name: g.title },
+  about: {
+    "@type": "DefinedTerm",
+    name,
+    alternateName: rune.symbol,
+    description: text.literalMeaning,
+    inDefinedTermSet: site + p.index,
+  },
+  keywords: [...text.upright.keywords, ...(text.reversed?.keywords ?? [])].join(", "),
+};
 const loreCards = [
   { title: g.lore.poem, text: l.poem },
   { title: g.lore.myth, text: l.myth },
@@ -66,6 +87,7 @@ const loreCards = [
   description={description}
   alternates={guideAlternates({ rune: name })}
   trail={[home, guide, { href: p.rune(name), label: name }]}
+  jsonLd={[article]}
 >
   <GuideHero kicker={caps} title={name} crumbs={[home, guide]} crumbsLabel={g.title}>
     <div class="rune-stage">

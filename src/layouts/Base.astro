@@ -23,9 +23,11 @@ interface Props {
   langRedirect?: boolean;
   /** Structured data (schema.org) for search engines: FAQ on the landing, breadcrumbs in the guide. */
   jsonLd?: object[];
+  /** The page's Markdown twin, for AI search and answer engines (src/ai.ts). */
+  markdown?: string;
 }
 
-const { lang, title, description, path, alternates = { en: "/", tr: "/tr/" }, langRedirect = false, jsonLd = [] } = Astro.props;
+const { lang, title, description, path, alternates = { en: "/", tr: "/tr/" }, langRedirect = false, jsonLd = [], markdown } = Astro.props;
 const site = Astro.site?.toString().replace(/\/$/, "") ?? "https://askrune.app";
 const t = copy[lang];
 ---
@@ -57,6 +59,8 @@ const t = copy[lang];
     {path && <meta property="og:url" content={site + path} />}
     <meta property="og:image" content={site + "/icons/icon-512.png"} />
     <meta property="og:locale" content={lang === "tr" ? "tr_TR" : "en_US"} />
+    {markdown && <link rel="alternate" type="text/markdown" href={markdown} />}
+    <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt" />
     {jsonLd.map((data) => <script type="application/ld+json" set:html={JSON.stringify(data)} />)}
     {
       langRedirect && (

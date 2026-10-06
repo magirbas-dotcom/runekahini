@@ -19,6 +19,22 @@ const home = { href: lang === "tr" ? "/tr/" : "/", label: "AskRune" };
 const stones = import.meta.glob<{ default: ImageMetadata }>("../../assets/guide/*.webp", { eager: true });
 const stone = (name: string) => stones[`../../assets/guide/${name.toLowerCase()}.webp`].default;
 const aettir = [1, 2, 3] as const;
+const site = Astro.site?.toString().replace(/\/$/, "") ?? "https://askrune.app";
+const termSet = {
+  "@context": "https://schema.org",
+  "@type": "DefinedTermSet",
+  "@id": site + p.index,
+  name: `${g.title}: Elder Futhark`,
+  description: g.meta.index.description,
+  inLanguage: lang,
+  hasDefinedTerm: runes.map((r) => ({
+    "@type": "DefinedTerm",
+    name: r.name,
+    alternateName: r.symbol,
+    description: `${c.runes[r.name].literalMeaning}: ${c.runes[r.name].upright.keywords.join(", ")}`,
+    url: site + p.rune(r.name),
+  })),
+};
 ---
 
 <GuidePage
@@ -27,6 +43,7 @@ const aettir = [1, 2, 3] as const;
   description={g.meta.index.description}
   alternates={guideAlternates("index")}
   trail={[home, { href: p.index, label: g.title }]}
+  jsonLd={[termSet]}
 >
   <GuideHero kicker={g.kicker} title={g.title} sub={g.sub} crumbs={[home]} crumbsLabel={g.title} />
 

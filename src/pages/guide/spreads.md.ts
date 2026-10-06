@@ -1,0 +1,6 @@
+// The Markdown twin of this guide page, for AI search and answer engines (src/ai.ts).
+import type { APIRoute } from "astro";
+
+import { spreadsMd, markdown } from "../../ai";
+
+export const GET: APIRoute = () => markdown(spreadsMd("en"));

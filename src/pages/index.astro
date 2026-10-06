@@ -1,11 +1,11 @@
 ---
 import Landing from "../components/Landing.astro";
-import { copy, faqJsonLd } from "../i18n";
+import { copy, faqJsonLd, siteJsonLd } from "../i18n";
 import Base from "../layouts/Base.astro";
 
 const t = copy.en;
 ---
 
-<Base lang="en" title={t.meta.title} description={t.meta.description} path="/" langRedirect jsonLd={[faqJsonLd("en")]}>
+<Base lang="en" title={t.meta.title} description={t.meta.description} path="/" langRedirect jsonLd={[...siteJsonLd("en"), faqJsonLd("en")]}>
   <Landing lang="en" />
 </Base>

@@ -1,5 +1,6 @@
 ---
 // One page of the Rune Guide: the site's layout, header and footer around the page's own content.
+import { mdPath } from "../../ai";
 import Base from "../../layouts/Base.astro";
 import type { Lang } from "../../i18n";
 import SiteFooter from "../SiteFooter.astro";
@@ -14,8 +15,10 @@ interface Props {
   alternates: { en: string; tr: string };
   /** Breadcrumb trail for search engines, last item the page itself. */
   trail: { href: string; label: string }[];
+  /** More structured data: the rune as an Article, the 24 as a DefinedTermSet. */
+  jsonLd?: object[];
 }
-const { lang, title, description, alternates, trail } = Astro.props;
+const { lang, title, description, alternates, trail, jsonLd = [] } = Astro.props;
 const site = Astro.site?.toString().replace(/\/$/, "") ?? "https://askrune.app";
 const breadcrumbs = {
   "@context": "https://schema.org",
@@ -24,7 +27,7 @@ const breadcrumbs = {
 };
 ---
 
-<Base lang={lang} title={title} description={description} path={alternates[lang]} alternates={alternates} jsonLd={[breadcrumbs]}>
+<Base lang={lang} title={title} description={description} path={alternates[lang]} alternates={alternates} jsonLd={[breadcrumbs, ...jsonLd]} markdown={mdPath(alternates[lang])}>
   <SiteHeader lang={lang} otherHref={alternates[lang === "tr" ? "en" : "tr"]} />
   <main class="guide">
     <slot />

@@ -1,11 +1,11 @@
 ---
 import Landing from "../../components/Landing.astro";
-import { copy, faqJsonLd } from "../../i18n";
+import { copy, faqJsonLd, siteJsonLd } from "../../i18n";
 import Base from "../../layouts/Base.astro";
 
 const t = copy.tr;
 ---
 
-<Base lang="tr" title={t.meta.title} description={t.meta.description} path="/tr/" jsonLd={[faqJsonLd("tr")]}>
+<Base lang="tr" title={t.meta.title} description={t.meta.description} path="/tr/" jsonLd={[...siteJsonLd("tr"), faqJsonLd("tr")]}>
   <Landing lang="tr" />
 </Base>

@@ -102,6 +102,18 @@ Kullanıcı isteği: uygulamadaki Rune Rehberi sitede de olsun, SSS rehberdeki b
   `BreadcrumbList` yapılandırılmış verisi taşır. "Fal" kelimesi yok; tarihsel dürüstlük çizgisi korunur.
 - `sitemap.xml` (`src/pages/sitemap.xml.ts`, hreflang çiftleriyle) ve `public/robots.txt` eklendi.
 
+## Yapay zekâ arama motorları (2026-10-06)
+
+Kullanıcı isteği: SEO'nun yanında yapay zekâ arama/cevap motorlarına da destek.
+- `src/ai.ts` sitenin içeriğini Markdown'a çevirir; sayfalarla aynı kaynaktan (`guide.ts`, `i18n.ts`), elle yazılmış
+  kopya yok. Çıktılar: `/llms.txt` (llmstxt.org haritası), `/llms-full.txt` (uygulama, SSS ve tüm rehber, iki dil,
+  ~150 KB), her rehber sayfasının `.md` ikizi (`/guide.md`, `/guide/fehu.md`, `/tr/rehber.md`, `/tr/rehber/fehu.md`…).
+  HTML sayfalar `<link rel="alternate" type="text/markdown">` ile ikizini, hepsi `llms.txt`'yi gösterir.
+- `public/robots.txt` yapay zekâ tarayıcılarını (GPTBot, OAI-SearchBot, ClaudeBot, PerplexityBot, Google-Extended…)
+  adıyla açar. **Cloudflare panelindeki "AI botlarını engelle" / yönetilen robots.txt ayarı bunu ezer:** kapalı olmalı.
+- Yapılandırılmış veri: ana sayfada `Organization`, `WebSite`, `MobileApplication`, `FAQPage`; rehberde
+  `DefinedTermSet` (24 rune), rune sayfasında `Article` + `DefinedTerm`, her sayfada `BreadcrumbList`.
+
 ## Proje nedir
 
 **Rune Kahini** — Elder Futhark Rune okuması, doğum rünü / burç haritası ve tılsım tasarımı yapılan,

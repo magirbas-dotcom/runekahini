@@ -431,3 +431,43 @@ export function faqJsonLd(lang: Lang) {
     ),
   };
 }
+
+/** Who and what the site is, for search and answer engines: the publisher, the site and the app itself. */
+export function siteJsonLd(lang: Lang) {
+  const site = "https://askrune.app";
+  const t = copy[lang];
+  return [
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "@id": site + "/#org",
+      name: "AskRune",
+      alternateName: "Rune Kahini",
+      url: site + "/",
+      logo: site + "/icons/icon-512.png",
+      email: "destek@askrune.app",
+      founder: { "@type": "Person", name: "Murat Ağırbaş" },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "@id": site + "/#site",
+      name: "AskRune",
+      url: site + (lang === "tr" ? "/tr/" : "/"),
+      inLanguage: lang,
+      publisher: { "@id": site + "/#org" },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "MobileApplication",
+      name: lang === "tr" ? "Rune Kahini (AskRune)" : "AskRune",
+      operatingSystem: "iOS, Android",
+      applicationCategory: "LifestyleApplication",
+      inLanguage: ["en", "tr"],
+      description: t.meta.description,
+      image: site + "/icons/icon-512.png",
+      author: { "@id": site + "/#org" },
+      featureList: [...t.features.map((f) => `${f.kicker}: ${f.title}`), ...t.more.items.map((m) => m.title)].join(", "),
+    },
+  ];
+}
