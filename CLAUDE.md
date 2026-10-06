@@ -93,6 +93,11 @@ Kullanıcı isteği: uygulamadaki Rune Rehberi sitede de olsun, SSS rehberdeki b
 - **Taşlar:** 24 rune uygulamanın rehberdeki bazalt taşına (`stone-fire.webp`, yüz 0,62) `scripts/carve.mjs` ile
   kazındı, `src/assets/guide/<rune>.webp`. Yeniden üretim: `node --experimental-strip-types scripts/carve.mjs ../askrune`
   (Node 24'te bayrak gerekmez).
+  **Kazıma 2026-10-07'de yeniden yazıldı** (kullanıcı, telefonda: "rune'larda kırıklar, deformasyonlar var"): oyuk
+  duvarları glifin kaydırılmış kopyası çıkarılarak çiziliyordu; kolların birleştiği iç köşelerde (Algiz'in çatalı,
+  Perthro'nun ayağı) sert basamaklar bırakıyordu. Şimdi oyuk bir yükseklik haritası (maske bulanıklaştırılır), her piksel
+  o haritanın ışığa (sol üst) doğru eğimiyle gölgelenir; birleşimler yumuşak. Not: sharp'ın `blur`'u tek kanallı ham
+  girdiden 3 kanal döndürür, `extractChannel(0)` şart.
 - Rune sayfasında Düz/Ters JavaScript'siz (radyo düğmeleri + CSS); iki okuma da sayfada olduğu için arama motoru görür.
 - Üst çubuk (`SiteHeader`, logo ana sayfaya, "Rune Rehberi", dil düğmesi aynı sayfanın öbür diline) ve alt bilgi
   (`SiteFooter`) ana sayfa ve rehberde ortak. `Base` artık `alternates` (hreflang) ve `jsonLd` alır.
