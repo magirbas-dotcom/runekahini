@@ -1,0 +1,41 @@
+---
+// Rune Guide → History of the Runes (the app's guide/history): attested history first, then the modern
+// practice, each modern section tagged.
+import { guideAlternates, guideCopy, guidePath, lore } from "../../guide";
+import type { Lang } from "../../i18n";
+import GuideHero from "./GuideHero.astro";
+import GuidePage from "./GuidePage.astro";
+import ModernTag from "./ModernTag.astro";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const g = guideCopy[lang];
+const p = guidePath[lang];
+const home = { href: lang === "tr" ? "/tr/" : "/", label: "AskRune" };
+const guide = { href: p.index, label: g.title };
+---
+
+<GuidePage
+  lang={lang}
+  title={g.meta.history.title}
+  description={g.meta.history.description}
+  alternates={guideAlternates("history")}
+  trail={[home, guide, { href: p.history, label: g.historyLink.title }]}
+>
+  <GuideHero kicker={g.kicker} title={g.historyLink.title} sub={g.historyLink.desc} crumbs={[home, guide]} crumbsLabel={g.title} />
+  <div class="wrap g-body narrow">
+    {
+      lore[lang].history.map((s) => (
+        <section class="g-card">
+          {s.modern && <ModernTag lang={lang} />}
+          <h2>{s.title}</h2>
+          {s.paragraphs.map((t) => <p>{t}</p>)}
+        </section>
+      ))
+    }
+    <p class="g-sources">{g.sources}</p>
+    <p class="g-next"><a href={p.spreads}>{g.spreadsLink.title} →</a></p>
+  </div>
+</GuidePage>

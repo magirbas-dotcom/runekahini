@@ -1,0 +1,12 @@
+---
+// "Modern interpretation": history and today's practice are never blurred (the app's ModernTag).
+import { guideCopy } from "../../guide";
+import type { Lang } from "../../i18n";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+---
+
+<span class="modern-tag">{guideCopy[lang].modern}</span>

@@ -1,0 +1,81 @@
+---
+// Rune Guide → Spreads (the app's guide/spreads): each spread's origin, a drawing of its places, what each
+// place means, the questions it suits and how to read it. All modern, and tagged so.
+import { guideAlternates, guideCopy, guidePath, lore } from "../../guide";
+import type { Lang } from "../../i18n";
+import GuideHero from "./GuideHero.astro";
+import GuidePage from "./GuidePage.astro";
+import ModernTag from "./ModernTag.astro";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const g = guideCopy[lang];
+const p = guidePath[lang];
+const l = lore[lang];
+const home = { href: lang === "tr" ? "/tr/" : "/", label: "AskRune" };
+const guide = { href: p.index, label: g.title };
+
+/** Where the stones lie, numbered in drawing order (centres in a 240×120 box; the app's LAYOUTS). */
+const LAYOUTS: Record<string, [number, number][]> = {
+  single: [[120, 60]],
+  three: [[70, 60], [120, 60], [170, 60]],
+  four: [[45, 60], [95, 60], [145, 60], [195, 60]],
+  five: [[120, 60], [70, 60], [120, 20], [120, 100], [170, 60]],
+  scatter: [[62, 34], [104, 56], [138, 28], [178, 46], [86, 92], [128, 88], [168, 96], [204, 74], [40, 72]],
+};
+---
+
+<GuidePage
+  lang={lang}
+  title={g.meta.spreads.title}
+  description={g.meta.spreads.description}
+  alternates={guideAlternates("spreads")}
+  trail={[home, guide, { href: p.spreads, label: g.spreadsLink.title }]}
+>
+  <GuideHero kicker={g.kicker} title={g.spreadsLink.title} sub={l.spreadsIntro} crumbs={[home, guide]} crumbsLabel={g.title}>
+    <ModernTag lang={lang} />
+  </GuideHero>
+  <div class="wrap g-body narrow">
+    {
+      l.spreads.map((s) => (
+        <section class="g-card spread" id={s.key}>
+          <h2>{s.title}</h2>
+          <svg class="diagram" viewBox="0 0 240 120" role="img" aria-label={s.layout}>
+            {LAYOUTS[s.key].map(([x, y], i) => (
+              <g>
+                <ellipse cx={x} cy={y} rx="14" ry="17" />
+                {s.key !== "scatter" && (
+                  <text x={x} y={y + 5}>
+                    {i + 1}
+                  </text>
+                )}
+              </g>
+            ))}
+          </svg>
+          <dl>
+            <dt>{g.spread.origin}</dt>
+            <dd>{s.origin}</dd>
+            <dt>{g.spread.layout}</dt>
+            <dd>{s.layout}</dd>
+            <dt>{g.spread.positions}</dt>
+            <dd>
+              <ol class:list={{ dots: s.key === "scatter" }}>
+                {s.positions.map((t) => (
+                  <li>{t}</li>
+                ))}
+              </ol>
+            </dd>
+            <dt>{g.spread.questions}</dt>
+            <dd>{s.questions}</dd>
+            <dt>{g.spread.reading}</dt>
+            <dd>{s.reading}</dd>
+          </dl>
+        </section>
+      ))
+    }
+    <p class="g-sources">{g.sources}</p>
+    <p class="g-next"><a href={p.history}>{g.historyLink.title} →</a></p>
+  </div>
+</GuidePage>

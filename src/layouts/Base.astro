@@ -17,11 +17,15 @@ interface Props {
   description: string;
   /** The page's path in its language ("/" or "/tr/"); 404 has none and gets no alternates. */
   path?: string;
+  /** The same page in each language (hreflang); the landing's "/" and "/tr/" when not given. */
+  alternates?: { en: string; tr: string };
   /** On the English root only: send a Turkish browser to /tr/ unless a language was chosen by hand. */
   langRedirect?: boolean;
+  /** Structured data (schema.org) for search engines: FAQ on the landing, breadcrumbs in the guide. */
+  jsonLd?: object[];
 }
 
-const { lang, title, description, path, langRedirect = false } = Astro.props;
+const { lang, title, description, path, alternates = { en: "/", tr: "/tr/" }, langRedirect = false, jsonLd = [] } = Astro.props;
 const site = Astro.site?.toString().replace(/\/$/, "") ?? "https://askrune.app";
 const t = copy[lang];
 ---
@@ -40,9 +44,9 @@ const t = copy[lang];
       path && (
         <>
           <link rel="canonical" href={site + path} />
-          <link rel="alternate" hreflang="en" href={site + "/"} />
-          <link rel="alternate" hreflang="tr" href={site + "/tr/"} />
-          <link rel="alternate" hreflang="x-default" href={site + "/"} />
+          <link rel="alternate" hreflang="en" href={site + alternates.en} />
+          <link rel="alternate" hreflang="tr" href={site + alternates.tr} />
+          <link rel="alternate" hreflang="x-default" href={site + alternates.en} />
         </>
       )
     }
@@ -53,6 +57,7 @@ const t = copy[lang];
     {path && <meta property="og:url" content={site + path} />}
     <meta property="og:image" content={site + "/icons/icon-512.png"} />
     <meta property="og:locale" content={lang === "tr" ? "tr_TR" : "en_US"} />
+    {jsonLd.map((data) => <script type="application/ld+json" set:html={JSON.stringify(data)} />)}
     {
       langRedirect && (
         <script is:inline>

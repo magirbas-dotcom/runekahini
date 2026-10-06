@@ -1,0 +1,81 @@
+---
+// Rune Guide, the catalogue (the app's guide/index): what the Elder Futhark is, the two deeper pages
+// (history, spreads), then the 24 runes in their three aettir, each a carved stone opening its own page.
+import { Image } from "astro:assets";
+
+import { content, firstSense, guideAlternates, guideCopy, guidePath, runes } from "../../guide";
+import type { Lang } from "../../i18n";
+import GuideHero from "./GuideHero.astro";
+import GuidePage from "./GuidePage.astro";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const g = guideCopy[lang];
+const c = content[lang];
+const p = guidePath[lang];
+const home = { href: lang === "tr" ? "/tr/" : "/", label: "AskRune" };
+const stones = import.meta.glob<{ default: ImageMetadata }>("../../assets/guide/*.webp", { eager: true });
+const stone = (name: string) => stones[`../../assets/guide/${name.toLowerCase()}.webp`].default;
+const aettir = [1, 2, 3] as const;
+---
+
+<GuidePage
+  lang={lang}
+  title={g.meta.index.title}
+  description={g.meta.index.description}
+  alternates={guideAlternates("index")}
+  trail={[home, { href: p.index, label: g.title }]}
+>
+  <GuideHero kicker={g.kicker} title={g.title} sub={g.sub} crumbs={[home]} crumbsLabel={g.title} />
+
+  <div class="wrap g-body">
+    <section class="g-card intro" aria-labelledby="intro-title">
+      <h2 id="intro-title">{g.introTitle}</h2>
+      {g.intro.map((t) => <p>{t}</p>)}
+    </section>
+
+    <div class="g-links">
+      {
+        (["history", "spreads"] as const).map((k) => (
+          <a class="g-link" href={p[k]}>
+            <span>
+              <b>{g[`${k}Link`].title}</b>
+              <small>{g[`${k}Link`].desc}</small>
+            </span>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M6 3.5 10.5 8 6 12.5" stroke="#C8A46A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </a>
+        ))
+      }
+    </div>
+
+    <h2 class="g-section-title">{g.runesTitle}</h2>
+    {
+      aettir.map((a) => (
+        <section class="aett" aria-labelledby={`aett-${a}`}>
+          <header>
+            <h3 id={`aett-${a}`}>{c.aettNames[String(a) as "1" | "2" | "3"]}</h3>
+            <p>{g.aettThemes[a - 1]}</p>
+          </header>
+          <ul class="stones">
+            {runes
+              .filter((r) => r.aett === a)
+              .map((r) => (
+                <li>
+                  <a href={p.rune(r.name)}>
+                    <Image src={stone(r.name)} alt="" widths={[120, 240]} sizes="96px" />
+                    <b lang="en">{r.name}</b>
+                    <small>{firstSense(c.runes[r.name].literalMeaning)}</small>
+                  </a>
+                </li>
+              ))}
+          </ul>
+        </section>
+      ))
+    }
+    <p class="g-sources">{g.sources}</p>
+  </div>
+</GuidePage>

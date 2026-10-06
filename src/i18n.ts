@@ -11,9 +11,21 @@ export interface Feature {
   alt: string;
 }
 
+/** A question and its answer; `link` points into the Rune Guide (its address comes from src/guide.ts). */
+export interface FaqItem {
+  q: string;
+  a: string;
+  link?: { page: "index" | "history" | "spreads"; label: string };
+}
+
+export interface FaqGroup {
+  title: string;
+  items: FaqItem[];
+}
+
 export interface Copy {
   meta: { title: string; description: string };
-  nav: { other: string; otherHref: string };
+  nav: { other: string; otherHref: string; guide: string };
   hero: { kicker: string; title: [string, string]; sub: string; ios: string; android: string; soon: string };
   head: { features: { kicker: string; title: string; text: string }; more: string; privacy: string; plans: string; faq: string };
   features: Feature[];
@@ -21,7 +33,7 @@ export interface Copy {
   craft: { kicker: string; title: string; text: string; note: string };
   privacy: { title: string; items: { title: string; text: string }[]; link: string };
   plans: { title: string; free: string; freeItems: string[]; premium: string; premiumItems: string[]; note: string };
-  faq: { title: string; items: { q: string; a: string }[] };
+  faq: { title: string; groups: FaqGroup[] };
   footer: { privacy: string; terms: string; support: string; contact: string; rights: string };
   legal: { privacy: string; terms: string; support: string };
   pwa: { text: string; close: string };
@@ -35,7 +47,7 @@ export const copy: Record<Lang, Copy> = {
       description:
         "Daily rune readings with the 24 runes of the Elder Futhark, your birth rune, a talisman of your own and the harmony of two. No account, no ads. Coming soon to the App Store and Google Play.",
     },
-    nav: { other: "Türkçe", otherHref: "/tr/" },
+    nav: { other: "Türkçe", otherHref: "/tr/", guide: "Rune Guide" },
     hero: {
       kicker: "THE 24 RUNES OF THE ELDER FUTHARK",
       title: ["Ancient signs,", "new perspectives"],
@@ -140,17 +152,72 @@ export const copy: Record<Lang, Copy> = {
     },
     faq: {
       title: "Questions",
-      items: [
+      groups: [
         {
-          q: "Does a rune reading tell the future?",
-          a: "No. It is a tool for reflection, for entertainment and inspiration. It is not a substitute for professional advice.",
+          title: "About the app",
+          items: [
+            {
+              q: "Does a rune reading tell the future?",
+              a: "No. It is a tool for reflection, for entertainment and inspiration. It is not a substitute for professional advice.",
+            },
+            { q: "Where is my data?", a: "Only on your phone. There is no server and no account; we never see it." },
+            { q: "Does it work offline?", a: "Yes, everything but purchases." },
+            { q: "How do I cancel a subscription?", a: "In your App Store or Google Play account settings. See Support for the steps." },
+            {
+              q: "What happened to the Rune Kahini web app?",
+              a: "It has closed and lives on as the AskRune app. Readings saved in the browser cannot be moved over.",
+            },
+          ],
         },
-        { q: "Where is my data?", a: "Only on your phone. There is no server and no account; we never see it." },
-        { q: "Does it work offline?", a: "Yes, everything but purchases." },
-        { q: "How do I cancel a subscription?", a: "In your App Store or Google Play account settings. See Support for the steps." },
         {
-          q: "What happened to the Rune Kahini web app?",
-          a: "It has closed and lives on as the AskRune app. Readings saved in the browser cannot be moved over.",
+          title: "About the runes",
+          items: [
+            {
+              q: "What is the Elder Futhark?",
+              a: "The oldest known runic alphabet, used by the Germanic peoples of northern and central Europe from about AD 150 to 800. It is named after its first six letters (F, U, Th, A, R, K), and each of its 24 signs carries both a sound and a meaning. From the 8th century it gave way to the 16-sign Younger Futhark in Scandinavia.",
+              link: { page: "history", label: "History of the Runes" },
+            },
+            {
+              q: "How many runes are there, and what is an aett?",
+              a: "The Elder Futhark has 24 runes in three groups of eight. Each group is an aett (plural aettir), Old Norse for family or kin. Freyr & Freyja's aett begins with Fehu and speaks of the material world and daily life; Heimdall's begins with Hagalaz and speaks of trials and transformation; Tyr's begins with Tiwaz and speaks of justice and spiritual maturity.",
+              link: { page: "index", label: "All 24 runes in the Rune Guide" },
+            },
+            {
+              q: "Were runes used to read the future in history?",
+              a: "Runes are first of all a script: names, dedications and short protective formulas were carved into stone, wood, bone and metal. The Roman historian Tacitus, writing in AD 98, describes Germanic tribes drawing lots with marked slips of wood, but whether those marks were runes is disputed. There is no direct archaeological evidence for reading runes by drawing stones; today's rune reading is largely a modern reconstruction, and AskRune presents it as one.",
+              link: { page: "history", label: "What were runes used for?" },
+            },
+            {
+              q: "What is the oldest rune inscription?",
+              a: "One of the oldest known is the word \"harja\" on the Vimose comb from Denmark, from around AD 160. The oldest complete row of all 24 runes in order is on the Kylver stone on Gotland, Sweden, from around AD 400.",
+            },
+            {
+              q: "What does a reversed rune mean?",
+              a: "Reading a rune that lands upside down with a different, usually shadowed meaning is a modern practice, borrowed from reversed cards in tarot; old inscriptions know no such rule. Nine runes are symmetrical and look the same either way up, so they are read upright only: Gebo, Hagalaz, Nauthiz, Isa, Jera, Eihwaz, Sowilo, Ingwaz and Dagaz. The Rune Guide gives every other rune's upright and reversed meaning.",
+              link: { page: "index", label: "Upright and reversed meanings" },
+            },
+            {
+              q: "What is the blank rune, and why is there none in AskRune?",
+              a: "The unmarked stone in some sets appears in no ancient inscription, rune poem or Viking Age find. It entered rune reading with Ralph Blum's The Book of Runes in 1982, when the spare blank stone packed with commercial sets was read as \"the unknown\". The Elder Futhark has 24 signs, and AskRune stays true to that.",
+            },
+            {
+              q: "Which spread should I choose?",
+              a: "A single rune for daily direction or quick clarity. Past · Present · Future, inspired by the three Norns who weave fate, to see where a matter comes from and where it is heading. The four-rune relationship spread for a bond between two people. The five-rune cross for complex decisions. All of today's spreads are modern.",
+              link: { page: "spreads", label: "The spreads explained" },
+            },
+            {
+              q: "How do I prepare for a reading?",
+              a: "Modern readers begin with a small pause: a quiet place, a few deep breaths, and the question held clearly in mind. The runes are not a prophecy but a mirror to think with. Whatever the stone says, the choice and the path are yours.",
+            },
+            {
+              q: "Are the birth rune and the zodiac pairing historical?",
+              a: "No, both are modern interpretations. No Norse source pairs runes with the signs of the zodiac, and working out a rune from a birth date is today's practice. The app labels them as modern interpretations, as it does talisman design.",
+            },
+            {
+              q: "What is a bind rune?",
+              a: "Several runes joined on one shared stave into a single sign. In AskRune it is how a talisman is made: pick an intention or your own runes, and they are carved together into a gold, bronze or stone pendant. Each rune's page in the guide says which intentions it is used for (In Talismans). Talisman design is a modern interpretation.",
+            },
+          ],
         },
       ],
     },
@@ -169,7 +236,7 @@ export const copy: Record<Lang, Copy> = {
       description:
         "Elder Futhark'ın 24 rune'u ile günlük okumalar, doğum rune'in, kendi tılsımın ve iki kişinin uyumu. Hesap yok, reklam yok. Yakında App Store ve Google Play'de.",
     },
-    nav: { other: "English", otherHref: "/" },
+    nav: { other: "English", otherHref: "/", guide: "Rune Rehberi" },
     hero: {
       kicker: "ELDER FUTHARK'IN 24 RUNE'U",
       title: ["Kadim işaretler,", "yeni bakışlar"],
@@ -274,17 +341,72 @@ export const copy: Record<Lang, Copy> = {
     },
     faq: {
       title: "Sorular",
-      items: [
+      groups: [
         {
-          q: "Rune okuması geleceği söyler mi?",
-          a: "Hayır. Bir düşünme ve kendini sorgulama aracıdır; eğlence ve ilham içindir. Profesyonel desteğin yerini tutmaz.",
+          title: "Uygulama hakkında",
+          items: [
+            {
+              q: "Rune okuması geleceği söyler mi?",
+              a: "Hayır. Bir düşünme ve kendini sorgulama aracıdır; eğlence ve ilham içindir. Profesyonel desteğin yerini tutmaz.",
+            },
+            { q: "Verilerim nerede?", a: "Yalnızca telefonunda. Sunucu da hesap da yok; biz göremeyiz." },
+            { q: "İnternetsiz çalışır mı?", a: "Evet, satın alma dışında her şey." },
+            { q: "Aboneliği nasıl iptal ederim?", a: "App Store ya da Google Play hesap ayarlarından. Adımlar Destek sayfasında." },
+            {
+              q: "Rune Kahini web sürümüne ne oldu?",
+              a: "Kapandı; AskRune uygulaması olarak yenilendi. Tarayıcıda saklanan okumalar taşınamıyor.",
+            },
+          ],
         },
-        { q: "Verilerim nerede?", a: "Yalnızca telefonunda. Sunucu da hesap da yok; biz göremeyiz." },
-        { q: "İnternetsiz çalışır mı?", a: "Evet, satın alma dışında her şey." },
-        { q: "Aboneliği nasıl iptal ederim?", a: "App Store ya da Google Play hesap ayarlarından. Adımlar Destek sayfasında." },
         {
-          q: "Rune Kahini web sürümüne ne oldu?",
-          a: "Kapandı; AskRune uygulaması olarak yenilendi. Tarayıcıda saklanan okumalar taşınamıyor.",
+          title: "Rune'lar hakkında",
+          items: [
+            {
+              q: "Elder Futhark nedir?",
+              a: "Kuzey ve Orta Avrupa'daki Germen halklarının yaklaşık MS 150–800 arasında kullandığı, bilinen en eski rune alfabesidir. Adını ilk altı harfinden alır (F, U, Th, A, R, K); 24 işaretin her biri hem bir ses hem bir anlam taşır. 8. yüzyıldan sonra İskandinavya'da yerini 16 işaretli Younger Futhark'a bıraktı.",
+              link: { page: "history", label: "Rune'ların Tarihi" },
+            },
+            {
+              q: "Kaç rune var, aett ne demek?",
+              a: "Elder Futhark 24 rune'dur ve sekizerli üç gruba ayrılır. Her gruba aett denir (çoğulu aettir); Eski İskandinavcada aile ya da soy demektir. Freyr & Freyja Ailesi Fehu ile başlar, maddi dünyayı ve günlük yaşamı anlatır; Heimdall Ailesi Hagalaz ile başlar, sınavları ve dönüşümü; Tyr Ailesi Tiwaz ile başlar, adaleti ve ruhsal olgunluğu.",
+              link: { page: "index", label: "Rune Rehberi'nde 24 rune" },
+            },
+            {
+              q: "Rune'lar tarihte geleceği okumak için kullanıldı mı?",
+              a: "Rune'lar her şeyden önce bir yazıdır: taşa, ahşaba, kemiğe ve metale isimler, adaklar ve kısa koruyucu formüller kazındı. Romalı tarihçi Tacitus MS 98'de Germen kabilelerinin işaretli çubuklarla kura çektiğini anlatır, ama bu işaretlerin rune olup olmadığı tartışmalıdır. Taş çekerek okumaya dair doğrudan arkeolojik kanıt yoktur; bugünkü rune okuması büyük ölçüde modern bir yeniden kurgudur ve AskRune onu böyle sunar.",
+              link: { page: "history", label: "Rune'lar ne için kullanıldı?" },
+            },
+            {
+              q: "Bilinen en eski rune yazıtı hangisi?",
+              a: "En eskilerden biri, Danimarka'da bulunan ve MS 160 civarına tarihlenen Vimose tarağındaki \"harja\" kelimesidir. 24 rune'un sırasıyla yazıldığı en eski eksiksiz dizi ise İsveç'in Gotland adasındaki Kylver taşındadır (MS 400 civarı).",
+            },
+            {
+              q: "Ters rune ne anlama gelir?",
+              a: "Ters çıkan bir rune'un farklı, çoğu zaman gölgeli bir anlamla okunması moderndir; tarot'taki ters kartlardan uyarlanmıştır, eski yazıtlarda böyle bir kural yoktur. Dokuz rune simetrik olduğu için ters çevrilince aynı görünür ve yalnız düz okunur: Gebo, Hagalaz, Nauthiz, Isa, Jera, Eihwaz, Sowilo, Ingwaz ve Dagaz. Diğer rune'ların düz ve ters anlamları rehberde ayrı ayrı yazılı.",
+              link: { page: "index", label: "Düz ve ters anlamlar" },
+            },
+            {
+              q: "Boş rune nedir, AskRune'da neden yok?",
+              a: "Bazı setlerdeki işaretsiz taş, hiçbir eski yazıtta, rune şiirinde ya da Viking Çağı buluntusunda geçmez. 1982'de Ralph Blum'un The Book of Runes kitabıyla okumaya girdi; satılan setlere yedek olarak konan boş taş \"bilinmeyen\" diye yorumlandı. Elder Futhark 24 işarettir ve AskRune o hâline sadık kalır.",
+            },
+            {
+              q: "Hangi açılımı seçmeliyim?",
+              a: "Günlük yön ya da hızlı bir netlik için Tek Rune. Bir sürecin nereden gelip nereye gittiğini görmek için, kaderi dokuyan üç Norn'dan esinlenen Geçmiş · Şimdi · Gelecek. İki kişi arasındaki bağ için 4'lü İlişki Açılımı. Karmaşık kararlar için 5'li Haç. Bugünkü açılımların hepsi moderndir.",
+              link: { page: "spreads", label: "Açılımlar nasıl okunur" },
+            },
+            {
+              q: "Okumadan önce nasıl hazırlanırım?",
+              a: "Modern okuyucular küçük bir hazırlıkla başlar: sakin bir yer, birkaç derin nefes ve sorunun açıkça düşünülmesi. Rune'lar bir kehanet değil, düşünmek için bir aynadır. Çıkan taş ne söylerse söylesin, kararın ve yolun senindir.",
+            },
+            {
+              q: "Doğum rune'u ve burç eşleşmesi tarihsel mi?",
+              a: "Hayır, ikisi de modern yorumdur. Rune'ları burçlarla eşleyen hiçbir İskandinav kaynağı yoktur; doğum tarihinden rune hesaplamak da bugünün pratiğidir. Uygulama bunları, tılsım tasarımı gibi, açıkça modern yorum olarak etiketler.",
+            },
+            {
+              q: "Bağ rune'u (bindrune) nedir?",
+              a: "Birden çok rune'un ortak bir gövde üzerinde tek bir işarette birleştirilmesidir. AskRune'da tılsım böyle yapılır: bir niyet ya da kendi rune'larını seçersin, birlikte altın, bronz ya da taş bir kolyeye kazınır. Rehberde her rune'un \"Tılsımda\" bölümü hangi niyetlerde kullanıldığını anlatır. Tılsım tasarımı modern bir yorumdur.",
+            },
+          ],
         },
       ],
     },
@@ -297,3 +419,15 @@ export const copy: Record<Lang, Copy> = {
     notFound: { title: "Burada kazılı bir şey yok", text: "Bu sayfa bulunamadı.", home: "AskRune'a dön" },
   },
 };
+
+/** The questions as schema.org FAQPage data, for search engines. */
+export function faqJsonLd(lang: Lang) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    inLanguage: lang,
+    mainEntity: copy[lang].faq.groups.flatMap((g) =>
+      g.items.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+    ),
+  };
+}

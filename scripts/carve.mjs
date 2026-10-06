@@ -5,6 +5,7 @@
 // outline, gold leaf, a shadowed wall toward the light (upper left) and a lit wall opposite.
 //
 //   node scripts/carve.mjs <askrune-app folder>     (default ../askrune)
+// (Node 24 runs the .ts import directly; on Node 22 add --experimental-strip-types.)
 import path from "node:path";
 
 import sharp from "sharp";
@@ -22,6 +23,17 @@ const JOBS = [
   { file: "talisman-3.webp", cx: 0.5, cy: 0.56, r: 0.37, rune: "Algiz", out: "stone-algiz" },
   { file: "talisman-4.webp", cx: 0.5, cy: 0.5, r: 0.36, rune: "Ingwaz", out: "stone-ingwaz" },
   { file: "stone-daily.webp", cx: 0.5, cy: 0.5, r: 0.36, rune: "Dagaz", out: "stone-dagaz" },
+  // The Rune Guide (2026-10-06): all 24 on the basalt the app's guide uses (realms.fire.stone, CarvedStone face
+  // 0.62 = the 100-box over 62% of the image), smaller, into src/assets/guide/.
+  ...Object.keys(RUNE_GLYPHS).map((rune) => ({
+    file: "stone-fire.webp",
+    cx: 0.5,
+    cy: 0.5,
+    r: 0.62 / 1.6,
+    rune,
+    out: `../guide/${rune.toLowerCase()}`,
+    max: 480,
+  })),
 ];
 
 const GOLD = ["#4a3009", "#8f6620", "#d8b25a", "#f6e2a6", "#c79a3e", "#6e4e18", "#a9802f"];
@@ -61,7 +73,7 @@ function svgFor(size, { cx, cy, r, rune }) {
 for (const job of JOBS) {
   const src = path.join(STONES, job.file);
   const { width } = await sharp(src).metadata();
-  const size = Math.min(width, 900);
+  const size = Math.min(width, job.max ?? 900);
   const stone = await sharp(src).resize(size, size).toBuffer();
   await sharp(stone)
     .composite([{ input: Buffer.from(svgFor(size, job)) }])

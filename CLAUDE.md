@@ -80,6 +80,28 @@ sıkılaşsın, kalite artsın"; "Gerçek işaretler'i görselle destekle"; "onb
 eski PWA kullanıcılarında `sw.js` kendini kaldırır). Mağazalar çıkınca "Yakında" düğmeleri gerçek
 bağlantılarla değişir. Mobil uygulamanın App Store "pazarlama" ve "destek" adresleri bu site.
 
+## Rune Rehberi ve SSS (2026-10-06)
+
+Kullanıcı isteği: uygulamadaki Rune Rehberi sitede de olsun, SSS rehberdeki bilgilerle genişlesin.
+- **Adresler:** İngilizce `/guide/`, `/guide/history/`, `/guide/spreads/`, `/guide/<rune>/`; Türkçe `/tr/rehber/`,
+  `/tr/rehber/tarih/`, `/tr/rehber/acilimlar/`, `/tr/rehber/<rune>/` (rune adı küçük harf). Tek kaynak `src/guide.ts`
+  (`guidePath`, `guideAlternates`, sayfa metinleri `guideCopy`). Sayfalar `src/components/guide/`, stil `src/styles/guide.css`.
+- **İçerik uygulamadan kopya, burada elle değiştirilmez:** `src/content/{tr,en,types}.ts` (rune yorumları, düz/ters,
+  aşk/kariyer, pratik ipucu), `src/content/guide/` (tarih, açılımlar, rune şiiri, mitoloji, gölge, tılsım…),
+  `src/content/runes.ts` (yalnız dilden bağımsız veri). Uygulamada metin değişirse dosyalar yeniden kopyalanır
+  (`types.ts`'te yalnız iki import yolu yerelleştirildi).
+- **Taşlar:** 24 rune uygulamanın rehberdeki bazalt taşına (`stone-fire.webp`, yüz 0,62) `scripts/carve.mjs` ile
+  kazındı, `src/assets/guide/<rune>.webp`. Yeniden üretim: `node --experimental-strip-types scripts/carve.mjs ../askrune`
+  (Node 24'te bayrak gerekmez).
+- Rune sayfasında Düz/Ters JavaScript'siz (radyo düğmeleri + CSS); iki okuma da sayfada olduğu için arama motoru görür.
+- Üst çubuk (`SiteHeader`, logo ana sayfaya, "Rune Rehberi", dil düğmesi aynı sayfanın öbür diline) ve alt bilgi
+  (`SiteFooter`) ana sayfa ve rehberde ortak. `Base` artık `alternates` (hreflang) ve `jsonLd` alır.
+- **SSS** iki grup: "Uygulama hakkında" (eski beş soru) ve "Rune'lar hakkında" (rehberden on soru: Elder Futhark, aett,
+  tarihte kullanım/Tacitus, en eski yazıt, ters rune, boş rune, açılım seçimi, hazırlık, doğum rune'u/burç modern
+  yorum, bağ rune'u). Bazı cevaplar rehber sayfasına bağlanır (`FaqItem.link`). Ana sayfa `FAQPage`, rehber
+  `BreadcrumbList` yapılandırılmış verisi taşır. "Fal" kelimesi yok; tarihsel dürüstlük çizgisi korunur.
+- `sitemap.xml` (`src/pages/sitemap.xml.ts`, hreflang çiftleriyle) ve `public/robots.txt` eklendi.
+
 ## Proje nedir
 
 **Rune Kahini** — Elder Futhark Rune okuması, doğum rünü / burç haritası ve tılsım tasarımı yapılan,

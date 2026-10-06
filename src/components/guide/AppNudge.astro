@@ -1,0 +1,23 @@
+---
+// The end of a guide page: the reading itself is in the app.
+import { Image } from "astro:assets";
+
+import stoneDagaz from "../../assets/craft/stone-dagaz.webp";
+import { guideCopy } from "../../guide";
+import type { Lang } from "../../i18n";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const g = guideCopy[lang];
+---
+
+<aside class="nudge">
+  <Image src={stoneDagaz} alt="" widths={[160, 280]} sizes="120px" />
+  <div>
+    <h2>{g.app.title}</h2>
+    <p>{g.app.text}</p>
+    <a href={lang === "tr" ? "/tr/" : "/"}>{g.app.link}</a>
+  </div>
+</aside>

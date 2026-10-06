@@ -6,6 +6,10 @@
   Cache-Control: no-cache
 /tr/
   Cache-Control: no-cache
+/guide/*
+  Cache-Control: no-cache
+/tr/rehber/*
+  Cache-Control: no-cache
 
 # Hashed build output never changes under the same name.
 /_astro/*

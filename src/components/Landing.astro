@@ -18,10 +18,12 @@ import stoneAnsuz from "../assets/craft/stone-ansuz.webp";
 import stoneDagaz from "../assets/craft/stone-dagaz.webp";
 import stoneFehu from "../assets/craft/stone-fehu.webp";
 import stoneIngwaz from "../assets/craft/stone-ingwaz.webp";
+import { guidePath } from "../guide";
 import { copy, type Feature, type Lang } from "../i18n";
 import Ornament from "./Ornament.astro";
 import RuneRibbon from "./RuneRibbon.astro";
-import Wordmark from "./Wordmark.astro";
+import SiteFooter from "./SiteFooter.astro";
+import SiteHeader from "./SiteHeader.astro";
 
 interface Props {
   lang: Lang;
@@ -32,7 +34,6 @@ const t = copy[lang];
 // The app's own screens per language (src/assets/screens/{tr,en}/, see CLAUDE.md for how they are made).
 const screens = import.meta.glob<{ default: ImageMetadata }>("../assets/screens/*/*.webp", { eager: true });
 const screen = (key: string) => screens[`../assets/screens/${lang}/${key}.webp`].default;
-const otherLang = lang === "tr" ? "en" : "tr";
 
 // Each feature in the photograph of its own room in the app (the realms).
 const realmPhoto: Record<Feature["key"], ImageMetadata> = {
@@ -64,12 +65,7 @@ const craftStones = [
 const heroWide = await getImage({ src: altarWide, width: 2000, format: "webp" });
 ---
 
-<header class="top">
-  <div class="wrap">
-    <Wordmark width={124} />
-    <a class="lang" href={t.nav.otherHref} hreflang={otherLang} lang={otherLang} data-lang={otherLang}>{t.nav.other}</a>
-  </div>
-</header>
+<SiteHeader lang={lang} otherHref={t.nav.otherHref} home />
 
 <main>
   <section class="hero">
@@ -160,12 +156,12 @@ const heroWide = await getImage({ src: altarWide, width: 2000, format: "webp" })
       <div class="grid4">
         {
           t.more.items.map((m, i) => (
-            <div class="tile">
+            <div class:list={["tile", { linked: i === 0 }]}>
               <div class="tile-photo">
                 <Image src={morePhotos[i]} alt="" widths={[400, 700]} sizes="(min-width: 960px) 280px, (min-width: 720px) 50vw, 100vw" />
               </div>
               <div class="tile-copy">
-                <h3>{m.title}</h3>
+                <h3>{i === 0 ? <a href={guidePath[lang].index}>{m.title}</a> : m.title}</h3>
                 <p>{m.text}</p>
               </div>
             </div>
@@ -247,30 +243,28 @@ const heroWide = await getImage({ src: altarWide, width: 2000, format: "webp" })
         <h2 id="faq-title">{t.faq.title}</h2>
         <Ornament />
       </div>
-      <div class="faq">
-        {
-          t.faq.items.map((f) => (
-            <details>
-              <summary>{f.q}</summary>
-              <p>{f.a}</p>
-            </details>
-          ))
-        }
-      </div>
+      {
+        t.faq.groups.map((g) => (
+          <div class="faq">
+            <h3 class="faq-group">{g.title.toLocaleUpperCase(lang)}</h3>
+            {g.items.map((f) => (
+              <details>
+                <summary>{f.q}</summary>
+                <p>
+                  {f.a}
+                  {f.link && (
+                    <a class="faq-link" href={guidePath[lang][f.link.page]}>
+                      {f.link.label}
+                    </a>
+                  )}
+                </p>
+              </details>
+            ))}
+          </div>
+        ))
+      }
     </div>
   </section>
 </main>
 
-<footer class="foot">
-  <div class="wrap">
-    <RuneRibbon />
-    <Wordmark width={110} />
-    <nav aria-label={t.footer.contact}>
-      <a href={t.legal.privacy}>{t.footer.privacy}</a>
-      <a href={t.legal.terms}>{t.footer.terms}</a>
-      <a href={t.legal.support}>{t.footer.support}</a>
-      <a href="mailto:destek@askrune.app">destek@askrune.app</a>
-    </nav>
-    <small>{t.footer.rights}</small>
-  </div>
-</footer>
+<SiteFooter lang={lang} />

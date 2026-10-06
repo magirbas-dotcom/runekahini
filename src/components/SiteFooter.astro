@@ -1,0 +1,27 @@
+---
+import { guidePath } from "../guide";
+import { copy, type Lang } from "../i18n";
+import RuneRibbon from "./RuneRibbon.astro";
+import Wordmark from "./Wordmark.astro";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = copy[lang];
+---
+
+<footer class="foot">
+  <div class="wrap">
+    <RuneRibbon />
+    <Wordmark width={110} />
+    <nav aria-label={t.footer.contact}>
+      <a href={guidePath[lang].index}>{t.nav.guide}</a>
+      <a href={t.legal.privacy}>{t.footer.privacy}</a>
+      <a href={t.legal.terms}>{t.footer.terms}</a>
+      <a href={t.legal.support}>{t.footer.support}</a>
+      <a href="mailto:destek@askrune.app">destek@askrune.app</a>
+    </nav>
+    <small>{t.footer.rights}</small>
+  </div>
+</footer>

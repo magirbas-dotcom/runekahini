@@ -1,0 +1,34 @@
+---
+// The top of every guide page: the scrolls and candle (the app's "lore" room, its Rune Guide) behind a
+// breadcrumb, the page's kicker, title and line.
+import { Image } from "astro:assets";
+
+import scrolls from "../../assets/bg/scrolls.webp";
+import Ornament from "../Ornament.astro";
+
+interface Props {
+  kicker: string;
+  title: string;
+  sub?: string;
+  crumbs: { href: string; label: string }[];
+  /** Screen-reader name of the breadcrumb trail. */
+  crumbsLabel: string;
+}
+const { kicker, title, sub, crumbs, crumbsLabel } = Astro.props;
+---
+
+<section class="g-hero">
+  <div class="g-hero-bg" aria-hidden="true">
+    <Image src={scrolls} alt="" widths={[700, 1400]} sizes="100vw" loading="eager" fetchpriority="high" />
+  </div>
+  <div class="wrap g-hero-inner">
+    <nav class="crumbs" aria-label={crumbsLabel}>
+      {crumbs.map((c) => <a href={c.href}>{c.label}</a>)}
+    </nav>
+    <span class="kicker">{kicker}</span>
+    <h1>{title}</h1>
+    <Ornament />
+    {sub && <p class="g-sub">{sub}</p>}
+    <slot />
+  </div>
+</section>

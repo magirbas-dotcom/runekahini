@@ -1,0 +1,157 @@
+---
+// One rune's page (the app's guide/[rune]): the carved stone between its neighbours, its name, sound and
+// meaning, the Upright / Reversed readings (general, love, career, keywords), the practical tip, then the
+// lore: the rune poem, history and myth, the inner life, its shadow, and (tagged modern) harmony and
+// tension and its use in talismans, with the question for the day apart.
+import { Image } from "astro:assets";
+
+import {
+  content,
+  firstSense,
+  firstSentence,
+  guideAlternates,
+  guideCopy,
+  guidePath,
+  lore,
+  runes,
+} from "../../guide";
+import type { Lang } from "../../i18n";
+import type { RuneReadingText } from "../../content/types";
+import GuideHero from "./GuideHero.astro";
+import GuidePage from "./GuidePage.astro";
+import ModernTag from "./ModernTag.astro";
+
+interface Props {
+  lang: Lang;
+  name: string;
+}
+const { lang, name } = Astro.props;
+const g = guideCopy[lang];
+const c = content[lang];
+const p = guidePath[lang];
+const index = runes.findIndex((r) => r.name === name);
+const rune = runes[index];
+const text = c.runes[name];
+const l = lore[lang].runes[name];
+// The Futhark as a ring: Othala leads back to Fehu.
+const prev = runes[(index - 1 + runes.length) % runes.length];
+const next = runes[(index + 1) % runes.length];
+const stones = import.meta.glob<{ default: ImageMetadata }>("../../assets/guide/*.webp", { eager: true });
+const stone = (n: string) => stones[`../../assets/guide/${n.toLowerCase()}.webp`].default;
+const locale = lang === "tr" ? "tr-TR" : "en";
+const caps = [text.literalMeaning, c.aettNames[String(rune.aett) as "1" | "2" | "3"], c.elements[rune.element]]
+  .join(" · ")
+  .toLocaleUpperCase(locale);
+const home = { href: lang === "tr" ? "/tr/" : "/", label: "AskRune" };
+const guide = { href: p.index, label: g.title };
+const meaning = firstSense(text.literalMeaning);
+const description = `${name} (${text.literalMeaning}): ${text.upright.keywords.join(", ")}. ${firstSentence(text.upright.general)}`;
+const readings: { key: "up" | "rev"; label: string; reading: RuneReadingText }[] = [
+  { key: "up", label: g.upright, reading: text.upright },
+  ...(rune.reversible && text.reversed ? [{ key: "rev" as const, label: g.reversed, reading: text.reversed }] : []),
+];
+const loreCards = [
+  { title: g.lore.poem, text: l.poem },
+  { title: g.lore.myth, text: l.myth },
+  { title: g.lore.inner, text: l.inner },
+  { title: g.lore.shadow, text: l.shadow },
+  { title: g.lore.harmony, text: l.harmony, modern: true },
+  { title: g.lore.talisman, text: l.talisman, modern: true },
+];
+---
+
+<GuidePage
+  lang={lang}
+  title={g.meta.rune(name, meaning)}
+  description={description}
+  alternates={guideAlternates({ rune: name })}
+  trail={[home, guide, { href: p.rune(name), label: name }]}
+>
+  <GuideHero kicker={caps} title={name} crumbs={[home, guide]} crumbsLabel={g.title}>
+    <div class="rune-stage">
+      <a class="neighbour" href={p.rune(prev.name)} rel="prev">
+        <Image src={stone(prev.name)} alt="" widths={[120]} sizes="64px" />
+        <small>← {g.prev}</small>
+        <b lang="en">{prev.name}</b>
+      </a>
+      <Image class="rune-stone" src={stone(name)} alt={`${name}, ${text.literalMeaning}`} widths={[240, 480]} sizes="220px" loading="eager" />
+      <a class="neighbour" href={p.rune(next.name)} rel="next">
+        <Image src={stone(next.name)} alt="" widths={[120]} sizes="64px" />
+        <small>{g.next} →</small>
+        <b lang="en">{next.name}</b>
+      </a>
+    </div>
+    <p class="rune-facts">
+      <span>{g.sound}: <b>{rune.soundValue}</b></span>
+      <span>{rune.pronunciation}</span>
+      {l && <span>{g.proto}: <i>{l.proto}</i></span>}
+    </p>
+  </GuideHero>
+
+  <div class="wrap g-body narrow">
+    <section class="g-card reading">
+      {
+        readings.length > 1 ? (
+          <>
+            <input type="radio" name="orient" id="o-up" checked />
+            <input type="radio" name="orient" id="o-rev" />
+            <div class="seg" role="presentation">
+              <label for="o-up">{g.upright}</label>
+              <label for="o-rev">{g.reversed}</label>
+            </div>
+          </>
+        ) : (
+          <p class="symmetric">{g.symmetric}</p>
+        )
+      }
+      {
+        readings.map((r) => (
+          <div class:list={["panel", r.key]}>
+            <h2 class="visually-hidden">{`${name} · ${r.label}`}</h2>
+            <ul class="chips" aria-label={g.keywords}>
+              {r.reading.keywords.map((k) => (
+                <li>{k}</li>
+              ))}
+            </ul>
+            <h3>{g.general}</h3>
+            <p>{r.reading.general}</p>
+            <h3>{g.love}</h3>
+            <p>{r.reading.love}</p>
+            <h3>{g.career}</h3>
+            <p>{r.reading.career}</p>
+          </div>
+        ))
+      }
+      <div class="tip">
+        <b>{g.practicalTip}</b>
+        <p>{text.practicalNote}</p>
+      </div>
+    </section>
+
+    {
+      l && (
+        <>
+          <div class="lore-grid">
+            {loreCards.map((card) => (
+              <section class="g-card lore">
+                {card.modern && <ModernTag lang={lang} />}
+                <h2>{card.title}</h2>
+                <p>{card.text}</p>
+              </section>
+            ))}
+          </div>
+          <section class="question">
+            <span class="kicker">{g.lore.question.toLocaleUpperCase(locale)}</span>
+            <p>{l.question}</p>
+          </section>
+        </>
+      )
+    }
+
+    <nav class="rune-nav" aria-label={g.title}>
+      <a href={p.rune(prev.name)} rel="prev">← <span lang="en">{prev.name}</span></a>
+      <a href={p.index}>{g.back}</a>
+      <a href={p.rune(next.name)} rel="next"><span lang="en">{next.name}</span> →</a>
+    </nav>
+  </div>
+</GuidePage>

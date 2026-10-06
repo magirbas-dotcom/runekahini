@@ -1,0 +1,28 @@
+---
+// The top bar of every page: the logo (home), the Rune Guide, and the same page in the other language.
+import { guidePath } from "../guide";
+import { copy, type Lang } from "../i18n";
+import Wordmark from "./Wordmark.astro";
+
+interface Props {
+  lang: Lang;
+  /** The same page in the other language. */
+  otherHref: string;
+  /** On the landing the logo is the page itself, not a link. */
+  home?: boolean;
+}
+const { lang, otherHref, home = false } = Astro.props;
+const t = copy[lang];
+const otherLang = lang === "tr" ? "en" : "tr";
+const homeHref = lang === "tr" ? "/tr/" : "/";
+---
+
+<header class="top">
+  <div class="wrap">
+    {home ? <Wordmark width={124} /> : <a class="home" href={homeHref} aria-label="AskRune"><Wordmark width={112} /></a>}
+    <nav class="top-nav">
+      <a class="nav-link" href={guidePath[lang].index}>{t.nav.guide}</a>
+      <a class="lang" href={otherHref} hreflang={otherLang} lang={otherLang} data-lang={otherLang}>{t.nav.other}</a>
+    </nav>
+  </div>
+</header>

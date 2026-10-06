@@ -1,0 +1,34 @@
+---
+// One page of the Rune Guide: the site's layout, header and footer around the page's own content.
+import Base from "../../layouts/Base.astro";
+import type { Lang } from "../../i18n";
+import SiteFooter from "../SiteFooter.astro";
+import SiteHeader from "../SiteHeader.astro";
+import AppNudge from "./AppNudge.astro";
+import "../../styles/guide.css";
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description: string;
+  alternates: { en: string; tr: string };
+  /** Breadcrumb trail for search engines, last item the page itself. */
+  trail: { href: string; label: string }[];
+}
+const { lang, title, description, alternates, trail } = Astro.props;
+const site = Astro.site?.toString().replace(/\/$/, "") ?? "https://askrune.app";
+const breadcrumbs = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: trail.map((c, i) => ({ "@type": "ListItem", position: i + 1, name: c.label, item: site + c.href })),
+};
+---
+
+<Base lang={lang} title={title} description={description} path={alternates[lang]} alternates={alternates} jsonLd={[breadcrumbs]}>
+  <SiteHeader lang={lang} otherHref={alternates[lang === "tr" ? "en" : "tr"]} />
+  <main class="guide">
+    <slot />
+    <div class="wrap"><AppNudge lang={lang} /></div>
+  </main>
+  <SiteFooter lang={lang} />
+</Base>

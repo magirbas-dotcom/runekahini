@@ -1,0 +1,11 @@
+---
+import GuideRune from "../../../components/guide/GuideRune.astro";
+import { runes } from "../../../guide";
+
+export function getStaticPaths() {
+  return runes.map((r) => ({ params: { rune: r.name.toLowerCase() }, props: { name: r.name } }));
+}
+const { name } = Astro.props;
+---
+
+<GuideRune lang="tr" name={name} />

@@ -137,6 +137,25 @@ p {
   color: var(--parchment);
   border-color: var(--gold);
 }
+.top-nav {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.nav-link {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--parchment);
+  text-decoration: none;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.8);
+}
+.nav-link:hover {
+  color: var(--gold-light);
+}
+.home {
+  display: block;
+  line-height: 0;
+}
 
 /* ── Hero ────────────────────────────────────────────── */
 
@@ -380,6 +399,23 @@ p {
   color: var(--parchment);
   margin-bottom: 6px;
 }
+.tile.linked {
+  position: relative;
+  border-color: var(--hairline);
+}
+.tile.linked h3 a {
+  color: inherit;
+  text-decoration: none;
+}
+.tile.linked h3 a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+.tile.linked h3::after {
+  content: " →";
+  color: var(--gold);
+}
 .tile p {
   color: var(--parchment-dim);
   font-size: 14.5px;
@@ -593,7 +629,6 @@ p {
 .faq {
   max-width: 760px;
   margin: 0 auto;
-  border-top: 1px solid var(--hairline-soft);
 }
 .faq details {
   border-bottom: 1px solid var(--hairline-soft);
@@ -630,6 +665,26 @@ p {
   padding: 0 4px 22px;
   color: var(--parchment-dim);
   font-size: 15px;
+}
+.faq + .faq {
+  margin-top: 40px;
+}
+.faq-group {
+  padding: 0 4px 12px;
+  font-family: var(--body);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  color: var(--gold);
+  border-bottom: 1px solid var(--hairline-soft);
+}
+.faq-link {
+  display: block;
+  margin-top: 10px;
+  font-size: 14px;
+}
+.faq-link::after {
+  content: " →";
 }
 
 /* ── Footer ──────────────────────────────────────────── */
