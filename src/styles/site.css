@@ -669,6 +669,9 @@ p {
   margin: 0 auto;
 }
 .plan {
+  position: relative;
+  display: flex;
+  flex-direction: column;
   padding: 32px 30px;
   border-radius: 24px;
   border: 1px solid var(--hairline-soft);
@@ -679,11 +682,13 @@ p {
   border-color: rgba(200, 164, 106, 0.6);
   background: linear-gradient(180deg, rgba(200, 164, 106, 0.1), rgba(14, 13, 11, 0.72) 55%);
 }
+/* In the corner, out of the flow, so the Premium list starts on the same line as the free one. */
 .plan-emblem {
+  position: absolute;
+  top: 18px;
+  right: 22px;
   width: 84px;
   height: auto;
-  float: right;
-  margin: -12px -8px 0 12px;
   filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.6));
 }
 .plan .kicker {
@@ -720,8 +725,13 @@ p {
   transform: translateY(-2px) rotate(45deg);
   background: var(--gold);
 }
+/* User, 2026-10-07: the cards stood unevenly side by side (seven free items, four Premium). The note sits at the
+   card's foot, so both cards end on the same line and the Premium card has no empty tail. */
+.plan ul {
+  margin-bottom: 22px;
+}
 .plan-note {
-  margin-top: 22px;
+  margin-top: auto;
   padding-top: 18px;
   border-top: 1px solid var(--hairline-soft);
   color: var(--parchment-dim);
@@ -911,6 +921,19 @@ p {
   }
   .grid4 {
     grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  /* The four titles share one line (user, 2026-10-07: "some cards long, some short"): every card's words get
+     room for four lines and the guide's button, whether they use it or not. */
+  .tile-copy {
+    grid-template-rows: auto auto calc(4 * 1.6em) 44px;
+    align-content: start;
+  }
+  /* With the words raised to that line, the word's stones sit higher and a little smaller. */
+  .tile-word {
+    inset: 7% 0 auto;
+  }
+  .tile-word li {
+    width: 21%;
   }
   .tile,
   .tile.linked,

@@ -724,3 +724,12 @@
 .daily .g-sub[hidden] {
   display: none;
 }
+
+/* User, 2026-10-07: under the phone the reading was twice its width. The column below keeps near the phone's
+   measure, so phone and words read as one piece. */
+.g-body.daily-body {
+  max-width: 600px;
+}
+.daily-body .nudge {
+  max-width: none;
+}
