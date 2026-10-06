@@ -40,7 +40,7 @@ h2 {
 }
 h3 { font-size: 16px; margin: 22px 0 6px; }
 p, li { color: var(--text); }
-ul { padding-left: 20px; }
+ul, ol { padding-left: 20px; }
 li { margin: 6px 0; }
 a { color: var(--gold); }
 .box {
