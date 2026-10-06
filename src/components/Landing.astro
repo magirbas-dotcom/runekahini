@@ -196,6 +196,15 @@ const heroWide = await getImage({ src: altarWide, width: 2000, format: "webp" })
                 <span class="tile-line" aria-hidden="true" />
                 <h3>{i === 0 ? <a href={guidePath[lang].index}>{m.title}</a> : m.title}</h3>
                 <p>{m.text}</p>
+                {/* User, 2026-10-07: only this card opens a page; say so with a button, not just an arrow. */}
+                {i === 0 && (
+                  <span class="tile-cta" aria-hidden="true">
+                    {t.more.open}
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                      <path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </span>
+                )}
               </div>
             </div>
           ))

@@ -29,7 +29,7 @@ export interface Copy {
   hero: { kicker: string; title: [string, string]; sub: string; ios: string; android: string; soon: string };
   head: { features: { kicker: string; title: string; text: string }; more: string; privacy: string; plans: string; faq: string };
   features: Feature[];
-  more: { title: string; items: { title: string; text: string }[] };
+  more: { title: string; items: { title: string; text: string }[]; open: string };
   craft: { kicker: string; title: string; text: string; note: string };
   privacy: { title: string; items: { title: string; text: string }[]; link: string };
   plans: { title: string; free: string; freeItems: string[]; premium: string; premiumItems: string[]; note: string };
@@ -106,6 +106,7 @@ export const copy: Record<Lang, Copy> = {
     ],
     more: {
       title: "And more",
+      open: "Open the guide",
       items: [
         { title: "Rune Guide", text: "All 24 runes, upright and reversed, with what each means in love and work." },
         { title: "History and notes", text: "Every reading kept on your phone, with your own notes beside it." },
@@ -295,6 +296,7 @@ export const copy: Record<Lang, Copy> = {
     ],
     more: {
       title: "Ve dahası",
+      open: "Rehberi aç",
       items: [
         { title: "Rune Rehberi", text: "24 rune'un hepsi, düz ve ters; aşkta ve işte ne anlattıkları." },
         { title: "Geçmiş ve notlar", text: "Her okuman telefonunda saklanır, yanına kendi notunu ekleyebilirsin." },

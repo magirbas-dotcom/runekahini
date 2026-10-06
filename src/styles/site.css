@@ -423,11 +423,13 @@ p {
   color: var(--gold-light);
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.9);
 }
-/* The word's stones need room above the words on a phone. */
+/* The word's stones, and the guide's button, need room on a phone. */
+.tile.linked,
 .tile.word-tile {
   aspect-ratio: 1 / 1.05;
 }
 @media (max-width: 359px) {
+  .tile.linked,
   .tile.word-tile {
     aspect-ratio: 1 / 1.18;
   }
@@ -448,8 +450,17 @@ p {
   color: var(--gold-light);
   text-shadow: 0 2px 14px rgba(0, 0, 0, 0.7);
 }
+/* The one card that opens a page (the Rune Guide): a gold edge, a button, and a lift on hover. */
 .tile.linked {
-  border-color: var(--hairline);
+  border-color: rgba(200, 164, 106, 0.65);
+  box-shadow: 0 0 0 1px rgba(200, 164, 106, 0.12), 0 18px 40px rgba(0, 0, 0, 0.45);
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease;
+}
+.tile.linked:hover {
+  transform: translateY(-3px);
+  border-color: var(--gold);
 }
 .tile.linked h3 a {
   color: inherit;
@@ -459,11 +470,32 @@ p {
   content: "";
   position: absolute;
   inset: 0;
+  border-radius: inherit;
 }
-.tile.linked h3::after {
-  content: " →";
-  font-size: 0.8em;
-  color: var(--gold);
+.tile.linked:has(a:focus-visible) {
+  outline: 1.5px solid var(--gold-light);
+  outline-offset: 3px;
+}
+.tile-cta {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--gold);
+  background: rgba(17, 16, 14, 0.82);
+  color: var(--gold-light);
+  font-size: 14px;
+  font-weight: 500;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease;
+}
+.tile.linked:hover .tile-cta {
+  background: var(--gold);
+  color: var(--ink);
 }
 .tile p {
   color: var(--parchment);
@@ -860,6 +892,7 @@ p {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
   .tile,
+  .tile.linked,
   .tile.word-tile {
     aspect-ratio: 3 / 4.2;
   }
@@ -879,8 +912,13 @@ p {
   html {
     scroll-behavior: auto;
   }
-  .tile-photo img {
+  .tile-photo img,
+  .tile.linked,
+  .tile-cta {
     transition: none;
+  }
+  .tile.linked:hover {
+    transform: none;
   }
   .tile:hover .tile-photo img {
     transform: none;

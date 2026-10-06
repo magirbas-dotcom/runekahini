@@ -41,6 +41,8 @@ diğerleri `/` İngilizce, elle seçim hatırlanır).
   fotoğraf kartın tamamını kaplar, altın başlık ve metin alttaki koyu geçişin üstünde. "İki dil" yerine **Rune ile Yaz**:
   ritüel odanın keten örtüsü üstünde dört taşa kazınmış R U N E (`craft/word-*.webp`, `scripts/carve.mjs`), altında Latin
   harfleri; iki dil metinde ("Türkçe ya da İngilizce okunuşuna göre").
+  Yalnız Rune Rehberi kartı bir sayfa açar (kullanıcı: "tıklandığı nasıl belli olsun?"): altın kenar, "Rehberi aç →"
+  düğmesi (fareyle üstüne gelince dolar), kart hafifçe yükselir; bütün kart bağlantı. Diğer üçü bilgi kartı.
 - Arka planlar `src/assets/bg/` (altar-wide, aurora-wide, forest-wide, ritual-tall), mobil repodaki
   görsellerden.
 
