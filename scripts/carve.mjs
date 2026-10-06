@@ -23,6 +23,11 @@ const JOBS = [
   { file: "talisman-3.webp", cx: 0.5, cy: 0.56, r: 0.37, rune: "Algiz", out: "stone-algiz" },
   { file: "talisman-4.webp", cx: 0.5, cy: 0.5, r: 0.36, rune: "Ingwaz", out: "stone-ingwaz" },
   { file: "stone-daily.webp", cx: 0.5, cy: 0.5, r: 0.36, rune: "Dagaz", out: "stone-dagaz" },
+  // "Write in Runes" card (2026-10-07): R U N E, one letter a stone, on the four talisman stones.
+  { file: "talisman-1.webp", cx: 0.5, cy: 0.5, r: 0.4, rune: "Raidho", out: "word-r", max: 480 },
+  { file: "talisman-2.webp", cx: 0.5, cy: 0.5, r: 0.4, rune: "Uruz", out: "word-u", max: 480 },
+  { file: "talisman-3.webp", cx: 0.5, cy: 0.56, r: 0.37, rune: "Nauthiz", out: "word-n", max: 480 },
+  { file: "talisman-4.webp", cx: 0.5, cy: 0.5, r: 0.36, rune: "Ehwaz", out: "word-e", max: 480 },
   // The Rune Guide (2026-10-06): all 24 on the basalt the app's guide uses (realms.fire.stone, CarvedStone face
   // 0.62 = the 100-box over 62% of the image), smaller, into src/assets/guide/.
   ...Object.keys(RUNE_GLYPHS).map((rune) => ({

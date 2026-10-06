@@ -110,7 +110,7 @@ export const copy: Record<Lang, Copy> = {
         { title: "Rune Guide", text: "All 24 runes, upright and reversed, with what each means in love and work." },
         { title: "History and notes", text: "Every reading kept on your phone, with your own notes beside it." },
         { title: "Share cards", text: "Your reading, birth map or talisman as a card made for stories." },
-        { title: "Two languages", text: "English and Turkish, the readings included." },
+        { title: "Write in runes", text: "Your name or a word, letter by letter in runes, by how it sounds in English or Turkish." },
       ],
     },
     craft: {
@@ -299,7 +299,7 @@ export const copy: Record<Lang, Copy> = {
         { title: "Rune Rehberi", text: "24 rune'un hepsi, düz ve ters; aşkta ve işte ne anlattıkları." },
         { title: "Geçmiş ve notlar", text: "Her okuman telefonunda saklanır, yanına kendi notunu ekleyebilirsin." },
         { title: "Paylaşım kartları", text: "Okuman, doğum haritan ya da tılsımın, hikâyeler için hazırlanmış bir kart." },
-        { title: "İki dil", text: "Türkçe ve İngilizce, yorumlar dahil." },
+        { title: "Rune ile Yaz", text: "Adın ya da bir kelime, Türkçe ya da İngilizce okunuşuna göre harf harf rune'larla." },
       ],
     },
     craft: {

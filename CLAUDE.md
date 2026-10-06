@@ -37,6 +37,10 @@ diğerleri `/` İngilizce, elle seçim hatırlanır).
   kâğıdından (rune'lar ayrık) kesilip ölçülerek aynı yere kondu; kenarı uygulamanın `gold-leaf.webp` siluetiyle
   maskelendi, çevresi (orman, başlık, seçici, hare) aynen. Ekran yeniden çekilirse bu gerekmez: uygulamadaki
   niyet yerleşimleri artık düzeltilmiş.
+- **"Ve dahası" kartları (2026-10-07, kullanıcı: "yazılar büyük olabilir, kutunun çoğu boş"; "İki dil kartı zayıf"):**
+  fotoğraf kartın tamamını kaplar, altın başlık ve metin alttaki koyu geçişin üstünde. "İki dil" yerine **Rune ile Yaz**:
+  ritüel odanın keten örtüsü üstünde dört taşa kazınmış R U N E (`craft/word-*.webp`, `scripts/carve.mjs`), altında Latin
+  harfleri; iki dil metinde ("Türkçe ya da İngilizce okunuşuna göre").
 - Arka planlar `src/assets/bg/` (altar-wide, aurora-wide, forest-wide, ritual-tall), mobil repodaki
   görsellerden.
 

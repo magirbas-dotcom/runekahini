@@ -11,6 +11,7 @@ import realmCompat from "../assets/bg/realm-compat.webp";
 import realmHome from "../assets/bg/realm-home.webp";
 import realmReading from "../assets/bg/realm-reading.webp";
 import realmTalisman from "../assets/bg/realm-talisman.webp";
+import ritualTall from "../assets/bg/ritual-tall.webp";
 import scrolls from "../assets/bg/scrolls.webp";
 import emblem from "../assets/craft/emblem.webp";
 import stoneAlgiz from "../assets/craft/stone-algiz.webp";
@@ -18,6 +19,10 @@ import stoneAnsuz from "../assets/craft/stone-ansuz.webp";
 import stoneDagaz from "../assets/craft/stone-dagaz.webp";
 import stoneFehu from "../assets/craft/stone-fehu.webp";
 import stoneIngwaz from "../assets/craft/stone-ingwaz.webp";
+import wordE from "../assets/craft/word-e.webp";
+import wordN from "../assets/craft/word-n.webp";
+import wordR from "../assets/craft/word-r.webp";
+import wordU from "../assets/craft/word-u.webp";
 import { guidePath } from "../guide";
 import { copy, type Feature, type Lang } from "../i18n";
 import Ornament from "./Ornament.astro";
@@ -53,10 +58,18 @@ const realmFocus: Record<Feature["key"], string> = {
 
 // A photograph for each "more" card: the scrolls (the guide), the chronicle (history and notes), a shared
 // card (the onboarding's), the candle-lit room (the app in two languages).
-const morePhotos = [scrolls, chronicle, onbShare, realmHome];
+const morePhotos = [scrolls, chronicle, onbShare, ritualTall];
 // Where each photograph's subject sits, so the card shows it above the words: the scroll, the book and
-// hourglass, the Berkano card, the candle and the window (the room's top left is only shadow).
-const moreFocus = ["50% 20%", "50% 25%", "50% 30%", "62% 55%"];
+// hourglass, the Berkano card, the ritual room's empty cloth (where the word's stones lie).
+const moreFocus = ["50% 20%", "50% 25%", "50% 30%", "50% 62%"];
+// "Write in Runes" (user, 2026-10-07: the "two languages" card was weak): R U N E carved one letter a stone
+// (scripts/carve.mjs), laid on the ritual room's cloth with the Latin letter under each.
+const word = [
+  { src: wordR, letter: "R", rune: "Raidho" },
+  { src: wordU, letter: "U", rune: "Uruz" },
+  { src: wordN, letter: "N", rune: "Nauthiz" },
+  { src: wordE, letter: "E", rune: "Ehwaz" },
+];
 // The carved stones (scripts/carve.mjs: the app's own glyphs cut into the app's own stones).
 const craftStones = [
   { src: stoneFehu, alt: "Fehu" },
@@ -159,7 +172,7 @@ const heroWide = await getImage({ src: altarWide, width: 2000, format: "webp" })
       <div class="grid4">
         {
           t.more.items.map((m, i) => (
-            <div class:list={["tile", { linked: i === 0 }]}>
+            <div class:list={["tile", { linked: i === 0, "word-tile": i === 3 }]}>
               <div class="tile-photo">
                 <Image
                   src={morePhotos[i]}
@@ -169,6 +182,16 @@ const heroWide = await getImage({ src: altarWide, width: 2000, format: "webp" })
                   style={`object-position:${moreFocus[i]}`}
                 />
               </div>
+              {i === 3 && (
+                <ol class="tile-word" aria-label="R U N E">
+                  {word.map((w) => (
+                    <li>
+                      <Image src={w.src} alt={w.rune} widths={[120, 220]} sizes="96px" />
+                      <span>{w.letter}</span>
+                    </li>
+                  ))}
+                </ol>
+              )}
               <div class="tile-copy">
                 <span class="tile-line" aria-hidden="true" />
                 <h3>{i === 0 ? <a href={guidePath[lang].index}>{m.title}</a> : m.title}</h3>
