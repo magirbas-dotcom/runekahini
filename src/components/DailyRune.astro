@@ -1,0 +1,163 @@
+---
+// Rune of the Day (2026-10-07, user's pick from the site suggestions): the app's daily stone on the web. The day is
+// the visitor's own, so the page is drawn in the browser: every rune's words are in the page as data, the script
+// picks today's (src/daily.ts, the app's own draw) and the stone waits, blank, to be turned, as on the app's home.
+import { getImage, Image } from "astro:assets";
+
+import blank from "../assets/craft/blank-basalt.webp";
+import realmHome from "../assets/bg/realm-home.webp";
+import { content, dailyPath, guideCopy, guidePath, lore, runes } from "../guide";
+import { copy, type Lang } from "../i18n";
+import Base from "../layouts/Base.astro";
+import Ornament from "./Ornament.astro";
+import SiteFooter from "./SiteFooter.astro";
+import SiteHeader from "./SiteHeader.astro";
+import AppNudge from "./guide/AppNudge.astro";
+import "../styles/guide.css";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = copy[lang].daily;
+const g = guideCopy[lang];
+const c = content[lang];
+const locale = lang === "tr" ? "tr-TR" : "en";
+const stones = import.meta.glob<{ default: ImageMetadata }>("../assets/guide/*.webp", { eager: true });
+const stoneUrl = async (file: string) =>
+  (await getImage({ src: stones[`../assets/guide/${file}.webp`].default, width: 440, format: "webp" })).src;
+
+// Every rune as the page needs it; the script shows one.
+const data = await Promise.all(
+  runes.map(async (r) => {
+    const text = c.runes[r.name];
+    const caps = [text.literalMeaning, c.aettNames[String(r.aett) as "1" | "2" | "3"], c.elements[r.element]]
+      .join(" · ")
+      .toLocaleUpperCase(locale);
+    const reading = (x: typeof text.upright) => ({ keywords: x.keywords, general: x.general });
+    return {
+      name: r.name,
+      caps,
+      stone: await stoneUrl(r.name.toLowerCase()),
+      stoneRev: r.reversible ? await stoneUrl(`${r.name.toLowerCase()}-rev`) : null,
+      upright: reading(text.upright),
+      reversed: r.reversible && text.reversed ? reading(text.reversed) : null,
+      question: lore[lang].runes[r.name]?.question ?? "",
+      guide: guidePath[lang].rune(r.name),
+    };
+  }),
+);
+const alternates = { en: dailyPath.en, tr: dailyPath.tr };
+const home = lang === "tr" ? "/tr/" : "/";
+---
+
+<Base lang={lang} title={t.meta.title} description={t.meta.description} path={dailyPath[lang]} alternates={alternates}>
+  <SiteHeader lang={lang} otherHref={alternates[lang === "tr" ? "en" : "tr"]} />
+  <main class="guide daily" data-runes={JSON.stringify(data)} data-lang={locale} data-reversed={t.reversed} data-more={t.readMore}>
+    <section class="g-hero daily-hero">
+      <div class="g-hero-bg" aria-hidden="true">
+        <Image src={realmHome} alt="" widths={[700, 1400]} sizes="100vw" loading="eager" fetchpriority="high" />
+      </div>
+      <div class="wrap g-hero-inner">
+        <nav class="crumbs" aria-label={t.title}><a href={home}>AskRune</a></nav>
+        <span class="kicker" id="daily-date">{t.kicker}</span>
+        <h1 id="daily-name">{t.title}</h1>
+        <Ornament />
+        <p class="g-sub" id="daily-sub">{t.support}</p>
+
+        <div class="flip" id="flip">
+          <div class="flip-inner">
+            <Image class="flip-face back" src={blank} alt="" widths={[440]} sizes="220px" loading="eager" />
+            <img class="flip-face front" id="daily-stone" alt="" width="220" height="220" />
+          </div>
+        </div>
+        <button type="button" class="turn" id="turn" aria-label={t.turnLabel}>{t.turn}</button>
+        <p class="daily-caps" id="daily-caps" hidden></p>
+        <noscript><p class="g-sub">{t.about}</p></noscript>
+      </div>
+    </section>
+
+    <div class="wrap g-body narrow">
+      <section class="g-card reading daily-reading" id="daily-reading" hidden aria-live="polite">
+        <ul class="chips" id="daily-keywords" aria-label={g.keywords}></ul>
+        <h2 class="visually-hidden">{g.general}</h2>
+        <p id="daily-general"></p>
+        <div class="question">
+          <span class="kicker">{g.lore.question.toLocaleUpperCase(locale)}</span>
+          <p id="daily-question"></p>
+        </div>
+        <p class="daily-links"><a id="daily-guide" href={guidePath[lang].index}></a></p>
+        <p class="daily-later">{t.later}</p>
+      </section>
+      <p class="g-sources">{t.about}</p>
+      <AppNudge lang={lang} />
+    </div>
+  </main>
+  <SiteFooter lang={lang} />
+</Base>
+
+<script>
+  import { drawDailyRune, todayKey } from "../daily";
+
+  interface DailyData {
+    name: string;
+    caps: string;
+    stone: string;
+    stoneRev: string | null;
+    upright: { keywords: string[]; general: string };
+    reversed: { keywords: string[]; general: string } | null;
+    question: string;
+    guide: string;
+  }
+
+  const main = document.querySelector<HTMLElement>("main.daily");
+  if (main) {
+    const all = JSON.parse(main.dataset.runes ?? "[]") as DailyData[];
+    const key = todayKey();
+    const draw = drawDailyRune(key);
+    const r = all.find((x) => x.name === draw.name)!;
+    const reversed = draw.reversed && !!r.reversed;
+    const reading = reversed ? r.reversed! : r.upright;
+    const $ = (id: string) => document.getElementById(id)!;
+
+    // The date leads the kicker, as on the app ("6 Ekim · GÜNÜN RUNE'Sİ").
+    const date = new Date().toLocaleDateString(main.dataset.lang, { day: "numeric", month: "long" });
+    $("daily-date").textContent = `${date.toLocaleUpperCase(main.dataset.lang)} · ${$("daily-date").textContent}`;
+    ($("daily-stone") as HTMLImageElement).src = (reversed ? r.stoneRev : r.stone) ?? r.stone;
+
+    const show = (animate: boolean) => {
+      const flip = $("flip");
+      if (!animate) flip.classList.add("instant");
+      flip.classList.add("turned");
+      $("turn").hidden = true;
+      $("daily-name").textContent = r.name;
+      $("daily-name").setAttribute("lang", "en");
+      $("daily-sub").hidden = true;
+      const caps = $("daily-caps");
+      caps.textContent = reversed ? `${r.caps} · ${main.dataset.reversed?.toLocaleUpperCase(main.dataset.lang)}` : r.caps;
+      caps.hidden = false;
+      $("daily-keywords").replaceChildren(
+        ...reading.keywords.map((k) => Object.assign(document.createElement("li"), { textContent: k })),
+      );
+      $("daily-general").textContent = reading.general;
+      $("daily-question").textContent = r.question;
+      const link = $("daily-guide") as HTMLAnchorElement;
+      link.href = r.guide;
+      link.textContent = `${(main.dataset.more ?? "").replace("{rune}", r.name)} →`;
+      $("daily-reading").hidden = false;
+    };
+
+    // Turned once today, it stays turned on this browser until tomorrow.
+    let turned = false;
+    try {
+      turned = localStorage.getItem("askrune.dailyTurned") === key;
+    } catch {}
+    if (turned) show(false);
+    $("turn").addEventListener("click", () => {
+      try {
+        localStorage.setItem("askrune.dailyTurned", key);
+      } catch {}
+      show(true);
+    });
+  }
+</script>

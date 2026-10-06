@@ -37,6 +37,21 @@ export interface Copy {
   footer: { privacy: string; terms: string; support: string; contact: string; rights: string };
   legal: { privacy: string; terms: string; support: string };
   pwa: { text: string; close: string };
+  daily: {
+    kicker: string;
+    title: string;
+    silent: string;
+    support: string;
+    turn: string;
+    turnLabel: string;
+    reversed: string;
+    later: string;
+    readMore: string;
+    about: string;
+    /** On the landing's "one stone every morning" card. */
+    cta: string;
+    meta: { title: string; description: string };
+  };
   notFound: { title: string; text: string; home: string };
 }
 
@@ -229,6 +244,25 @@ export const copy: Record<Lang, Copy> = {
       close: "Close",
     },
     notFound: { title: "Nothing carved here", text: "This page does not exist.", home: "Back to AskRune" },
+    daily: {
+      kicker: "RUNE OF THE DAY",
+      title: "Rune of the Day",
+      silent: "The stone is still silent",
+      support: "Discover what today brings you.",
+      turn: "Turn the Stone",
+      turnLabel: "Turn the stone and see its rune",
+      reversed: "Reversed",
+      later: "A new stone awaits you tomorrow.",
+      readMore: "Read {rune} in the Rune Guide",
+      cta: "Turn today's stone",
+      about:
+        "One stone a day, the same for everyone and the same as in the AskRune app; it changes at midnight, your time. A rune reading is for reflection, not a prediction.",
+      meta: {
+        title: "Rune of the Day: one Elder Futhark rune for today · AskRune",
+        description:
+          "Turn today's stone: one rune of the Elder Futhark, its meaning, keywords and a question to carry through the day. The same stone as in the AskRune app.",
+      },
+    },
   },
 
   tr: {
@@ -419,6 +453,25 @@ export const copy: Record<Lang, Copy> = {
       close: "Kapat",
     },
     notFound: { title: "Burada kazılı bir şey yok", text: "Bu sayfa bulunamadı.", home: "AskRune'a dön" },
+    daily: {
+      kicker: "GÜNÜN RUNE'Sİ",
+      title: "Günün Rune'si",
+      silent: "Taş henüz sessiz",
+      support: "Bugünün sana getirdiği mesajı keşfet.",
+      turn: "Taşı Çevir",
+      turnLabel: "Taşı çevir, rune'unu gör",
+      reversed: "Ters",
+      later: "Yarın yeni bir taş seni bekliyor.",
+      readMore: "Rehberde {rune}",
+      cta: "Bugünün taşını çevir",
+      about:
+        "Günde bir taş: herkes için aynı ve AskRune uygulamasındaki günün taşıyla aynı; senin saatinle gece yarısı değişir. Rune okuması bir kehanet değil, düşünmek için bir aynadır.",
+      meta: {
+        title: "Günün Rune'si: bugün için bir Elder Futhark rune'u · AskRune",
+        description:
+          "Bugünün taşını çevir: Elder Futhark'tan bir rune, anlamı, anahtar kelimeleri ve gün boyu taşıyacağın bir soru. AskRune uygulamasındaki taşla aynı.",
+      },
+    },
   },
 };
 

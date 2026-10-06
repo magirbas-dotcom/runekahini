@@ -10,6 +10,7 @@ import path from "node:path";
 
 import sharp from "sharp";
 
+import { runes } from "../src/content/runes.ts";
 import { glyphPlacement, RUNE_GLYPHS } from "../src/data/runeGlyphs.ts";
 
 const APP = process.argv[2] ?? "../askrune";
@@ -39,6 +40,20 @@ const JOBS = [
     out: `../guide/${rune.toLowerCase()}`,
     max: 480,
   })),
+  // Rune of the Day (2026-10-07): the day's rune can fall reversed, as in the app; the runes that can turn,
+  // turned, with the light still from the upper left.
+  ...runes
+    .filter((r) => r.reversible)
+    .map((r) => ({
+      file: "stone-fire.webp",
+      cx: 0.5,
+      cy: 0.5,
+      r: 0.62 / 1.6,
+      rune: r.name,
+      reversed: true,
+      out: `../guide/${r.name.toLowerCase()}-rev`,
+      max: 480,
+    })),
 ];
 
 const GOLD = ["#4a3009", "#8f6620", "#d8b25a", "#f6e2a6", "#c79a3e", "#6e4e18", "#a9802f"].map((h) => [
@@ -58,7 +73,7 @@ function gold(t) {
 }
 
 /** Where the rune's 100-box lies on the stone, in image pixels, and the glyph's transform. */
-function placement(size, { cx, cy, r, rune }) {
+function placement(size, { cx, cy, r, rune, reversed = false }) {
   const g = RUNE_GLYPHS[rune];
   const p = glyphPlacement(g, 0.78);
   // The 100-box spans 80% of the face's diameter: the rune sits within the stone with room around it.
@@ -66,7 +81,9 @@ function placement(size, { cx, cy, r, rune }) {
   const ox = cx * size - box / 2;
   const oy = cy * size - box / 2;
   const k = box / 100;
-  return { g, box, ox, oy, k, p, t: `translate(${ox} ${oy}) scale(${k}) translate(${p.x} ${p.y}) scale(${p.s})` };
+  // A reversed rune turns half a circle about the box's centre, before the carving is lit.
+  const turn = reversed ? `rotate(180 ${cx * size} ${cy * size}) ` : "";
+  return { g, box, ox, oy, k, p, t: `${turn}translate(${ox} ${oy}) scale(${k}) translate(${p.x} ${p.y}) scale(${p.s})` };
 }
 
 /** The groove as a white-on-black mask (the glyph widened by the cut's weight). */

@@ -22,6 +22,9 @@ export const guidePath = {
 
 export type GuidePage = "index" | "history" | "spreads";
 
+/** The Rune of the Day page (2026-10-07). */
+export const dailyPath = { en: "/rune-of-the-day/", tr: "/tr/gunun-runesi/" } as const;
+
 /** The same page in both languages, for hreflang and the language switch. */
 export function guideAlternates(page: GuidePage | { rune: string }) {
   const of = (l: Lang) => (typeof page === "string" ? guidePath[l][page] : guidePath[l].rune(page.rune));

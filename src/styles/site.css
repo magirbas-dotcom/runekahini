@@ -343,6 +343,27 @@ p {
   background: var(--gold);
   opacity: 0.8;
 }
+.realm-cta {
+  justify-self: start;
+  display: inline-flex;
+  margin-top: 6px;
+  padding: 10px 20px;
+  border-radius: 999px;
+  border: 1px solid var(--gold);
+  background: rgba(17, 16, 14, 0.82);
+  color: var(--gold-light);
+  font-size: 14.5px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.25s ease;
+}
+.realm-cta::after {
+  content: " →";
+  white-space: pre;
+}
+.realm-cta:hover {
+  background: rgba(200, 164, 106, 0.16);
+}
 .realm .phone {
   justify-self: center;
   margin-bottom: -90px;

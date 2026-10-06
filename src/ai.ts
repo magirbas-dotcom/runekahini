@@ -215,6 +215,7 @@ export function llmsTxt() {
     `- [Everything in one file](${SITE}/llms-full.txt): the app, the FAQ and the whole Rune Guide, in English and Turkish`,
     `- [About the app and FAQ (English)](${SITE}/): features, privacy, plans, questions`,
     `- [Uygulama ve SSS (Türkçe)](${SITE}/tr/)`,
+    `- [Rune of the Day](${SITE}/rune-of-the-day/) · [Günün Rune'si](${SITE}/tr/gunun-runesi/): one rune a day, the same stone as in the app (drawn in the browser from the local date)`,
     "",
     section("en"),
     section("tr"),

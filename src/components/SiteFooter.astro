@@ -1,5 +1,5 @@
 ---
-import { guidePath } from "../guide";
+import { dailyPath, guidePath } from "../guide";
 import { copy, type Lang } from "../i18n";
 import RuneRibbon from "./RuneRibbon.astro";
 import Wordmark from "./Wordmark.astro";
@@ -16,6 +16,7 @@ const t = copy[lang];
     <RuneRibbon />
     <Wordmark width={110} />
     <nav aria-label={t.footer.contact}>
+      <a href={dailyPath[lang]}>{t.daily.title}</a>
       <a href={guidePath[lang].index}>{t.nav.guide}</a>
       <a href={t.legal.privacy}>{t.footer.privacy}</a>
       <a href={t.legal.terms}>{t.footer.terms}</a>

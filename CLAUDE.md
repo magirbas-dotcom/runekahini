@@ -130,6 +130,24 @@ Kullanıcı isteği: SEO'nun yanında yapay zekâ arama/cevap motorlarına da de
 - Yapılandırılmış veri: ana sayfada `Organization`, `WebSite`, `MobileApplication`, `FAQPage`; rehberde
   `DefinedTermSet` (24 rune), rune sayfasında `Article` + `DefinedTerm`, her sayfada `BreadcrumbList`.
 
+## Günün Rune'si ve paylaşım görselleri (2026-10-07)
+
+Kullanıcı, site önerilerinden 1 ve 4'ü seçti.
+- **Günün Rune'si** (`/rune-of-the-day/`, `/tr/gunun-runesi/`, `components/DailyRune.astro`): uygulamanın günlük çekimi
+  (`src/daily.ts`, `drawDailyRune` + `todayKey` kopyası; uygulamadaki değişirse bu da değişir), ziyaretçinin yerel
+  tarihiyle tarayıcıda seçilir; aynı gün site ve uygulama aynı taşı gösterir. 24 rune'un metni sayfada veri olarak
+  durur. Önce boş bazalt (`craft/blank-basalt.webp`) + "Taşı Çevir", çevrilince 800 ms dönüş (Hareketi azalt'ta yok),
+  ad, anlam · aett · element (ters ise "TERS"), anahtar kelimeler, genel yorum, Günün Sorusu, rehbere bağlantı. O gün
+  çevrildiyse tarayıcıda açık kalır (`localStorage["askrune.dailyTurned"]`). Ters taşlar `guide/<rune>-rev.webp`
+  (`carve.mjs`, ışık yine sol üstten). Ana sayfadaki "Her sabah bir taş" kartında "Bugünün taşını çevir" düğmesi,
+  alt bilgide bağlantı, sitemap ve llms.txt'de.
+- **Paylaşım görselleri** (1200×630 JPEG, `public/og/`, adres kuralı `src/og.ts` `ogPath`): yolu olan her sayfa
+  (58) kendi görselini taşır (`og:image` + `twitter:card summary_large_image`): solda kazınmış taş, sağda üst yazı,
+  başlık, alt yazı, AskRune logosu. Cloudflare'de üretilemez (yazı tipleri için tarayıcı gerekir), kazınmış taşlar
+  gibi yerelde üretilip commit edilir: `npm run build && node scripts/og.mjs` (Playwright; global kuruluysa
+  `NODE_PATH=$(npm root -g)`), sonra yeniden build. Metinler `/og-pages.json`'dan (`src/pages/og-pages.json.ts`).
+  **Sayfa eklenir ya da başlık/metin değişirse betik yeniden çalıştırılmalı.**
+
 ## Proje nedir
 
 **Rune Kahini** — Elder Futhark Rune okuması, doğum rünü / burç haritası ve tılsım tasarımı yapılan,

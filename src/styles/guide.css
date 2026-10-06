@@ -543,3 +543,100 @@
     transform: none;
   }
 }
+
+/* ── Rune of the Day ─────────────────────────────────── */
+
+.daily-hero {
+  padding-bottom: 36px;
+}
+.daily-hero .g-hero-bg img {
+  object-position: 50% 40%;
+}
+/* The stone turns over on its vertical axis, as in the app (800 ms, no bounce). */
+.flip {
+  width: min(220px, 56vw);
+  aspect-ratio: 1;
+  margin-top: 8px;
+  perspective: 900px;
+}
+.flip-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.flip.turned .flip-inner {
+  transform: rotateY(180deg);
+}
+.flip.instant .flip-inner {
+  transition: none;
+}
+.flip-face {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  filter: drop-shadow(0 26px 30px rgba(0, 0, 0, 0.8));
+}
+.flip-face.front {
+  transform: rotateY(180deg);
+}
+.turn {
+  margin-top: 6px;
+  padding: 12px 26px;
+  border-radius: 999px;
+  border: 1px solid var(--gold);
+  background: rgba(17, 16, 14, 0.88);
+  color: var(--gold-light);
+  font: 500 15px var(--body);
+  cursor: pointer;
+  box-shadow: 0 0 24px rgba(200, 164, 106, 0.18);
+  transition: background 0.25s ease;
+}
+.turn:hover {
+  background: rgba(200, 164, 106, 0.16);
+}
+.turn[hidden] {
+  display: none;
+}
+.daily-caps {
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+  text-align: center;
+}
+.daily-reading {
+  gap: 16px;
+}
+.daily-reading > p {
+  color: var(--parchment);
+  font-size: 16.5px;
+  line-height: 1.75;
+}
+.daily-links {
+  text-align: center;
+  font-size: 15px;
+}
+.daily-later {
+  text-align: center;
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 18px;
+  color: var(--parchment-dim);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flip-inner {
+    transition: none;
+  }
+}
+/* The card's own display (grid) would otherwise show it before the stone is turned. */
+.daily-reading[hidden],
+.daily-caps[hidden],
+.daily .g-sub[hidden] {
+  display: none;
+}

@@ -23,7 +23,7 @@ import wordE from "../assets/craft/word-e.webp";
 import wordN from "../assets/craft/word-n.webp";
 import wordR from "../assets/craft/word-r.webp";
 import wordU from "../assets/craft/word-u.webp";
-import { guidePath } from "../guide";
+import { dailyPath, guidePath } from "../guide";
 import { copy, type Feature, type Lang } from "../i18n";
 import Ornament from "./Ornament.astro";
 import RuneRibbon from "./RuneRibbon.astro";
@@ -144,6 +144,11 @@ const heroWide = await getImage({ src: altarWide, width: 2000, format: "webp" })
                 <h3>{f.title}</h3>
                 <div class="line" />
                 <p>{f.text}</p>
+                {f.key === "home" && (
+                  <a class="realm-cta" href={dailyPath[lang]}>
+                    {t.daily.cta}
+                  </a>
+                )}
               </div>
               {f.key === "home" ? (
                 // The home screen leads the page; here the day's stone itself, carved.

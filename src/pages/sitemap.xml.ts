@@ -2,10 +2,11 @@
 // plain HTML in public/ and listed by hand.
 import type { APIRoute } from "astro";
 
-import { guideAlternates, runes } from "../guide";
+import { dailyPath, guideAlternates, runes } from "../guide";
 
 const pairs: { en: string; tr: string }[] = [
   { en: "/", tr: "/tr/" },
+  { en: dailyPath.en, tr: dailyPath.tr },
   guideAlternates("index"),
   guideAlternates("history"),
   guideAlternates("spreads"),
