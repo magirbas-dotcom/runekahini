@@ -32,6 +32,11 @@ diğerleri `/` İngilizce, elle seçim hatırlanır).
   780 px WebP). Üretimi: mobil repoda Expo web önizlemesi açıkken (`npx expo start`, port 8081)
   `node scripts/shots/run.mjs tr|en` (headless Chrome, 390×844 @3x PNG, `scripts/shots/out/`), sonra
   `npm run images -- scripts/shots/out`.
+- **Tılsım ekran görüntüsünde kolye değişti (2026-10-07, kullanıcı: "tılsım birbirinin içine geçmiş"):** Kuzey Muhafızı'nın
+  eski yerleşiminde Thurisaz Algiz'in kollarına biniyordu. Yalnız kolye, kullanıcının telefonda kaydettiği duvar
+  kâğıdından (rune'lar ayrık) kesilip ölçülerek aynı yere kondu; kenarı uygulamanın `gold-leaf.webp` siluetiyle
+  maskelendi, çevresi (orman, başlık, seçici, hare) aynen. Ekran yeniden çekilirse bu gerekmez: uygulamadaki
+  niyet yerleşimleri artık düzeltilmiş.
 - Arka planlar `src/assets/bg/` (altar-wide, aurora-wide, forest-wide, ritual-tall), mobil repodaki
   görsellerden.
 
