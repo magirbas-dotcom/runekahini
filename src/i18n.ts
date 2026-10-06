@@ -47,6 +47,8 @@ export interface Copy {
     reversed: string;
     later: string;
     readMore: string;
+    /** The app card's button once the stone is turned ("Anlamını Oku"). */
+    read: string;
     about: string;
     /** On the landing's "one stone every morning" card. */
     cta: string;
@@ -247,13 +249,14 @@ export const copy: Record<Lang, Copy> = {
     daily: {
       kicker: "RUNE OF THE DAY",
       title: "Rune of the Day",
-      silent: "The stone is still silent",
+      silent: "The stone is\nstill silent",
       support: "Discover what today brings you.",
       turn: "Turn the Stone",
       turnLabel: "Turn the stone and see its rune",
       reversed: "Reversed",
       later: "A new stone awaits you tomorrow.",
       readMore: "Read {rune} in the Rune Guide",
+      read: "Read Its Meaning",
       cta: "Turn today's stone",
       about:
         "One stone a day, the same for everyone and the same as in the AskRune app; it changes at midnight, your time. A rune reading is for reflection, not a prediction.",
@@ -463,6 +466,7 @@ export const copy: Record<Lang, Copy> = {
       reversed: "Ters",
       later: "Yarın yeni bir taş seni bekliyor.",
       readMore: "Rehberde {rune}",
+      read: "Anlamını Oku",
       cta: "Bugünün taşını çevir",
       about:
         "Günde bir taş: herkes için aynı ve AskRune uygulamasındaki günün taşıyla aynı; senin saatinle gece yarısı değişir. Rune okuması bir kehanet değil, düşünmek için bir aynadır.",

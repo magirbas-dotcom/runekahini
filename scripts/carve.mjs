@@ -54,6 +54,20 @@ const JOBS = [
       out: `../guide/${r.name.toLowerCase()}-rev`,
       max: 480,
     })),
+  // The phone on the Rune of the Day page shows the app's home card, whose stone is the daily stone: every rune
+  // on it, and the ones that can turn, turned.
+  ...runes.flatMap((r) =>
+    [false, ...(r.reversible ? [true] : [])].map((reversed) => ({
+      file: "stone-daily.webp",
+      cx: 0.5,
+      cy: 0.5,
+      r: 0.36,
+      rune: r.name,
+      reversed,
+      out: `../daily/${r.name.toLowerCase()}${reversed ? "-rev" : ""}`,
+      max: 360,
+    })),
+  ),
 ];
 
 const GOLD = ["#4a3009", "#8f6620", "#d8b25a", "#f6e2a6", "#c79a3e", "#6e4e18", "#a9802f"].map((h) => [

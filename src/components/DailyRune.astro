@@ -4,8 +4,8 @@
 // picks today's (src/daily.ts, the app's own draw) and the stone waits, blank, to be turned, as on the app's home.
 import { getImage, Image } from "astro:assets";
 
-import blank from "../assets/craft/blank-basalt.webp";
 import realmHome from "../assets/bg/realm-home.webp";
+import blank from "../assets/daily/blank.webp";
 import { content, dailyPath, guideCopy, guidePath, lore, runes } from "../guide";
 import { copy, type Lang } from "../i18n";
 import Base from "../layouts/Base.astro";
@@ -23,9 +23,14 @@ const t = copy[lang].daily;
 const g = guideCopy[lang];
 const c = content[lang];
 const locale = lang === "tr" ? "tr-TR" : "en";
-const stones = import.meta.glob<{ default: ImageMetadata }>("../assets/guide/*.webp", { eager: true });
+// The app's home card carves the day's rune into the daily stone (scripts/carve.mjs, src/assets/daily/).
+const stones = import.meta.glob<{ default: ImageMetadata }>("../assets/daily/*.webp", { eager: true });
 const stoneUrl = async (file: string) =>
-  (await getImage({ src: stones[`../assets/guide/${file}.webp`].default, width: 440, format: "webp" })).src;
+  (await getImage({ src: stones[`../assets/daily/${file}.webp`].default, width: 300, format: "webp" })).src;
+// The phone's screen is the app's real home screen; only its daily card is drawn live over it.
+const screens = import.meta.glob<{ default: ImageMetadata }>("../assets/screens/*/home.webp", { eager: true });
+const homeScreen = screens[`../assets/screens/${lang}/home.webp`].default;
+const silent = t.silent.split("\n");
 
 // Every rune as the page needs it; the script shows one.
 const data = await Promise.all(
@@ -38,6 +43,8 @@ const data = await Promise.all(
     return {
       name: r.name,
       caps,
+      first: text.upright.general.match(/^[^.!?]+[.!?]/)?.[0] ?? text.upright.general,
+      firstRev: text.reversed ? (text.reversed.general.match(/^[^.!?]+[.!?]/)?.[0] ?? text.reversed.general) : null,
       stone: await stoneUrl(r.name.toLowerCase()),
       stoneRev: r.reversible ? await stoneUrl(`${r.name.toLowerCase()}-rev`) : null,
       upright: reading(text.upright),
@@ -61,24 +68,43 @@ const home = lang === "tr" ? "/tr/" : "/";
       <div class="wrap g-hero-inner">
         <nav class="crumbs" aria-label={t.title}><a href={home}>AskRune</a></nav>
         <span class="kicker" id="daily-date">{t.kicker}</span>
-        <h1 id="daily-name">{t.title}</h1>
+        <h1>{t.title}</h1>
         <Ornament />
-        <p class="g-sub" id="daily-sub">{t.support}</p>
+        <p class="g-sub">{t.support}</p>
 
-        <div class="flip" id="flip">
-          <div class="flip-inner">
-            <Image class="flip-face back" src={blank} alt="" widths={[440]} sizes="220px" loading="eager" />
-            <img class="flip-face front" id="daily-stone" alt="" width="220" height="220" />
+        {/* User, 2026-10-07: "if today's rune came inside a phone, as if using the app". The phone holds the app's
+            real home screen (src/assets/screens/), and its daily card is drawn over it, live, in the app's layout
+            (Direction A: the stone left; kicker, name, keywords, a gold line, the first sentence, one button). */}
+        <div class="phone daily-phone">
+          <div class="app-screen">
+            <Image class="app-shot" src={homeScreen} alt="" widths={[390, 780]} sizes="320px" loading="eager" />
+            <div class:list={["app-card", lang]} id="app-card">
+              <div class="flip" id="flip">
+                <div class="flip-inner">
+                  <Image class="flip-face back" src={blank} alt="" widths={[300]} sizes="120px" loading="eager" />
+                  <img class="flip-face front" id="daily-stone" alt="" width="150" height="150" />
+                </div>
+              </div>
+              <div class="app-copy">
+                <span class="app-kicker">{t.kicker}</span>
+                <span class="app-name" id="app-name">{silent.map((l) => <span>{l}</span>)}</span>
+                <span class="app-keys" id="app-keys">{t.support}</span>
+                <span class="app-line" aria-hidden="true"></span>
+                <span class="app-first" id="app-first" hidden></span>
+                <button type="button" class="app-btn" id="turn" aria-label={t.turnLabel}>{t.turn}</button>
+                <a class="app-btn" id="app-read" href="#daily-reading" hidden>{t.read} ›</a>
+              </div>
+            </div>
           </div>
         </div>
-        <button type="button" class="turn" id="turn" aria-label={t.turnLabel}>{t.turn}</button>
-        <p class="daily-caps" id="daily-caps" hidden></p>
         <noscript><p class="g-sub">{t.about}</p></noscript>
       </div>
     </section>
 
     <div class="wrap g-body narrow">
       <section class="g-card reading daily-reading" id="daily-reading" hidden aria-live="polite">
+        <h2 class="daily-title" id="daily-name" lang="en"></h2>
+        <p class="daily-caps" id="daily-caps" hidden></p>
         <ul class="chips" id="daily-keywords" aria-label={g.keywords}></ul>
         <h2 class="visually-hidden">{g.general}</h2>
         <p id="daily-general"></p>
@@ -102,6 +128,8 @@ const home = lang === "tr" ? "/tr/" : "/";
   interface DailyData {
     name: string;
     caps: string;
+    first: string;
+    firstRev: string | null;
     stone: string;
     stoneRev: string | null;
     upright: { keywords: string[]; general: string };
@@ -129,10 +157,17 @@ const home = lang === "tr" ? "/tr/" : "/";
       const flip = $("flip");
       if (!animate) flip.classList.add("instant");
       flip.classList.add("turned");
+      // The card, as the app's once the stone is turned.
+      $("app-name").textContent = r.name;
+      $("app-name").setAttribute("lang", "en");
+      $("app-keys").textContent = reading.keywords.join(" · ");
+      $("app-first").textContent = (reversed ? r.firstRev : r.first) ?? r.first;
+      $("app-first").hidden = false;
       $("turn").hidden = true;
+      $("app-read").hidden = false;
+      $("app-card").classList.add("turned");
+      // And the whole reading under the phone.
       $("daily-name").textContent = r.name;
-      $("daily-name").setAttribute("lang", "en");
-      $("daily-sub").hidden = true;
       const caps = $("daily-caps");
       caps.textContent = reversed ? `${r.caps} · ${main.dataset.reversed?.toLocaleUpperCase(main.dataset.lang)}` : r.caps;
       caps.hidden = false;

@@ -552,12 +552,107 @@
 .daily-hero .g-hero-bg img {
   object-position: 50% 40%;
 }
+/* The phone: the app's home screen with its daily card drawn live over the real one. Sizes are in the app's points,
+   1pt = 100cqw / 390 (the screen is 390 pt wide), so the card scales with the phone. */
+.daily-phone {
+  width: min(330px, 84vw);
+  margin-top: 10px;
+}
+.app-screen {
+  position: relative;
+  container-type: inline-size;
+  border-radius: 33px;
+  overflow: hidden;
+}
+.app-shot {
+  width: 100%;
+  border-radius: 0 !important;
+}
+.app-card {
+  position: absolute;
+  left: 6.15%;
+  top: 12.3%;
+  width: 87.7%;
+  /* Reaches a little into the gap under the screen's own card, so a turned rune with two lines of keywords
+     still has air around it. */
+  height: 24.8%;
+  display: grid;
+  grid-template-columns: 41% 1fr;
+  align-items: center;
+  border-radius: 4.6cqw;
+  border: 1px solid rgba(200, 164, 106, 0.45);
+  background: rgb(13, 12, 10);
+  text-align: left;
+}
+/* The English screen's card is taller (the keywords take two lines there). */
+.app-card.en {
+  top: 12.3%;
+  height: 25.4%;
+}
+.app-copy {
+  display: grid;
+  gap: 1cqw;
+  justify-items: start;
+  padding-right: 4cqw;
+}
+.app-kicker {
+  font-size: 3.1cqw;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  color: var(--gold);
+}
+.app-name {
+  display: grid;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 6.4cqw;
+  line-height: 1.05;
+  color: var(--parchment);
+}
+.app-keys {
+  font-size: 3.35cqw;
+  line-height: 1.35;
+  color: var(--parchment-dim);
+}
+.app-line {
+  width: 36%;
+  height: 1px;
+  background: rgba(200, 164, 106, 0.55);
+}
+.app-first {
+  font-size: 3.35cqw;
+  line-height: 1.4;
+  color: var(--parchment);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.app-first[hidden],
+.app-btn[hidden] {
+  display: none;
+}
+.app-btn {
+  margin-top: 0.8cqw;
+  padding: 2.2cqw 4.6cqw;
+  border-radius: 999px;
+  border: 1px solid var(--gold);
+  background: rgba(17, 16, 14, 0.88);
+  color: var(--gold-light);
+  font: 500 3.6cqw var(--body);
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 0 4cqw rgba(200, 164, 106, 0.22);
+}
+.app-btn:hover {
+  background: rgba(200, 164, 106, 0.16);
+}
 /* The stone turns over on its vertical axis, as in the app (800 ms, no bounce). */
 .flip {
-  width: min(220px, 56vw);
+  justify-self: center;
+  width: 30cqw;
   aspect-ratio: 1;
-  margin-top: 8px;
-  perspective: 900px;
+  perspective: 600px;
 }
 .flip-inner {
   position: relative;
@@ -579,31 +674,20 @@
   height: 100%;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  filter: drop-shadow(0 26px 30px rgba(0, 0, 0, 0.8));
+  filter: drop-shadow(0 2cqw 2.5cqw rgba(0, 0, 0, 0.8));
 }
 .flip-face.front {
   transform: rotateY(180deg);
 }
-.turn {
-  margin-top: 6px;
-  padding: 12px 26px;
-  border-radius: 999px;
-  border: 1px solid var(--gold);
-  background: rgba(17, 16, 14, 0.88);
+.daily-title {
+  text-align: center;
+  font-size: 40px;
   color: var(--gold-light);
-  font: 500 15px var(--body);
-  cursor: pointer;
-  box-shadow: 0 0 24px rgba(200, 164, 106, 0.18);
-  transition: background 0.25s ease;
 }
-.turn:hover {
-  background: rgba(200, 164, 106, 0.16);
-}
-.turn[hidden] {
-  display: none;
-}
+.daily-reading > p.daily-caps,
 .daily-caps {
   font-size: 11.5px;
+  line-height: 1.6;
   font-weight: 500;
   letter-spacing: 0.2em;
   color: var(--gold);
