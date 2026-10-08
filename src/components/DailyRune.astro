@@ -6,6 +6,7 @@ import { getImage, Image } from "astro:assets";
 
 import realmHome from "../assets/bg/realm-home.webp";
 import blank from "../assets/daily/blank.webp";
+import { CORRESPONDENCES, nameIn, STONES } from "../content/correspondences";
 import { content, dailyPath, guideCopy, guidePath, lore, runes } from "../guide";
 import { copy, type Lang } from "../i18n";
 import Base from "../layouts/Base.astro";
@@ -27,6 +28,10 @@ const locale = lang === "tr" ? "tr-TR" : "en";
 const stones = import.meta.glob<{ default: ImageMetadata }>("../assets/daily/*.webp", { eager: true });
 const stoneUrl = async (file: string) =>
   (await getImage({ src: stones[`../assets/daily/${file}.webp`].default, width: 300, format: "webp" })).src;
+// The correspondence stones' pictures, small (the app's "To go with today" line).
+const gems = import.meta.glob<{ default: ImageMetadata }>("../assets/gems/*.webp", { eager: true });
+const gemUrl = async (id: string) =>
+  (await getImage({ src: gems[`../assets/gems/${id}.webp`].default, width: 96, format: "webp" })).src;
 // The phone's screen is the app's real home screen; only its daily card is drawn live over it.
 const screens = import.meta.glob<{ default: ImageMetadata }>("../assets/screens/*/home.webp", { eager: true });
 const homeScreen = screens[`../assets/screens/${lang}/home.webp`].default;
@@ -50,6 +55,15 @@ const data = await Promise.all(
       upright: reading(text.upright),
       reversed: r.reversible && text.reversed ? reading(text.reversed) : null,
       question: lore[lang].runes[r.name]?.question ?? "",
+      corr: CORRESPONDENCES[r.name]
+        ? {
+            stones: await Promise.all(
+              CORRESPONDENCES[r.name].stones.map(async (s) => ({ name: nameIn(STONES[s], lang), src: await gemUrl(s) })),
+            ),
+            incense: nameIn(CORRESPONDENCES[r.name].incense[0], lang),
+            scent: nameIn(CORRESPONDENCES[r.name].scents[0], lang),
+          }
+        : null,
       guide: guidePath[lang].rune(r.name),
     };
   }),
@@ -112,6 +126,21 @@ const home = lang === "tr" ? "/tr/" : "/";
           <span class="kicker">{g.lore.question.toLocaleUpperCase(locale)}</span>
           <p id="daily-question"></p>
         </div>
+        {/* Stones, incense and scent for today's rune, as under the app's daily card (modern). */}
+        <div class="daily-corr" id="daily-corr" hidden>
+          <div class="daily-corr-stones" id="daily-corr-stones"></div>
+          <div class="daily-corr-text">
+            <span class="kicker">{t.corrKicker}</span>
+            <b id="daily-corr-names"></b>
+            <span class="daily-corr-meta">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 15V9M8 9c-2-1.5-2-3 0-4.5s2-3 0-4.5M5 9c-1.2-1-1.2-2 0-3M11 9c1.2-1 1.2-2 0-3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              <span id="daily-corr-incense"></span>
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1.5C6 4.5 3.5 7.2 3.5 10a4.5 4.5 0 0 0 9 0C12.5 7.2 10 4.5 8 1.5Z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              <span id="daily-corr-scent"></span>
+            </span>
+            <small>{g.corr.note}</small>
+          </div>
+        </div>
         <p class="daily-links"><a id="daily-guide" href={guidePath[lang].index}></a></p>
         <p class="daily-later">{t.later}</p>
       </section>
@@ -135,6 +164,7 @@ const home = lang === "tr" ? "/tr/" : "/";
     upright: { keywords: string[]; general: string };
     reversed: { keywords: string[]; general: string } | null;
     question: string;
+    corr: { stones: { name: string; src: string }[]; incense: string; scent: string } | null;
     guide: string;
   }
 
@@ -176,6 +206,23 @@ const home = lang === "tr" ? "/tr/" : "/";
       );
       $("daily-general").textContent = reading.general;
       $("daily-question").textContent = r.question;
+      if (r.corr) {
+        const box = $("daily-corr-stones");
+        box.replaceChildren(
+          ...r.corr.stones.map((s) => {
+            const img = document.createElement("img");
+            img.src = s.src;
+            img.alt = "";
+            img.width = 48;
+            img.height = 48;
+            return img;
+          }),
+        );
+        $("daily-corr-names").textContent = r.corr.stones.map((s) => s.name).join(" · ");
+        $("daily-corr-incense").textContent = r.corr.incense;
+        $("daily-corr-scent").textContent = r.corr.scent;
+        $("daily-corr").hidden = false;
+      }
       const link = $("daily-guide") as HTMLAnchorElement;
       link.href = r.guide;
       link.textContent = `${(main.dataset.more ?? "").replace("{rune}", r.name)} →`;

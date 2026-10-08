@@ -4,6 +4,7 @@
 // same sources as the pages (src/guide.ts, src/i18n.ts), so the two never drift apart.
 
 import { content, firstSense, guideCopy, guidePath, lore, runes } from "./guide";
+import { CORRESPONDENCES, nameIn, STONES } from "./content/correspondences";
 import { copy, type Lang } from "./i18n";
 
 export const SITE = "https://askrune.app";
@@ -53,6 +54,24 @@ function head(lang: Lang, title: string, htmlPath: string, otherPath: string) {
 }
 
 /** One rune: its facts, upright and reversed readings, tip and lore. */
+/** A rune's stones, incense and scents (modern correspondences), as on its page. */
+function corrMd(name: string, lang: Lang): string[] {
+  const c = CORRESPONDENCES[name];
+  if (!c) return [];
+  const g = guideCopy[lang];
+  const w = words[lang];
+  return [
+    `## ${g.corr.title} (${w.modern})`,
+    "",
+    `- ${c.stones.map((s) => nameIn(STONES[s], lang)).join(", ")}`,
+    `- ${g.corr.incense}: ${c.incense.map((n) => nameIn(n, lang)).join(", ")}`,
+    `- ${g.corr.scents}: ${c.scents.map((n) => nameIn(n, lang)).join(", ")}`,
+    "",
+    g.corr.note,
+    "",
+  ];
+}
+
 export function runeMd(lang: Lang, name: string) {
   const g = guideCopy[lang];
   const w = words[lang];
@@ -83,6 +102,7 @@ export function runeMd(lang: Lang, name: string) {
       `## ${g.lore.shadow}`, "", l.shadow, "",
       `## ${g.lore.harmony} (${w.modern})`, "", l.harmony, "",
       `## ${g.lore.talisman} (${w.modern})`, "", l.talisman, "",
+      ...corrMd(r.name, lang),
       `## ${g.lore.question}`, "", l.question, "",
     );
   }

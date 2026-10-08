@@ -7,7 +7,7 @@ import sharp from "sharp";
 
 const src = process.argv[2];
 if (!src) throw new Error("Give the screenshot folder: npm run images -- <folder>");
-const KEEP = ["home", "reading-drawn", "birth", "talisman-medallion", "compat"];
+const KEEP = ["home", "reading-drawn", "birth", "talisman-medallion", "compat", "journey"];
 
 for (const lang of ["tr", "en"]) {
   const out = join("src", "assets", "screens", lang);

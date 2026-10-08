@@ -50,6 +50,8 @@ export interface GuideCopy {
   runesTitle: string;
   modern: string;
   lore: { poem: string; myth: string; inner: string; shadow: string; harmony: string; question: string; talisman: string };
+  /** Stones, incense and scents (the app's corr.*). */
+  corr: { title: string; incense: string; scents: string; note: string };
   spread: { origin: string; layout: string; positions: string; questions: string; reading: string };
   sources: string;
   prev: string;
@@ -98,8 +100,14 @@ export const guideCopy: Record<Lang, GuideCopy> = {
       inner: "Inner Life",
       shadow: "Shadow Side",
       harmony: "Harmony and Tension",
-      question: "Question for the Day",
+      question: "This Rune's Question",
       talisman: "In Talismans",
+    },
+    corr: {
+      title: "Stones · Incense · Scents",
+      incense: "Incense",
+      scents: "Scents",
+      note: "Modern esoteric correspondences; they vary from source to source. Burn incense somewhere airy.",
     },
     spread: { origin: "Origin", layout: "Layout", positions: "Places", questions: "Good for", reading: "How to read it" },
     sources:
@@ -119,7 +127,7 @@ export const guideCopy: Record<Lang, GuideCopy> = {
     sound: "Sound",
     app: {
       title: "Draw the stones in AskRune",
-      text: "The rune of the day, readings of one to five runes, your birth rune and a talisman of your own. Coming soon to the App Store and Google Play.",
+      text: "The rune of the day, readings of one to five runes, your birth rune, a talisman of your own and a seven-day Rune Journey. Coming soon to the App Store and Google Play.",
       link: "Discover the app",
     },
     meta: {
@@ -165,8 +173,14 @@ export const guideCopy: Record<Lang, GuideCopy> = {
       inner: "İç Dünya",
       shadow: "Gölge Yönü",
       harmony: "Uyum ve Gerilim",
-      question: "Günün Sorusu",
+      question: "Bu Rune'un Sorusu",
       talisman: "Tılsımda",
+    },
+    corr: {
+      title: "Taş · Tütsü · Koku",
+      incense: "Tütsü",
+      scents: "Koku",
+      note: "Modern ezoterik eşleşmelerdir, kaynaktan kaynağa değişir. Tütsüyü havadar bir yerde yak.",
     },
     spread: { origin: "Kökeni", layout: "Diziliş", positions: "Yerler", questions: "Hangi sorular için", reading: "Nasıl okunur" },
     sources:
@@ -186,7 +200,7 @@ export const guideCopy: Record<Lang, GuideCopy> = {
     sound: "Ses",
     app: {
       title: "Taşları AskRune'da çek",
-      text: "Günün rune'u, bir ile beş rune arası okumalar, doğum rune'un ve kendi tılsımın. Yakında App Store ve Google Play'de.",
+      text: "Günün rune'u, bir ile beş rune arası okumalar, doğum rune'un, kendi tılsımın ve yedi günlük Rune Yolculuğu. Yakında App Store ve Google Play'de.",
       link: "Uygulamayı keşfet",
     },
     meta: {

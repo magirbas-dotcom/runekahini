@@ -154,6 +154,22 @@ Kullanıcı, site önerilerinden 1 ve 4'ü seçti.
   `NODE_PATH=$(npm root -g)`), sonra yeniden build. Metinler `/og-pages.json`'dan (`src/pages/og-pages.json.ts`).
   **Sayfa eklenir ya da başlık/metin değişirse betik yeniden çalıştırılmalı.**
 
+## Uygulamanın 2026-10-08 yenilikleri sitede
+
+Kullanıcı: "askrune.app'te bu güncellemeleri yansıt".
+- **Rune Yolculuğu** tanıtımda altıncı bölüm ("Rune'ları okumanın altı yolu"): ekran `screens/<dil>/journey.webp` (uygulamanın
+  web önizlemesinden, 3. gün Isa; labradorit taş başsız tarayıcıda çizilmediği için `scripts/carve.mjs` reçetesiyle oyulup
+  ekran görüntüsüne yerleştirildi). Arka planı uygulamanın yolculuk ormanı (`bg/realm-journey.webp`, eski realm-talisman);
+  Tılsım bölümünün arka planı artık uygulamanın bronz duvar kâğıdı sahnesi (`bg/realm-talisman.webp`). Planlarda ücretsiz,
+  SSS'de iki dilde soru, uygulama tanıtım kutusunda (AppNudge) ve meta açıklamada.
+- **Taş · Tütsü · Koku:** `src/content/correspondences.ts` ve `src/assets/gems/` uygulamadan kopya (orada değişirse yeniden
+  kopyalanır). Rune sayfasında modern yorum etiketli kart (`guide/RuneCorrespondences.astro`, .md ikizinde de), Günün Rune'si
+  sayfasında çevrilince "Bugüne eşlik eden" kutusu. SSS'de "tarihsel mi?" sorusu.
+- "Günün Sorusu" etiketi uygulamadaki gibi "Bu Rune'un Sorusu" / "This Rune's Question".
+- Rehber içeriği uygulamadan yeniden kopyalandı: beşli haçta Engel sağda, Sonuç altta (çizim `GuideSpreads` buna göre).
+- Ana sayfanın paylaşım görseli (`public/og/`) eski alt yazıyla duruyor: Playwright bu bilgisayarda kurulu değil;
+  `node scripts/og.mjs` bir sonraki fırsatta çalıştırılmalı.
+
 ## Proje nedir
 
 **Rune Kahini** — Elder Futhark Rune okuması, doğum rünü / burç haritası ve tılsım tasarımı yapılan,

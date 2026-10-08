@@ -1,0 +1,56 @@
+---
+// A rune's stones, incense and scents, as in the app (askrune-app components/correspondence/Correspondences,
+// the "card" variant): the stones as small pictures with their names, the incense and scents beside a thin
+// mark (smoke, a drop). Modern esoteric correspondences, tagged as such, never a health claim.
+import { Image } from "astro:assets";
+
+import { CORRESPONDENCES, nameIn, STONES } from "../../content/correspondences";
+import { guideCopy } from "../../guide";
+import type { Lang } from "../../i18n";
+import ModernTag from "./ModernTag.astro";
+
+interface Props {
+  lang: Lang;
+  name: string;
+}
+const { lang, name } = Astro.props;
+const g = guideCopy[lang];
+const c = CORRESPONDENCES[name];
+const gems = import.meta.glob<{ default: ImageMetadata }>("../../assets/gems/*.webp", { eager: true });
+const gem = (id: string) => gems[`../../assets/gems/${id}.webp`].default;
+const SMOKE = "M8 15V9M8 9c-2-1.5-2-3 0-4.5s2-3 0-4.5M5 9c-1.2-1-1.2-2 0-3M11 9c1.2-1 1.2-2 0-3";
+const DROP = "M8 1.5C6 4.5 3.5 7.2 3.5 10a4.5 4.5 0 0 0 9 0C12.5 7.2 10 4.5 8 1.5Z";
+const rows = c
+  ? [
+      { mark: SMOKE, label: g.corr.incense, names: c.incense.map((n) => nameIn(n, lang)) },
+      { mark: DROP, label: g.corr.scents, names: c.scents.map((n) => nameIn(n, lang)) },
+    ]
+  : [];
+---
+
+{
+  c && (
+    <section class="g-card lore corr">
+      <ModernTag lang={lang} />
+      <h2>{g.corr.title}</h2>
+      <ul class="corr-stones">
+        {c.stones.map((s) => (
+          <li>
+            <Image src={gem(s)} alt="" widths={[96, 192]} sizes="64px" />
+            <span>{nameIn(STONES[s], lang)}</span>
+          </li>
+        ))}
+      </ul>
+      {rows.map((r) => (
+        <p class="corr-row">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d={r.mark} stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <b>{r.label}</b>
+          <span>{r.names.join(" · ")}</span>
+        </p>
+      ))}
+      <p class="corr-note">{g.corr.note}</p>
+    </section>
+  )
+}

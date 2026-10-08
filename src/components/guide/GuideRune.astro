@@ -2,7 +2,7 @@
 // One rune's page (the app's guide/[rune]): the carved stone between its neighbours, its name, sound and
 // meaning, the Upright / Reversed readings (general, love, career, keywords), the practical tip, then the
 // lore: the rune poem, history and myth, the inner life, its shadow, and (tagged modern) harmony and
-// tension and its use in talismans, with the question for the day apart.
+// tension and its use in talismans, its stones, incense and scents (modern), with the rune's question apart.
 import { Image } from "astro:assets";
 
 import {
@@ -20,6 +20,7 @@ import type { RuneReadingText } from "../../content/types";
 import GuideHero from "./GuideHero.astro";
 import GuidePage from "./GuidePage.astro";
 import ModernTag from "./ModernTag.astro";
+import RuneCorrespondences from "./RuneCorrespondences.astro";
 
 interface Props {
   lang: Lang;
@@ -162,6 +163,7 @@ const loreCards = [
               </section>
             ))}
           </div>
+          <RuneCorrespondences lang={lang} name={name} />
           <section class="question">
             <span class="kicker">{g.lore.question.toLocaleUpperCase(locale)}</span>
             <p>{l.question}</p>

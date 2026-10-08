@@ -4,7 +4,7 @@
 export type Lang = "en" | "tr";
 
 export interface Feature {
-  key: "home" | "reading-drawn" | "birth" | "talisman-medallion" | "compat";
+  key: "home" | "reading-drawn" | "birth" | "talisman-medallion" | "journey" | "compat";
   kicker: string;
   title: string;
   text: string;
@@ -47,6 +47,8 @@ export interface Copy {
     reversed: string;
     later: string;
     readMore: string;
+    /** Over the stones, incense and scent for today (the app's corr.daily). */
+    corrKicker: string;
     /** The app card's button once the stone is turned ("Anlamını Oku"). */
     read: string;
     about: string;
@@ -62,13 +64,13 @@ export const copy: Record<Lang, Copy> = {
     meta: {
       title: "AskRune: rune readings, your birth rune and talismans",
       description:
-        "Daily rune readings with the 24 runes of the Elder Futhark, your birth rune, a talisman of your own and the harmony of two. No account, no ads. Coming soon to the App Store and Google Play.",
+        "Daily rune readings with the 24 runes of the Elder Futhark, your birth rune, a talisman of your own, a seven-day Rune Journey and the harmony of two. No account, no ads. Coming soon to the App Store and Google Play.",
     },
     nav: { other: "Türkçe", otherHref: "/tr/", guide: "Rune Guide" },
     hero: {
       kicker: "THE 24 RUNES OF THE ELDER FUTHARK",
       title: ["Ancient signs,", "new perspectives"],
-      sub: "Daily readings with the 24 runes of the Elder Futhark, your birth rune, a talisman of your own and the harmony of two. No account, no ads: everything stays on your phone.",
+      sub: "Daily readings with the 24 runes of the Elder Futhark, your birth rune, a talisman of your own, a seven-day Rune Journey and the harmony of two. No account, no ads: everything stays on your phone.",
       ios: "App Store",
       android: "Google Play",
       soon: "Coming soon",
@@ -76,7 +78,7 @@ export const copy: Record<Lang, Copy> = {
     head: {
       features: {
         kicker: "INSIDE THE APP",
-        title: "Five ways to read the runes",
+        title: "Six ways to read the runes",
         text: "Each part of AskRune has a room of its own: a candle-lit altar, the northern lights, an old forest.",
       },
       more: "ALSO IN THE APP",
@@ -114,6 +116,13 @@ export const copy: Record<Lang, Copy> = {
         alt: "A bind rune carved into a gold leaf pendant",
       },
       {
+        key: "journey",
+        kicker: "Rune Journey",
+        title: "Seven days, seven runes",
+        text: "One rune and one question a day, a small step to take, the stones and scents that go with it, and a note only you will read. A finished journey stays in your history, with a card to share.",
+        alt: "Day three of a Rune Journey: Isa, carved in labradorite",
+      },
+      {
         key: "compat",
         kicker: "Rune compatibility",
         title: "Two dates, two runes",
@@ -125,9 +134,9 @@ export const copy: Record<Lang, Copy> = {
       title: "And more",
       open: "Open the guide",
       items: [
-        { title: "Rune Guide", text: "All 24 runes, upright and reversed, with what each means in love and work." },
+        { title: "Rune Guide", text: "All 24 runes, upright and reversed: what each means in love and work, and the stones, incense and scents that go with it." },
         { title: "History and notes", text: "Every reading kept on your phone, with your own notes beside it." },
-        { title: "Share cards", text: "Your reading, birth map or talisman as a card made for stories." },
+        { title: "Share cards", text: "Your reading, birth map, talisman or finished journey as a card made for stories." },
         { title: "Write in runes", text: "Your name or a word, letter by letter in runes, by how it sounds in English or Turkish." },
       ],
     },
@@ -135,7 +144,7 @@ export const copy: Record<Lang, Copy> = {
       kicker: "THE CRAFT",
       title: "Real signs, carved in stone",
       text: "No rune is drawn by AI. Every sign comes from the Elder Futhark's own shapes and is cut into stone, gold or bronze, lit as the stone was lit.",
-      note: "The birth rune, the zodiac pairing and talisman design are modern interpretations, and the app says so.",
+      note: "The birth rune, the zodiac pairing, talisman design and the stone and scent pairings are modern interpretations, and the app says so.",
     },
     privacy: {
       title: "Yours, and only yours",
@@ -156,6 +165,7 @@ export const copy: Record<Lang, Copy> = {
         "Your birth rune and its card",
         "The Rune Guide",
         "Rune compatibility",
+        "The seven-day Rune Journey",
         "Design a talisman",
         "Your last 10 readings",
       ],
@@ -179,6 +189,10 @@ export const copy: Record<Lang, Copy> = {
               a: "No. It is a tool for reflection, for entertainment and inspiration. It is not a substitute for professional advice.",
             },
             { q: "Where is my data?", a: "Only on your phone. There is no server and no account; we never see it." },
+            {
+              q: "What is a Rune Journey?",
+              a: "Seven days, one rune and one question each, with a small step for the day and the stones and scents that go with its rune. A new day opens the day after the one before, and your notes stay on your phone. A finished journey is kept in your history with a card to share.",
+            },
             { q: "Does it work offline?", a: "Yes, everything but purchases." },
             { q: "How do I cancel a subscription?", a: "In your App Store or Google Play account settings. See Support for the steps." },
             {
@@ -232,6 +246,10 @@ export const copy: Record<Lang, Copy> = {
               a: "No, both are modern interpretations. No Norse source pairs runes with the signs of the zodiac, and working out a rune from a birth date is today's practice. The app labels them as modern interpretations, as it does talisman design.",
             },
             {
+              q: "Are the stone, incense and scent pairings historical?",
+              a: "No. They are modern esoteric correspondences and vary from source to source; no old source pairs runes with crystals or scents. AskRune offers them as something to go with a rune, labelled as modern, and never as a health claim.",
+            },
+            {
               q: "What is a bind rune?",
               a: "Several runes joined on one shared stave into a single sign. In AskRune it is how a talisman is made: pick an intention or your own runes, and they are carved together into a gold, bronze or stone pendant. Each rune's page in the guide says which intentions it is used for (In Talismans). Talisman design is a modern interpretation.",
             },
@@ -256,6 +274,7 @@ export const copy: Record<Lang, Copy> = {
       reversed: "Reversed",
       later: "A new stone awaits you tomorrow.",
       readMore: "Read {rune} in the Rune Guide",
+      corrKicker: "TO GO WITH TODAY",
       read: "Read Its Meaning",
       cta: "Turn today's stone",
       about:
@@ -272,13 +291,13 @@ export const copy: Record<Lang, Copy> = {
     meta: {
       title: "AskRune: rune okumaları, doğum rune'si ve tılsım",
       description:
-        "Elder Futhark'ın 24 rune'u ile günlük okumalar, doğum rune'in, kendi tılsımın ve iki kişinin uyumu. Hesap yok, reklam yok. Yakında App Store ve Google Play'de.",
+        "Elder Futhark'ın 24 rune'u ile günlük okumalar, doğum rune'in, kendi tılsımın, yedi günlük Rune Yolculuğu ve iki kişinin uyumu. Hesap yok, reklam yok. Yakında App Store ve Google Play'de.",
     },
     nav: { other: "English", otherHref: "/", guide: "Rune Rehberi" },
     hero: {
       kicker: "ELDER FUTHARK'IN 24 RUNE'U",
       title: ["Kadim işaretler,", "yeni bakışlar"],
-      sub: "Elder Futhark'ın 24 rune'u ile günlük okumalar, doğum rune'in, kendi tılsımın ve iki kişinin uyumu. Hesap yok, reklam yok: her şey telefonunda kalır.",
+      sub: "Elder Futhark'ın 24 rune'u ile günlük okumalar, doğum rune'in, kendi tılsımın, yedi günlük Rune Yolculuğu ve iki kişinin uyumu. Hesap yok, reklam yok: her şey telefonunda kalır.",
       ios: "App Store",
       android: "Google Play",
       soon: "Yakında",
@@ -286,7 +305,7 @@ export const copy: Record<Lang, Copy> = {
     head: {
       features: {
         kicker: "UYGULAMANIN İÇİNDE",
-        title: "Rune'ları okumanın beş yolu",
+        title: "Rune'ları okumanın altı yolu",
         text: "AskRune'un her bölümünün kendi odası var: mum ışıklı bir sunak, kuzey ışıkları, kadim bir orman.",
       },
       more: "UYGULAMADA AYRICA",
@@ -324,6 +343,13 @@ export const copy: Record<Lang, Copy> = {
         alt: "Altın yaprak kolyeye kazınmış bağ rune'u",
       },
       {
+        key: "journey",
+        kicker: "Rune Yolculuğu",
+        title: "Yedi gün, yedi rune",
+        text: "Her gün bir rune ve bir soru, atılacak küçük bir adım, o rune'a eşlik eden taşlar ve kokular, bir de yalnızca senin okuyacağın bir not. Biten yolculuk Geçmiş'inde kalır, paylaşılacak bir kartı olur.",
+        alt: "Rune Yolculuğu'nun üçüncü günü: labradorite kazınmış Isa",
+      },
+      {
         key: "compat",
         kicker: "Rune Uyumu",
         title: "İki tarih, iki rune",
@@ -335,9 +361,9 @@ export const copy: Record<Lang, Copy> = {
       title: "Ve dahası",
       open: "Rehberi aç",
       items: [
-        { title: "Rune Rehberi", text: "24 rune'un hepsi, düz ve ters; aşkta ve işte ne anlattıkları." },
+        { title: "Rune Rehberi", text: "24 rune'un hepsi, düz ve ters: aşkta ve işte ne anlattıkları, eşlik eden taşlar, tütsüler ve kokular." },
         { title: "Geçmiş ve notlar", text: "Her okuman telefonunda saklanır, yanına kendi notunu ekleyebilirsin." },
-        { title: "Paylaşım kartları", text: "Okuman, doğum haritan ya da tılsımın, hikâyeler için hazırlanmış bir kart." },
+        { title: "Paylaşım kartları", text: "Okuman, doğum haritan, tılsımın ya da biten yolculuğun, hikâyeler için hazırlanmış bir kart." },
         { title: "Rune ile Yaz", text: "Adın ya da bir kelime, Türkçe ya da İngilizce okunuşuna göre harf harf rune'larla." },
       ],
     },
@@ -345,7 +371,7 @@ export const copy: Record<Lang, Copy> = {
       kicker: "ZANAAT",
       title: "Gerçek işaretler, kazınmış taş",
       text: "Hiçbir rune yapay zekâya çizdirilmez. Her işaret Elder Futhark'ın kendi biçiminden çizilir ve taşa, altına, bronza oyulur; taşın aldığı ışıkla aydınlanır.",
-      note: "Doğum rune'si, burç eşleşmesi ve tılsım tasarımı modern yorumlardır; uygulama bunu açıkça söyler.",
+      note: "Doğum rune'si, burç eşleşmesi, tılsım tasarımı ve taş ile koku eşleşmeleri modern yorumlardır; uygulama bunu açıkça söyler.",
     },
     privacy: {
       title: "Senin, yalnızca senin",
@@ -366,6 +392,7 @@ export const copy: Record<Lang, Copy> = {
         "Doğum rune'in ve kartı",
         "Rune Rehberi",
         "Rune Uyumu",
+        "Yedi günlük Rune Yolculuğu",
         "Tılsım tasarlama",
         "Son 10 okuman",
       ],
@@ -389,6 +416,10 @@ export const copy: Record<Lang, Copy> = {
               a: "Hayır. Bir düşünme ve kendini sorgulama aracıdır; eğlence ve ilham içindir. Profesyonel desteğin yerini tutmaz.",
             },
             { q: "Verilerim nerede?", a: "Yalnızca telefonunda. Sunucu da hesap da yok; biz göremeyiz." },
+            {
+              q: "Rune Yolculuğu nedir?",
+              a: "Yedi gün; her gün bir rune ve bir soru, o güne küçük bir adım ve rune'a eşlik eden taşlar ve kokular. Yeni gün bir öncekinin ertesi günü açılır, notların telefonunda kalır. Biten yolculuk paylaşılacak bir kartla Geçmiş'inde saklanır.",
+            },
             { q: "İnternetsiz çalışır mı?", a: "Evet, satın alma dışında her şey." },
             { q: "Aboneliği nasıl iptal ederim?", a: "App Store ya da Google Play hesap ayarlarından. Adımlar Destek sayfasında." },
             {
@@ -442,6 +473,10 @@ export const copy: Record<Lang, Copy> = {
               a: "Hayır, ikisi de modern yorumdur. Rune'ları burçlarla eşleyen hiçbir İskandinav kaynağı yoktur; doğum tarihinden rune hesaplamak da bugünün pratiğidir. Uygulama bunları, tılsım tasarımı gibi, açıkça modern yorum olarak etiketler.",
             },
             {
+              q: "Taş, tütsü ve koku eşleşmeleri tarihsel mi?",
+              a: "Hayır. Bunlar modern ezoterik eşleşmelerdir ve kaynaktan kaynağa değişir; rune'ları kristallerle ya da kokularla eşleyen eski bir kaynak yoktur. AskRune bunları bir rune'a eşlik edebilecek şeyler olarak, modern yorum etiketiyle sunar; hiçbir zaman sağlık iddiası olarak değil.",
+            },
+            {
               q: "Bağ rune'u (bindrune) nedir?",
               a: "Birden çok rune'un ortak bir gövde üzerinde tek bir işarette birleştirilmesidir. AskRune'da tılsım böyle yapılır: bir niyet ya da kendi rune'larını seçersin, birlikte altın, bronz ya da taş bir kolyeye kazınır. Rehberde her rune'un \"Tılsımda\" bölümü hangi niyetlerde kullanıldığını anlatır. Tılsım tasarımı modern bir yorumdur.",
             },
@@ -466,6 +501,7 @@ export const copy: Record<Lang, Copy> = {
       reversed: "Ters",
       later: "Yarın yeni bir taş seni bekliyor.",
       readMore: "Rehberde {rune}",
+      corrKicker: "BUGÜNE EŞLİK EDEN",
       read: "Anlamını Oku",
       cta: "Bugünün taşını çevir",
       about:

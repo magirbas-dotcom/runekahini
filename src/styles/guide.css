@@ -391,6 +391,54 @@
 .g-card.lore h2 {
   font-size: 22px;
 }
+/* A rune's stones, incense and scents (RuneCorrespondences). */
+.corr-stones {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin: 4px 0 2px;
+  padding: 0 0 14px;
+  list-style: none;
+  border-bottom: 1px solid var(--hairline-soft);
+}
+.corr-stones li {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  width: 92px;
+}
+.corr-stones img {
+  width: 64px;
+  height: 64px;
+}
+.corr-stones span {
+  font-size: 13px;
+  color: var(--parchment);
+  text-align: center;
+}
+.g-card p.corr-row {
+  display: grid;
+  grid-template-columns: 16px 64px 1fr;
+  align-items: start;
+  gap: 10px;
+  color: var(--parchment);
+}
+.corr-row svg {
+  margin-top: 4px;
+  color: var(--gold);
+}
+.corr-row b {
+  font-weight: 500;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--gold);
+  line-height: 24px;
+}
+.g-card p.corr-note {
+  font-style: italic;
+  font-size: 13px;
+  color: var(--parchment-dim);
+}
 .question {
   display: grid;
   gap: 10px;
@@ -700,6 +748,57 @@
   color: var(--parchment);
   font-size: 16.5px;
   line-height: 1.75;
+}
+/* Today's stones, incense and scent (the app's "To go with today" line). */
+.daily-corr {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 18px;
+  border-radius: 16px;
+  border: 1px solid var(--hairline-soft);
+  background: rgba(17, 17, 15, 0.6);
+}
+.daily-corr[hidden] {
+  display: none;
+}
+.daily-corr-stones {
+  display: flex;
+  flex: none;
+}
+.daily-corr-stones img + img {
+  margin-left: -14px;
+}
+.daily-corr-text {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+.daily-corr-text b {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 1.2;
+  color: var(--gold-light);
+}
+.daily-corr-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+  font-size: 13.5px;
+  color: var(--parchment-dim);
+}
+.daily-corr-meta svg {
+  color: var(--gold);
+}
+.daily-corr-meta svg + span + svg {
+  margin-left: 8px;
+}
+.daily-corr-text small {
+  font-size: 12px;
+  font-style: italic;
+  color: var(--parchment-mute);
 }
 .daily-links {
   text-align: center;
