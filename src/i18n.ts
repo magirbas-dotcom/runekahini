@@ -134,7 +134,7 @@ export const copy: Record<Lang, Copy> = {
       title: "And more",
       open: "Open the guide",
       items: [
-        { title: "Rune Guide", text: "All 24 runes, upright and reversed, in love and work, with the stones, incense and scents for each." },
+        { title: "Rune Guide", text: "All 24 runes, upright and reversed, with their stones and scents." },
         { title: "History and notes", text: "Every reading kept on your phone, with your own notes beside it." },
         { title: "Share cards", text: "Your reading, birth map, talisman or finished journey as a card made for stories." },
         { title: "Write in runes", text: "Your name or a word, letter by letter in runes, by how it sounds in English or Turkish." },
@@ -361,7 +361,7 @@ export const copy: Record<Lang, Copy> = {
       title: "Ve dahası",
       open: "Rehberi aç",
       items: [
-        { title: "Rune Rehberi", text: "24 rune'un hepsi, düz ve ters; aşkta ve işte, eşlik eden taşlar, tütsüler ve kokularla." },
+        { title: "Rune Rehberi", text: "24 rune'un hepsi, düz ve ters; taşları ve kokularıyla." },
         { title: "Geçmiş ve notlar", text: "Her okuman telefonunda saklanır, yanına kendi notunu ekleyebilirsin." },
         { title: "Paylaşım kartları", text: "Okuman, doğum haritan, tılsımın ya da biten yolculuğun, hikâyeler için hazırlanmış bir kart." },
         { title: "Rune ile Yaz", text: "Adın ya da bir kelime, Türkçe ya da İngilizce okunuşuna göre harf harf rune'larla." },
