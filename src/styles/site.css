@@ -501,10 +501,11 @@ p {
     aspect-ratio: 1 / 1.18;
   }
 }
+/* Low in the card, over the darkest of the fade (user, 2026-10-08: "the words should sit lower"). */
 .tile-copy {
   display: grid;
   gap: 10px;
-  padding: 0 26px 28px;
+  padding: 0 26px 18px;
 }
 .tile-line {
   width: 32px;
@@ -969,9 +970,10 @@ p {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
   /* The four titles share one line (user, 2026-10-07: "some cards long, some short"): every card's words get
-     room for four lines and the guide's button, whether they use it or not. */
+     room for three lines and the guide's button, whether they use it or not; a longer text runs on into the
+     button's room, which only the guide uses (2026-10-08: three, not four, so the words sit lower). */
   .tile-copy {
-    grid-template-rows: auto auto calc(4 * 1.6em) 44px;
+    grid-template-rows: auto auto calc(3 * 1.6em) 44px;
     align-content: start;
   }
   /* With the words raised to that line, the word's stones sit higher and a little smaller. */
