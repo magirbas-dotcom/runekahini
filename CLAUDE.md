@@ -57,6 +57,8 @@ diğerleri `/` İngilizce, elle seçim hatırlanır).
   gizlilik, planlar, SSS, altbilgi), `Wordmark.astro` (uygulamanın logo path'i, şampanya altın),
   `src/pages/index.astro` (EN), `tr/index.astro`, `404.astro` (iki dilli).
 - Yasal sayfalardaki marka yeniden bağlantı (`a.brand`: TR → `/tr/`, EN → `/`).
+  2026-10-08 (kullanıcı: "geri dönüş linki yok"): marka bağlantı olarak anlaşılmıyordu; her yasal sayfanın en üstünde
+  hap biçiminde "← Ana sayfa" / "← Home" (`nav.back`), alt bilgide Ana sayfa · Rune Rehberi · diğer iki yasal sayfa.
 - `vercel.json`: runekahini.vercel.app'in her adresi askrune.app'e kalıcı yönlendirme.
 - `npm run build` temiz; mobil (375) ve masaüstü (1280) görünüm kontrol edildi. Önizleme
   `.claude/launch.json` "rune-oracle-preview" (Astro preview, port 4173).
