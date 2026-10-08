@@ -20,6 +20,8 @@ import stoneAnsuz from "../assets/craft/stone-ansuz.webp";
 import stoneDagaz from "../assets/craft/stone-dagaz.webp";
 import stoneFehu from "../assets/craft/stone-fehu.webp";
 import stoneIngwaz from "../assets/craft/stone-ingwaz.webp";
+import { CORRESPONDENCES, nameIn, STONES } from "../content/correspondences";
+import { guideCopy } from "../guide";
 import wordE from "../assets/craft/word-e.webp";
 import wordN from "../assets/craft/word-n.webp";
 import wordR from "../assets/craft/word-r.webp";
@@ -58,6 +60,11 @@ const realmFocus: Record<Feature["key"], string> = {
   journey: "50% 35%",
   compat: "50% 10%",
 };
+
+// The home feature's stone is Ingwaz: its correspondences beside it, with their pictures.
+const ingwaz = CORRESPONDENCES.Ingwaz;
+const gems = import.meta.glob<{ default: ImageMetadata }>("../assets/gems/*.webp", { eager: true });
+const gem = (id: string) => gems[`../assets/gems/${id}.webp`].default;
 
 // A photograph for each "more" card: the scrolls (the guide), the chronicle (history and notes), a shared
 // card (the onboarding's), the candle-lit room (the app in two languages).
@@ -157,6 +164,22 @@ const heroWide = await getImage({ src: altarWide, width: 2000, format: "webp" })
                 // The home screen leads the page; here the day's stone itself, carved.
                 <div class="realm-stone">
                   <Image src={stoneIngwaz} alt="Ingwaz" widths={[200, 360]} sizes="170px" />
+                  {/* What goes with the day's rune, as under the app's daily card (user, 2026-10-08). */}
+                  <div class="realm-corr">
+                    <div class="realm-corr-stones">
+                      {ingwaz.stones.map((s) => (
+                        <Image src={gem(s)} alt="" widths={[96]} sizes="44px" />
+                      ))}
+                    </div>
+                    <div class="realm-corr-text">
+                      <span>{t.daily.corrKicker}</span>
+                      <b>{ingwaz.stones.map((s) => nameIn(STONES[s], lang)).join(" · ")}</b>
+                      <small>
+                        {guideCopy[lang].corr.incense}: {nameIn(ingwaz.incense[0], lang)} · {guideCopy[lang].corr.scents}:{" "}
+                        {nameIn(ingwaz.scents[0], lang)}
+                      </small>
+                    </div>
+                  </div>
                 </div>
               ) : (
                 <div class="phone">
