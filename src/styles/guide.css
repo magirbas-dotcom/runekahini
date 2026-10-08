@@ -715,6 +715,56 @@
 .flip.instant .flip-inner {
   transition: none;
 }
+/* Until it is turned, the stone and its button call for a tap (user, 2026-10-08: "people do not know they
+   should tap there"): a warm halo breathing behind the stone, the stone half-turning now and then as in the
+   app (RuneStone nudge), and a gold glow and a light sweeping across the button. */
+.flip:not(.turned) {
+  position: relative;
+  cursor: pointer;
+}
+.flip:not(.turned)::before {
+  content: "";
+  position: absolute;
+  inset: -45%;
+  border-radius: 50%;
+  /* Brightest just outside the stone, which hides the middle. */
+  background: radial-gradient(closest-side, rgba(255, 214, 140, 0.7) 40%, rgba(226, 178, 96, 0.3) 60%, transparent 92%);
+  animation: stone-halo 2.6s ease-in-out infinite;
+  pointer-events: none;
+}
+.flip:not(.turned) .flip-inner {
+  animation: stone-nudge 3.6s ease-in-out 1s infinite;
+}
+@keyframes stone-halo {
+  0%, 100% { opacity: 0.45; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
+@keyframes stone-nudge {
+  0%, 62%, 100% { transform: rotateY(0deg); }
+  72% { transform: rotateY(-28deg); }
+  84% { transform: rotateY(12deg); }
+}
+#turn:not([hidden]) {
+  position: relative;
+  overflow: hidden;
+  animation: turn-glow 2.6s ease-in-out infinite;
+}
+#turn:not([hidden])::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 35%, rgba(255, 233, 180, 0.55) 50%, transparent 65%);
+  transform: translateX(-120%);
+  animation: turn-sweep 2.6s ease-in-out infinite;
+}
+@keyframes turn-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(233, 196, 120, 0); }
+  50% { box-shadow: 0 0 3.5cqw 0.6cqw rgba(233, 196, 120, 0.55); }
+}
+@keyframes turn-sweep {
+  0%, 40% { transform: translateX(-120%); }
+  80%, 100% { transform: translateX(120%); }
+}
 .flip-face {
   position: absolute;
   inset: 0;
@@ -815,6 +865,11 @@
 @media (prefers-reduced-motion: reduce) {
   .flip-inner {
     transition: none;
+  }
+  /* Light in place stays (the halo, the glow); movement goes. */
+  .flip:not(.turned) .flip-inner,
+  #turn:not([hidden])::after {
+    animation: none;
   }
 }
 /* The card's own display (grid) would otherwise show it before the stone is turned. */

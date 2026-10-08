@@ -235,11 +235,16 @@ const home = lang === "tr" ? "/tr/" : "/";
       turned = localStorage.getItem("askrune.dailyTurned") === key;
     } catch {}
     if (turned) show(false);
-    $("turn").addEventListener("click", () => {
+    const turn = () => {
+      if (turned) return;
+      turned = true;
       try {
         localStorage.setItem("askrune.dailyTurned", key);
       } catch {}
       show(true);
-    });
+    };
+    $("turn").addEventListener("click", turn);
+    // The stone itself turns too (user, 2026-10-08: visitors did not know where to tap).
+    $("flip").addEventListener("click", turn);
   }
 </script>
