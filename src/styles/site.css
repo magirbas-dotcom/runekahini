@@ -432,11 +432,10 @@ p {
 }
 /* User, 2026-10-07: "the pictures are good but the words could be bigger, the titles finer; most of the box
    looks empty". The photograph now fills the card and the words sit on it, low, over a dark fade. */
-/* Not overflow: hidden on the card: with it, aspect-ratio held the card to its ratio and a longer text ran
-   over the button (user, 2026-10-08). The photo clips itself; the card grows when its words need more room. */
 .tile {
   position: relative;
   isolation: isolate;
+  overflow: hidden;
   aspect-ratio: 5 / 4;
   border-radius: 20px;
   border: 1px solid var(--hairline-soft);
@@ -448,8 +447,6 @@ p {
   position: absolute;
   inset: 0;
   z-index: -1;
-  overflow: hidden;
-  border-radius: inherit;
 }
 .tile-photo img {
   width: 100%;
